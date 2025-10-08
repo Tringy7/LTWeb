@@ -1,44 +1,41 @@
 package com.shop.shop.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "Orders")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne()
-    @JoinColumn(name = "userId")
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    private List<OrderDetail> orderDetails;
+    @ManyToOne
+    @JoinColumn(name = "addressId")
+    private UserAddress address;
 
-    private String receiverName;
-    private String receiverAddress;
-    private String receiverPhone;
-    private String status;
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(length = 50)
     private String paymentMethod;
 
-    private double totalPrice;
+    @Column(length = 50)
+    private String status = "New";
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    private Double totalPrice;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(length = 50)
+    private String voucherCode;
 }

@@ -1,5 +1,7 @@
 package com.shop.shop.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,39 +16,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Products")
+@Table(name = "Shops")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Shop {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "shopId", nullable = false)
-    private Shop shop;
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
     @Column(nullable = false, length = 255)
-    private String name;
+    private String shopName;
 
-    @Column(length = 255)
-    private String brand;
+    @Column(length = 500)
+    private String description;
 
-    @Column(length = 255)
-    private String color;
+    @Column(length = 50)
+    private String status = "Active";
 
-    @Column(columnDefinition = "TEXT")
-    private String detailDesc;
-
-    @Column(length = 255)
-    private String image;
-
-    @Column(nullable = false)
-    private Double price;
-
-    @Column(length = 255)
-    private String category;
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

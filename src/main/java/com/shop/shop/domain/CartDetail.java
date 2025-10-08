@@ -1,30 +1,38 @@
 package com.shop.shop.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "cartDetails")
+@Table(name = "Cart_Details")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double price;
-    private Long quantity;
-    private String sizeProduct;
-
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "cartId")
     private Cart cart;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "productId")
     private Product product;
+
+    private Long quantity = 1L;
+
+    private Double price;
 }

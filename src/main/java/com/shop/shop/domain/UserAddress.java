@@ -14,39 +14,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Products")
+@Table(name = "User_Addresses")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class UserAddress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "shopId", nullable = false)
-    private Shop shop;
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
 
     @Column(nullable = false, length = 255)
-    private String name;
+    private String receiverName;
 
-    @Column(length = 255)
-    private String brand;
+    @Column(nullable = false, length = 50)
+    private String receiverPhone;
 
-    @Column(length = 255)
-    private String color;
-
-    @Column(columnDefinition = "TEXT")
-    private String detailDesc;
-
-    @Column(length = 255)
-    private String image;
+    @Column(nullable = false, length = 500)
+    private String receiverAddress;
 
     @Column(nullable = false)
-    private Double price;
-
-    @Column(length = 255)
-    private String category;
+    private Boolean isDefault = false;
 }

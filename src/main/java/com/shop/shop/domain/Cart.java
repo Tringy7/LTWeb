@@ -1,30 +1,34 @@
 package com.shop.shop.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "carts")
+@Table(name = "Carts")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double totalPrice;
-    private Long sum;
-
-    @OneToOne()
-    @JoinColumn(name = "userId")
+    @OneToOne
+    @JoinColumn(name = "userId", unique = true)
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
-    private List<CartDetail> cartDetails;
+    @Column
+    private Double totalPrice = 0.0;
 }
