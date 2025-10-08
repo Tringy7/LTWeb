@@ -1,14 +1,15 @@
-package com.shop.shop.controller.admin;
+package com.shop.shop.controller.vendor;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+
 @Controller
-public class AdminOrderController {
+public class VendorEventController {
 
-    @GetMapping("/admin/order")
+    @GetMapping("/vendor/event")
     public String show() {
-        return "admin/order/show";
+        return "vendor/event/show";
     }
-
+    
 }

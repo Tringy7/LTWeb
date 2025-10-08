@@ -13,6 +13,10 @@ public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
                 // layout cho admin
                 .addDecoratorPath("/admin", "/admin/layout.jsp")
                 .addDecoratorPath("/admin/*", "/admin/layout.jsp")
+
+                // layout cho vendor
+                .addDecoratorPath("/vendor", "/vendor/layout.jsp")
+                .addDecoratorPath("/vendor/*", "/vendor/layout.jsp")
                 // layout cho client
                 .addDecoratorPath("/*", "/client/layout.jsp");
     }
