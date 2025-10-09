@@ -42,4 +42,4 @@ public class Shop {
 
     @Column
     private LocalDateTime createdAt = LocalDateTime.now();
-}
+}  

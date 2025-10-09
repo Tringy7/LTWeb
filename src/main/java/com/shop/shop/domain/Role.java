@@ -24,5 +24,5 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, length = 50)
-    private String name; // Admin, User, Vendor
+    private String name;
 }

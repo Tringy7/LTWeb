@@ -40,6 +40,9 @@ public class User {
     @Column(length = 500)
     private String address;
 
+    @Column(length = 255)
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;
