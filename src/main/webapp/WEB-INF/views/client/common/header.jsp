@@ -76,8 +76,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="shop.html" class="nav-item nav-link">Shop</a>
+                        <a href="/" class="nav-item nav-link">Home</a>
+                        <a href="/shop" class="nav-item nav-link">Shop</a>
                         <a href="single.html" class="nav-item nav-link">Single Page</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
@@ -134,4 +134,17 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var path = window.location.pathname;
+        var navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        navLinks.forEach(function (link) {
+            // So sánh chính xác hoặc bắt đầu bằng path (cho các trang con)
+            if (link.getAttribute('href') === path || (path !== "/" && link.getAttribute('href') !== "/" && path.startsWith(link.getAttribute('href')))) {
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
 <!-- Navbar & Hero End -->

@@ -1,8 +1,11 @@
 package com.shop.shop.service.client.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.shop.shop.domain.Product;
@@ -44,5 +47,20 @@ public class ProductServiceImpl implements ProductService {
                     return Long.compare(sold1, sold2);
                 })
                 .orElse(null);
+    }
+
+    @Override
+    public Page<Product> getProductPage(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public Product getProductById(Long id) {
+        Optional<Product> check = productRepository.findById(id);
+        if (check.isPresent()) {
+            Product product = check.get();
+            return product;
+        }
+        return null;
     }
 }

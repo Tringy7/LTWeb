@@ -175,7 +175,8 @@
                                                             class="img-fluid w-100 rounded-top" alt=""
                                                             style="max-width:220px; max-height:220px; object-fit:cover; margin:auto; display:block;">
                                                         <div class="product-details">
-                                                            <a href="#"><i class="fa fa-eye fa-1x"></i></a>
+                                                            <a href="/shop/product/${product.id}"><i
+                                                                    class="fa fa-eye fa-1x"></i></a>
                                                         </div>
                                                     </div>
                                                     <div class="text-center rounded-bottom p-4">
