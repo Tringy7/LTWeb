@@ -137,53 +137,7 @@
                                                 class="btn btn-primary border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i
                                                     class="fa fa-shopping-bag me-2 text-white"></i> Add to cart</a>
                                         </div>
-                                        <div class="col-lg-12">
-                                            <nav>
-                                                <div class="nav nav-tabs mb-3">
 
-                                                    <button class="nav-link border-white border-bottom-0" type="button"
-                                                        role="tab" id="nav-mission-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-mission" aria-controls="nav-mission"
-                                                        aria-selected="false">Reviews</button>
-                                                </div>
-                                            </nav>
-                                            <div class="tab-content mb-5">
-                                                <div class="tab-pane active" id="nav-mission" role="tabpanel"
-                                                    aria-labelledby="nav-mission-tab">
-                                                    <!-- Nếu không có review -->
-                                                    <c:if test="${empty reviews}">
-                                                        <div class="d-flex">
-                                                            <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.
-                                                            </p>
-                                                        </div>
-                                                    </c:if>
-                                                    <c:forEach var="review" items="${reviews}">
-                                                        <div class="d-flex">
-                                                            <img src="img/avatar.jpg"
-                                                                class="img-fluid rounded-circle p-3"
-                                                                style="width: 100px; height: 100px;" alt="">
-                                                            <div class="">
-                                                                <p class="mb-2" style="font-size: 14px;">
-                                                                    ${review.createdAt}
-                                                                </p>
-                                                                <div class="d-flex justify-content-between">
-                                                                    <h5>Jason Smith</h5>
-                                                                    <div class="d-flex mb-3">
-                                                                        <i class="fa fa-star text-secondary"></i>
-                                                                        <i class="fa fa-star text-secondary"></i>
-                                                                        <i class="fa fa-star text-secondary"></i>
-                                                                        <i class="fa fa-star text-secondary"></i>
-                                                                        <i class="fa fa-star"></i>
-                                                                    </div>
-                                                                </div>
-                                                                <p>${review.message}
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </c:forEach>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <form action="#">
                                             <h4 class="mb-5 fw-bold">Leave a Reply</h4>
                                             <div class="row g-4">
@@ -210,22 +164,70 @@
                                                     <div class="d-flex justify-content-between py-3 mb-5">
                                                         <div class="d-flex align-items-center">
                                                             <p class="mb-0 me-3">Please rate:</p>
-                                                            <div class="d-flex align-items-center"
-                                                                style="font-size: 12px;">
-                                                                <i class="fa fa-star text-muted"></i>
-                                                                <i class="fa fa-star"></i>
-                                                                <i class="fa fa-star"></i>
-                                                                <i class="fa fa-star"></i>
-                                                                <i class="fa fa-star"></i>
+                                                            <div id="rating-stars" class="d-flex align-items-center"
+                                                                style="font-size: 12px; cursor: pointer;">
+                                                                <i class="fa fa-star text-muted" data-rating="1"></i>
+                                                                <i class="fa fa-star text-muted" data-rating="2"></i>
+                                                                <i class="fa fa-star text-muted" data-rating="3"></i>
+                                                                <i class="fa fa-star text-muted" data-rating="4"></i>
+                                                                <i class="fa fa-star text-muted" data-rating="5"></i>
                                                             </div>
                                                         </div>
-                                                        <a href="#"
+                                                        <input type="hidden" name="rating" id="rating-value" value="0">
+                                                        <button type="submit"
                                                             class="btn btn-primary border border-secondary text-primary rounded-pill px-4 py-3">
                                                             Post Comment</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </form>
+                                        <div class="col-lg-12">
+                                            <nav>
+                                                <div class="nav nav-tabs mb-3">
+
+                                                    <button class="nav-link border-white border-bottom-0" type="button"
+                                                        role="tab" id="nav-mission-tab" data-bs-toggle="tab"
+                                                        data-bs-target="#nav-mission" aria-controls="nav-mission"
+                                                        aria-selected="false">Reviews</button>
+                                                </div>
+                                            </nav>
+                                            <div class="tab-content mb-5">
+                                                <div class="tab-pane active" id="nav-mission" role="tabpanel"
+                                                    aria-labelledby="nav-mission-tab">
+                                                    <!-- Nếu không có review -->
+                                                    <c:if test="${empty reviews}">
+                                                        <div class="d-flex">
+                                                            <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+                                                    <c:forEach var="review" items="${reviews}">
+                                                        <div class="d-flex">
+                                                            <img src="/admin/images/user/${review.user.image}"
+                                                                class="img-fluid rounded-circle p-3"
+                                                                style="width: 100px; height: 100px;" alt="">
+                                                            <div class="">
+                                                                <p class="mb-2" style="font-size: 14px;">
+                                                                    ${review.createdAt}
+                                                                </p>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <h5>${review.user.fullName}</h5>
+                                                                    <div class="d-flex mb-3">
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <p>${review.message}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </c:forEach>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -234,9 +236,7 @@
                     <!-- Single Products End -->
 
 
-                    <!-- Back to Top -->
-                    <a href="#" class="btn btn-primary btn-lg-square back-to-top" style="display: none;"><i
-                            class="fa fa-arrow-up"></i></a>
+                   
 
 
                     <!-- JavaScript Libraries -->
@@ -261,6 +261,40 @@
                                 sizeButtons.forEach((b) => b.classList.remove("active"));
                                 // Thêm active cho nút được chọn
                                 btn.classList.add("active");
+                            });
+                        });
+
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const starsContainer = document.getElementById('rating-stars');
+                            if (!starsContainer) return;
+
+                            const stars = Array.from(starsContainer.querySelectorAll('.fa-star'));
+                            const ratingInput = document.getElementById('rating-value');
+                            let currentRating = 0;
+
+                            const updateStars = (rating) => {
+                                stars.forEach(star => {
+                                    const starRating = parseInt(star.dataset.rating);
+                                    if (starRating <= rating) {
+                                        star.classList.remove('text-muted');
+                                        star.classList.add('text-warning');
+                                    } else {
+                                        star.classList.remove('text-warning');
+                                        star.classList.add('text-muted');
+                                    }
+                                });
+                            };
+
+                            starsContainer.addEventListener('mouseout', () => {
+                                updateStars(currentRating);
+                            });
+
+                            stars.forEach(star => {
+                                star.addEventListener('mouseover', () => updateStars(parseInt(star.dataset.rating)));
+                                star.addEventListener('click', () => {
+                                    currentRating = parseInt(star.dataset.rating);
+                                    ratingInput.value = currentRating;
+                                });
                             });
                         });
                     </script>

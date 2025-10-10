@@ -51,29 +51,32 @@
                         </div>
                     </div>
                     <div class="col-12 col-lg-5 col-xl-3 wow fadeInRight" data-wow-delay="0.1s">
-                        <div class="carousel-header-banner h-100">
-                            <img src="/admin/images/product/${productTop.image}" class="img-fluid w-100 h-100"
-                                style="object-fit: cover;" alt="${productTop.name}">
-                            <div class="carousel-banner-offer">
-                                <p class="bg-primary text-white rounded fs-5 py-2 px-4 mb-0 me-3">
-                                    Top Sold
-                                </p>
-                                <p class="text-primary fs-5 fw-bold mb-0">Best Seller</p>
-                            </div>
-                            <div class="carousel-banner">
-                                <div class="carousel-banner-content text-center p-4">
-                                    <a href="#" class="d-block mb-2">${productTop.category}</a>
-                                    <a href="#" class="d-block text-white fs-3">${productTop.name}</a>
-                                    <span class="text-primary fs-5">${productTop.price} vnd</span>
+                        <c:forEach var="productTop" items="${productTop}">
+                            <div class="carousel-header-banner">
+                                <img src="/admin/images/product/${productTop.image}" class="img-fluid"
+                                    style="object-fit: cover;" alt="${productTop.name}">
+                                <div class="carousel-banner-offer">
+                                    <p class="bg-primary text-white rounded fs-5 py-2 px-4 mb-0 me-3">
+                                        Top Sold
+                                    </p>
+                                    <p class="text-primary fs-5 fw-bold mb-0">Best Seller</p>
                                 </div>
-                                <form action="/cart/add" method="post">
+                                <div class="carousel-banner">
+                                    <div class="carousel-banner-content text-center p-4">
+                                        <a href="#" class="d-block mb-2">${productTop.category}</a>
+                                        <a href="#" class="d-block text-white fs-3">${productTop.name}</a>
+                                        <span class="text-primary fs-5">${productTop.price} vnd</span>
+                                    </div>
+
                                     <input type="hidden" name="productId" value="${productTop.id}" />
-                                    <button type="submit" class="btn btn-primary rounded-pill py-2 px-4 w-100 mt-2">
+                                    <a href="/shop/product/${productTop.id}" type="submit"
+                                        class="btn btn-primary rounded-pill py-2 px-4 w-100 mt-2">
                                         <i class="fas fa-shopping-cart me-2"></i> Add To Cart
-                                    </button>
-                                </form>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        </c:forEach>
+
                     </div>
                 </div>
             </div>
@@ -173,48 +176,29 @@
                                                     <div class="product-item-inner-item">
                                                         <img src="/admin/images/product/${product.image}"
                                                             class="img-fluid w-100 rounded-top" alt=""
-                                                            style="max-width:220px; max-height:220px; object-fit:cover; margin:auto; display:block;">
+                                                            style="width: 100%; height: 220px; object-fit: cover; border-radius: 8px;">
                                                         <div class="product-details">
                                                             <a href="/shop/product/${product.id}"><i
                                                                     class="fa fa-eye fa-1x"></i></a>
                                                         </div>
                                                     </div>
                                                     <div class="text-center rounded-bottom p-4">
-                                                        <a href="#" class="d-block mb-2">${product.category}</a>
-                                                        <a href="#" class="d-block h4">${product.name}</a>
+                                                        <a href="/shop/product/${product.id}"
+                                                            class="d-block mb-2">${product.category}</a>
+                                                        <a href="/shop/product/${product.id}"
+                                                            class="d-block h4">${product.name}</a>
                                                         <span class="text-primary fs-5">${product.price} vnd</span>
                                                     </div>
                                                 </div>
                                                 <div
                                                     class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
-                                                    <form action="/cart/add" method="post">
+                                                    <form action="/cart/add" method="post" style="margin-bottom: 0;">
                                                         <input type="hidden" name="productId" value="${product.id}" />
                                                         <button type="submit"
-                                                            class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4">
+                                                            class="btn btn-primary border-secondary rounded-pill py-2 px-4 w-100">
                                                             <i class="fas fa-shopping-cart me-2"></i> Add To Cart
                                                         </button>
                                                     </form>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <div class="d-flex">
-                                                            <i class="fas fa-star text-primary"></i>
-                                                            <i class="fas fa-star text-primary"></i>
-                                                            <i class="fas fa-star text-primary"></i>
-                                                            <i class="fas fa-star text-primary"></i>
-                                                            <i class="fas fa-star"></i>
-                                                        </div>
-                                                        <div class="d-flex">
-                                                            <a href="#"
-                                                                class="text-primary d-flex align-items-center justify-content-center me-3">
-                                                                <span class="rounded-circle btn-sm-square border"><i
-                                                                        class="fas fa-random"></i></span>
-                                                            </a>
-                                                            <a href="#"
-                                                                class="text-primary d-flex align-items-center justify-content-center me-0">
-                                                                <span class="rounded-circle btn-sm-square border"><i
-                                                                        class="fas fa-heart"></i></span>
-                                                            </a>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -247,14 +231,16 @@
                                                 class="img-fluid w-100 rounded-top" alt="${product.name}"
                                                 style="width:304.222px; height:220px; object-fit:cover; margin:auto; display:block;">
                                             <div class="products-mini-icon rounded-circle bg-primary">
-                                                <a href="#"><i class="fa fa-eye fa-1x text-white"></i></a>
+                                                <a href="/shop/product/${product.id}"><i
+                                                        class="fa fa-eye fa-1x text-white"></i></a>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-7">
                                         <div class="products-mini-content p-3">
-                                            <a href="#" class="d-block mb-2">${product.category}</a>
-                                            <a href="#" class="d-block h4">${product.name}</a>
+                                            <a href="/shop/product/${product.id}"
+                                                class="d-block mb-2">${product.category}</a>
+                                            <a href="/shop/product/${product.id}" class="d-block h4">${product.name}</a>
                                             <span class="text-primary fs-5">${product.price} vnd</span>
                                         </div>
                                     </div>
