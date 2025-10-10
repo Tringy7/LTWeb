@@ -1,5 +1,7 @@
 package com.shop.shop.controller.client;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.shop.shop.domain.Product;
+import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.service.client.ProductService;
 
 @Controller
@@ -44,6 +47,15 @@ public class ShopController {
         long roundedRating = Math.round(averageRating); // Làm tròn
         model.addAttribute("averageRating", roundedRating);
         model.addAttribute("product", product);
+
+        List<ProductDetail> productDetails = product.getProductDetails();
+        int sum = 0;
+        for (ProductDetail pd : productDetails) {
+            sum += pd.getSold();
+        }
+        model.addAttribute("sumSold", sum);
+        model.addAttribute("productDetail", product.getProductDetails());
+        model.addAttribute("reviews", product.getReviews());
         return "client/shop/detail";
     }
 

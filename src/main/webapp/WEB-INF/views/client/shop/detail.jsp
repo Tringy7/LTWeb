@@ -2,7 +2,31 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
             <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+                <style>
+                    .btn-size {
+                        border: 2px solid transparent;
+                        background-color: white;
+                        color: #777;
+                        font-weight: 600;
+                        padding: 8px 18px;
+                        border-radius: 10px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    }
 
+                    /* Khi hover */
+                    .btn-size:hover {
+                        border-color: #fcd9b6;
+                        /* màu viền khi hover */
+                    }
+
+                    /* Khi được chọn */
+                    .btn-size.active {
+                        border-color: #fcd9b6;
+                        /* giống trong hình */
+                        color: #000;
+                    }
+                </style>
 
                 <body>
 
@@ -61,7 +85,8 @@
                                             <div class="d-flex mb-4">
                                                 <c:choose>
                                                     <c:when test="${averageRating == null || averageRating == 0}">
-                                                        <span class="text-muted">Chưa được đánh giá</span>
+                                                        <span class="text-muted"><strong class="text-primary">Chưa được
+                                                                đánh giá</strong></span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <c:forEach var="i" begin="1" end="5">
@@ -74,18 +99,26 @@
                                             </div>
 
                                             <div class="d-flex flex-column mb-3">
-                                                <small>Product SKU: N/A</small>
-                                                <small>Available: <strong class="text-primary">20 items in
+                                                <small>Product Brand: <strong
+                                                        class="text-primary">${product.brand}</strong></small>
+                                                <small>Gender: <strong
+                                                        class="text-primary">${product.gender}</strong></small>
+                                                <small>Available: <strong class="text-primary">${sumSold} items in
                                                         stock</strong></small>
+                                                <small>Description: <strong
+                                                        class="text-primary">${product.detailDesc}</strong></small>
+                                                <small>Color: <strong
+                                                        class="text-primary">${product.color}</strong></small>
                                             </div>
-                                            <p class="mb-4">The generated Lorem Ipsum is therefore always free from
-                                                repetition
-                                                injected
-                                                humour, or non-characteristic words etc.</p>
-                                            <p class="mb-4">Susp endisse ultricies nisi vel quam suscipit. Sabertooth
-                                                peacock
-                                                flounder;
-                                                chain pickerel hatchetfish, pencilfish snailfish</p>
+                                            <div class="mb-4">
+                                                <span class="d-block fw-bold mb-2">SIZE</span>
+                                                <div class="d-flex gap-2" id="size-options">
+                                                    <button type="button" class="btn btn-size">S</button>
+                                                    <button type="button" class="btn btn-size">M</button>
+                                                    <button type="button" class="btn btn-size">L</button>
+                                                    <button type="button" class="btn btn-size">XL</button>
+                                                </div>
+                                            </div>
                                             <div class="input-group quantity mb-5" style="width: 100px;">
                                                 <div class="input-group-btn">
                                                     <button class="btn btn-sm btn-minus rounded-circle bg-light border">
@@ -107,10 +140,7 @@
                                         <div class="col-lg-12">
                                             <nav>
                                                 <div class="nav nav-tabs mb-3">
-                                                    <button class="nav-link active border-white border-bottom-0"
-                                                        type="button" role="tab" id="nav-about-tab" data-bs-toggle="tab"
-                                                        data-bs-target="#nav-about" aria-controls="nav-about"
-                                                        aria-selected="true">Description</button>
+
                                                     <button class="nav-link border-white border-bottom-0" type="button"
                                                         role="tab" id="nav-mission-tab" data-bs-toggle="tab"
                                                         data-bs-target="#nav-mission" aria-controls="nav-mission"
@@ -118,114 +148,39 @@
                                                 </div>
                                             </nav>
                                             <div class="tab-content mb-5">
-                                                <div class="tab-pane active" id="nav-about" role="tabpanel"
-                                                    aria-labelledby="nav-about-tab">
-                                                    <p>Our new <b class="fw-bold">HPB12 / A12 battery</b> is rated at
-                                                        2000mAh
-                                                        and
-                                                        designed to power up Black and Decker / FireStorm line of 12V
-                                                        tools
-                                                        allowing
-                                                        users to run multiple devices off the same battery pack. The
-                                                        HPB12
-                                                        is
-                                                        compatible
-                                                        with the following Black and Decker power tool models:
-                                                    </p>
-                                                    <b class="fw-bold">Black &amp; Decker Drills and Drivers:</b>
-                                                    <p class="small">BD12PSK, BDG1200K, BDGL12K, BDID1202, CD1200SK,
-                                                        CD12SFK,
-                                                        CDC1200K,
-                                                        CDC120AK, CDC120ASB, CP122K, CP122KB, CP12K, CP12KB, EPC12,
-                                                        EPC126,
-                                                        EPC126BK,
-                                                        EPC12CA, EPC12CABK, HP122K, HP122KD, HP126F2B, HP126F2K,
-                                                        HP126F3B,
-                                                        HP126F3K,
-                                                        HP126FBH, HP126FSC, HP126FSH, HP126K, HP128F3B, HP12K, HP12KD,
-                                                        HPD1200,
-                                                        HPD1202,
-                                                        HPD1202KF, HPD12K-2, PS122K, PS122KB, PS12HAK, SS12, SX3000,
-                                                        SX3500,
-                                                        XD1200,
-                                                        XD1200K, XTC121
-                                                    </p>
-                                                    <b class="fw-bold">lack &amp; Decker Impact Wrenches:</b>
-                                                    <p class="small">SX5000, XTC12IK, XTC12IKH</p>
-                                                    <b class="fw-bold">Black &amp; Decker Multi-Tools:</b>
-                                                    <p class="small">KC2000FK</p>
-                                                    <b class="fw-bold">Black &amp; Decker Nailers:</b>
-                                                    <p class="small">BDBN1202</p>
-                                                    <b class="fw-bold">Black &amp; Decker Screwdrivers:</b>
-                                                    <p class="small">HP9019K</p>
-                                                    <b class="fw-bold mb-0">Best replacement for the following Black and
-                                                        Decker
-                                                        OEM
-                                                        battery part numbers:</b>
-                                                    <p class="small">HPB12, A12, A12EX, A12-XJ, A1712, B-8315, BD1204L,
-                                                        BD-1204L,
-                                                        BPT1047, FS120B, FS120BX, FSB12.</p>
-                                                </div>
-                                                <div class="tab-pane" id="nav-mission" role="tabpanel"
+                                                <div class="tab-pane active" id="nav-mission" role="tabpanel"
                                                     aria-labelledby="nav-mission-tab">
-                                                    <div class="d-flex">
-                                                        <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
-                                                            style="width: 100px; height: 100px;" alt="">
-                                                        <div class="">
-                                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-                                                            <div class="d-flex justify-content-between">
-                                                                <h5>Jason Smith</h5>
-                                                                <div class="d-flex mb-3">
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                </div>
-                                                            </div>
-                                                            <p>The generated Lorem Ipsum is therefore always free from
-                                                                repetition
-                                                                injected humour, or non-characteristic
-                                                                words etc. Susp endisse ultricies nisi vel quam suscipit
+                                                    <!-- Nếu không có review -->
+                                                    <c:if test="${empty reviews}">
+                                                        <div class="d-flex">
+                                                            <p class="text-muted">Chưa có đánh giá nào cho sản phẩm này.
                                                             </p>
                                                         </div>
-                                                    </div>
-                                                    <div class="d-flex">
-                                                        <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
-                                                            style="width: 100px; height: 100px;" alt="">
-                                                        <div class="">
-                                                            <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-                                                            <div class="d-flex justify-content-between">
-                                                                <h5>Sam Peters</h5>
-                                                                <div class="d-flex mb-3">
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star text-secondary"></i>
-                                                                    <i class="fa fa-star"></i>
-                                                                    <i class="fa fa-star"></i>
+                                                    </c:if>
+                                                    <c:forEach var="review" items="${reviews}">
+                                                        <div class="d-flex">
+                                                            <img src="img/avatar.jpg"
+                                                                class="img-fluid rounded-circle p-3"
+                                                                style="width: 100px; height: 100px;" alt="">
+                                                            <div class="">
+                                                                <p class="mb-2" style="font-size: 14px;">
+                                                                    ${review.createdAt}
+                                                                </p>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <h5>Jason Smith</h5>
+                                                                    <div class="d-flex mb-3">
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star text-secondary"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </div>
                                                                 </div>
+                                                                <p>${review.message}
+                                                                </p>
                                                             </div>
-                                                            <p class="text-dark">The generated Lorem Ipsum is therefore
-                                                                always
-                                                                free from
-                                                                repetition injected humour, or non-characteristic
-                                                                words etc. Susp endisse ultricies nisi vel quam suscipit
-                                                            </p>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane" id="nav-vision" role="tabpanel">
-                                                    <p class="text-dark">Tempor erat elitr rebum at clita. Diam dolor
-                                                        diam
-                                                        ipsum
-                                                        et
-                                                        tempor sit. Aliqu diam
-                                                        amet diam et eos labore. 3</p>
-                                                    <p class="mb-0">Diam dolor diam ipsum et tempor sit. Aliqu diam amet
-                                                        diam et
-                                                        eos
-                                                        labore.
-                                                        Clita erat ipsum et lorem et sit</p>
+                                                    </c:forEach>
                                                 </div>
                                             </div>
                                         </div>
@@ -297,6 +252,18 @@
 
                     <!-- Template Javascript -->
                     <script src="js/main.js"></script>
+                    <script>
+                        const sizeButtons = document.querySelectorAll(".btn-size");
+
+                        sizeButtons.forEach((btn) => {
+                            btn.addEventListener("click", () => {
+                                // Bỏ active ở tất cả
+                                sizeButtons.forEach((b) => b.classList.remove("active"));
+                                // Thêm active cho nút được chọn
+                                btn.classList.add("active");
+                            });
+                        });
+                    </script>
                     <!-- Code injected by live-server -->
                     <script>
                         // <![CDATA[  <-- For SVG support
