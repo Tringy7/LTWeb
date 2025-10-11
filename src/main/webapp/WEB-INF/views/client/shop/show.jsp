@@ -95,12 +95,14 @@
                             <form action="/shop/filter" method="get">
                                 <!-- Price Filter -->
                                 <div class="price mb-4">
-                                    <h4 class="mb-2">Price (VND)</h4>
+                                    <h4 class="mb-2">Price (VND)
+                                    </h4>
                                     <input type="range" class="form-range w-100" id="rangeInput" name="maxPrice" min="0"
                                         max="10000000" value="${maxPrice != null ? maxPrice : 10000000}"
                                         oninput="amount.value = Number(rangeInput.value).toLocaleString('vi-VN')">
                                     <output id="amount" name="amount" for="rangeInput">${maxPrice != null ? maxPrice :
                                         10000000}</output>
+                                    <p class="text-muted fst-italic mt-2">Get product &lt; price</p>
                                 </div>
 
                                 <!-- Brand Filter -->
@@ -163,7 +165,7 @@
                                     </c:forEach>
                                 </div>
 
-                                <button type="submit"
+                                <button type="submit" style="width: 274px;"
                                     class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4">
                                     <i class="bi bi-funnel-fill"></i> Filter
                                 </button>
