@@ -1,4 +1,4 @@
-package com.shop.shop.config;
+package com.shop.shop.config.filter;
 
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
@@ -10,6 +10,8 @@ public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
     @Override
     protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
         builder
+                .addExcludedPath("/login")
+                .addExcludedPath("/register")
                 // layout cho admin
                 .addDecoratorPath("/admin", "/admin/layout.jsp")
                 .addDecoratorPath("/admin/*", "/admin/layout.jsp")
