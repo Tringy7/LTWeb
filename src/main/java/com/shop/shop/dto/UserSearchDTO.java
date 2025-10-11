@@ -14,8 +14,7 @@ public class UserSearchDTO {
     private String keyword;
     private Long roleId;
 
-    // Constructor for easy initialization
-    public UserSearchDTO(String keyword) {
-        this.keyword = keyword;
-    }
+    // public UserSearchDTO(String keyword) {
+    // this.keyword = keyword;
+    // }
 }

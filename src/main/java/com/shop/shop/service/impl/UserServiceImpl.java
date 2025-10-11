@@ -104,4 +104,9 @@ public class UserServiceImpl implements UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    public long countUsersByRole(String roleName) {
+        return userRepository.countByRoleName(roleName);
+    }
 }

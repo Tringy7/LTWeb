@@ -1,0 +1,72 @@
+/* User Management Base Styles */
+
+.main-panel {
+    padding: 20px;
+}
+
+/* Common User Elements */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+/* Role Badges */
+.role-badge {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-weight: 500;
+}
+
+.role-admin {
+    background-color: #dc3545;
+    color: white;
+}
+
+.role-vendor {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.role-customer {
+    background-color: #28a745;
+    color: white;
+}
+
+.role-staff {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Action Buttons - General styles for forms and detail pages */
+.action-buttons {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.action-buttons .btn {
+    margin: 0 10px;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}

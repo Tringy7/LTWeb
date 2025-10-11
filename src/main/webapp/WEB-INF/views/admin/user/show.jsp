@@ -3,145 +3,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<style>
-    .main-panel {
-        padding: 20px;
-    }
-    
-    .search-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    .search-form .form-control {
-        border-radius: 25px;
-        border: none;
-        padding: 10px 20px;
-        margin-bottom: 10px;
-    }
-    
-    .search-form .btn {
-        border-radius: 25px;
-        padding: 10px 30px;
-        font-weight: 600;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        transition: all 0.3s ease;
-    }
-    
-    .search-form .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-    
-    .stats-card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-left: 4px solid #007bff;
-    }
-    
-    .table-container {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .table th {
-        background-color: #f8f9fa;
-        border: none;
-        font-weight: 600;
-        color: #495057;
-        padding: 15px;
-        vertical-align: middle;
-    }
-    
-    .table td {
-        border: none;
-        padding: 15px;
-        vertical-align: middle;
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .table tbody tr:hover {
-        background-color: #f8f9fa;
-        transition: all 0.3s ease;
-    }
-    
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #fff;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    .role-badge {
-        font-size: 0.75rem;
-        padding: 5px 12px;
-        border-radius: 15px;
-        font-weight: 500;
-    }
-    
-    .role-admin {
-        background-color: #dc3545;
-        color: white;
-    }
-    
-    .role-vendor {
-        background-color: #fd7e14;
-        color: white;
-    }
-    
-    .role-customer {
-        background-color: #28a745;
-        color: white;
-    }
-    
-    .role-staff {
-        background-color: #17a2b8;
-        color: white;
-    }
-    
-    .action-buttons .btn {
-        margin-right: 5px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-        font-size: 0.8rem;
-        padding: 5px 12px;
-    }
-    
-    .search-result-info {
-        background: #e7f3ff;
-        border: 1px solid #b3d9ff;
-        border-radius: 5px;
-        padding: 10px 15px;
-        margin-bottom: 15px;
-        color: #0066cc;
-    }
-    
-    .no-results {
-        text-align: center;
-        padding: 40px;
-        color: #6c757d;
-    }
-    
-    .no-results i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        color: #dee2e6;
-    }
-</style>
+<!-- Include CSS Files -->
+<link rel="stylesheet" href="/admin/css/user-base.css">
+<link rel="stylesheet" href="/admin/css/user-search.css">
+<link rel="stylesheet" href="/admin/css/user-table.css">
 
 <div class="main-panel">
     <div class="content-wrapper">
+        
+        <!-- Flash Messages -->
+        <c:if test="${not empty successMessage}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="typcn typcn-tick mr-2"></i>
+                ${successMessage}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </c:if>
+        
+        <c:if test="${not empty errorMessage}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="typcn typcn-warning mr-2"></i>
+                ${errorMessage}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </c:if>
         
         <!-- Search Card -->
         <div class="search-card">
@@ -150,7 +39,7 @@
                 Quản lý người dùng
             </h4>
             
-            <form:form method="POST" action="/admin/user/search" modelAttribute="searchForm" cssClass="search-form">
+            <form:form method="GET" action="/admin/user" modelAttribute="searchForm" cssClass="search-form">
                 <div class="row align-items-end">
                     <div class="col-md-4">
                         <label for="keyword" class="form-label">Từ khóa tìm kiếm</label>
@@ -174,9 +63,6 @@
                         <a href="/admin/user/clear" class="btn btn-outline-light">
                             <i class="typcn typcn-refresh mr-1"></i> Làm mới
                         </a>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="typcn typcn-plus mr-1"></i> Thêm người dùng
-                        </button>
                     </div>
                 </div>
             </form:form>
@@ -298,34 +184,42 @@
                                         </td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${user.role.name == 'Admin'}">
-                                                    <span class="role-badge role-admin">${user.role.name}</span>
+                                                <c:when test="${user.roleName == 'Admin'}">
+                                                    <span class="role-badge role-admin">${user.roleName}</span>
                                                 </c:when>
-                                                <c:when test="${user.role.name == 'Vendor'}">
-                                                    <span class="role-badge role-vendor">${user.role.name}</span>
+                                                <c:when test="${user.roleName == 'Vendor'}">
+                                                    <span class="role-badge role-vendor">${user.roleName}</span>
                                                 </c:when>
-                                                <c:when test="${user.role.name == 'Customer'}">
-                                                    <span class="role-badge role-customer">${user.role.name}</span>
+                                                <c:when test="${user.roleName == 'Customer'}">
+                                                    <span class="role-badge role-customer">${user.roleName}</span>
                                                 </c:when>
-                                                <c:when test="${user.role.name == 'Staff'}">
-                                                    <span class="role-badge role-staff">${user.role.name}</span>
+                                                <c:when test="${user.roleName == 'Staff'}">
+                                                    <span class="role-badge role-staff">${user.roleName}</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <span class="role-badge" style="background-color: #6c757d; color: white;">${user.role.name}</span>
+                                                    <span class="role-badge" style="background-color: #6c757d; color: white;">${user.roleName}</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td class="text-center">
                                             <div class="action-buttons">
-                                                <button class="btn btn-sm btn-outline-info" onclick="viewUser('${user.id}')" title="Xem chi tiết">
+                                                <!-- View User - Direct Link -->
+                                                <a href="/admin/user/detail/${user.id}" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                     <i class="typcn typcn-eye"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="editUser('${user.id}')" title="Chỉnh sửa">
+                                                </a>
+                                                
+                                                <!-- Edit User - Direct Link -->
+                                                <a href="/admin/user/edit/${user.id}" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
                                                     <i class="typcn typcn-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}', '${user.fullName}')" title="Xóa">
-                                                    <i class="typcn typcn-trash"></i>
-                                                </button>
+                                                </a>
+                                                
+                                                <!-- Delete User - Form Submission -->
+                                                <form action="/admin/user/delete/${user.id}" method="POST" style="display: inline;" 
+                                                      onsubmit="return confirmDelete('${user.fullName}')">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                        <i class="typcn typcn-trash"></i>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </td>
                                     </tr>
@@ -359,68 +253,12 @@
     </div>
 </div>
 
-<!-- Scripts -->
+<!-- Include Base Scripts -->
 <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
 <script src="/admin/js/off-canvas.js"></script>
 <script src="/admin/js/hoverable-collapse.js"></script>
 <script src="/admin/js/template.js"></script>
 <script src="/admin/js/todolist.js"></script>
 
-<script>
-// JavaScript functions for user actions
-function viewUser(userId) {
-    // Redirect to user detail page
-    window.location.href = '/admin/user/detail/' + userId;
-}
-
-function editUser(userId) {
-    // Redirect to user edit page
-    window.location.href = '/admin/user/edit/' + userId;
-}
-
-function deleteUser(userId, userName) {
-    if (confirm('Bạn có chắc chắn muốn xóa người dùng "' + userName + '"?')) {
-        // Send DELETE request
-        fetch('/admin/user/delete/' + userId, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Xóa người dùng thành công!');
-                location.reload();
-            } else {
-                alert('Có lỗi xảy ra khi xóa người dùng!');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra khi xóa người dùng!');
-        });
-    }
-}
-
-// Auto-submit form when role changes
-document.getElementById('roleId').addEventListener('change', function() {
-    if (this.value !== '') {
-        document.querySelector('.search-form').submit();
-    }
-});
-
-// Enter key search
-document.getElementById('keyword').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        document.querySelector('.search-form').submit();
-    }
-});
-
-// Clear search when clicking clear button
-function clearSearch() {
-    document.getElementById('keyword').value = '';
-    document.getElementById('roleId').value = '';
-    window.location.href = '/admin/user';
-}
-</script>
+<!-- Include Only Essential JavaScript for Pure Spring Boot MVC -->
+<script src="/admin/js/user/user-actions.js"></script>

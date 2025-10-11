@@ -33,4 +33,7 @@ public interface UserService {
 
     // Check if email exists
     boolean existsByEmail(String email);
+
+    // Count users by role name
+    long countUsersByRole(String roleName);
 }

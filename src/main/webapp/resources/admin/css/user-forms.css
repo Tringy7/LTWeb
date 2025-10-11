@@ -1,0 +1,152 @@
+/* User Form Styles */
+
+.add-header, .edit-header, .user-detail-header {
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.add-header {
+    background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
+}
+
+.edit-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.user-detail-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.form-card, .info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.form-card {
+    border-left: 4px solid #007bff;
+}
+
+.info-card {
+    padding: 25px;
+    border-left: 4px solid #007bff;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.edit-header ~ .form-card .form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.btn-submit {
+    border: none;
+    border-radius: 25px;
+    padding: 12px 40px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.add-header ~ .form-card .btn-submit {
+    background: linear-gradient(135deg, #007bff 0%, #6f42c1 100%);
+}
+
+.edit-header ~ .form-card .btn-submit {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    color: white;
+}
+
+.add-header ~ .form-card .btn-submit:hover {
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.edit-header ~ .form-card .btn-submit:hover {
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-cancel {
+    border-radius: 25px;
+    padding: 12px 40px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.required {
+    color: #dc3545;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+.strength-weak {
+    color: #dc3545;
+}
+
+.strength-medium {
+    color: #ffc107;
+}
+
+.strength-strong {
+    color: #28a745;
+}
+
+/* Info Display Styles */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+}
+
+.info-value {
+    color: #212529;
+    flex: 1;
+    text-align: right;
+}

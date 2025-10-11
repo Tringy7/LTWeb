@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.shop.shop.domain.User;
@@ -43,4 +45,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     long countByRoleId(Long roleId);
+
+    // Count users by role name using custom query
+    @Query("SELECT COUNT(u) FROM User u WHERE u.role.name = :roleName")
+    long countByRoleName(@Param("roleName") String roleName);
 }
