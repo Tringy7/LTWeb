@@ -39,25 +39,22 @@
                                         <h4>Chào mừng bạn!</h4>
                                         <h6 class="font-weight-light">Đăng nhập để tiếp tục.</h6>
                                         <c:if test="${param.error != null}">
-                                            <div class="alert alert-danger mt-3">
-                                                Sai tên đăng nhập hoặc mật khẩu.
+                                            <div class="my-2" style="color: red;">Tên đăng nhập hoặc mật khẩu không
+                                                đúng!
                                             </div>
                                         </c:if>
-                                        <c:if test="${errorMessage != null}">
-                                            <div class="alert alert-danger mt-3">
-                                                ${errorMessage}
+                                        <c:if test="${param.logout != null}">
+                                            <div class="my-2" style="color: green;">Đăng xuất thành công!
                                             </div>
                                         </c:if>
-                                        <form:form class="pt-3" action="/login" method="post" modelAttribute="userDTO">
+                                        <form class="pt-3" action="/login" method="post">
                                             <div class="form-group">
-                                                <form:input type="email" path="email"
-                                                    class="form-control form-control-lg" placeholder="Email" />
-                                                <form:errors path="email" cssClass="error-message" />
+                                                <input type="email" class="form-control form-control-lg" name="email"
+                                                    id="email" placeholder="Email" />
                                             </div>
                                             <div class="form-group">
-                                                <form:input type="password" path="password"
-                                                    class="form-control form-control-lg" placeholder="Mật khẩu" />
-                                                <form:errors path="password" cssClass="error-message" />
+                                                <input type="password" class="form-control form-control-lg"
+                                                    name="password" placeholder="Mật khẩu" />
                                             </div>
                                             <div class="mt-3">
                                                 <button type="submit"
@@ -68,7 +65,8 @@
                                             <div class="my-2 d-flex justify-content-between align-items-center">
                                                 <div class="form-check">
                                                     <label class="form-check-label text-muted">
-                                                        <form:checkbox path="rememberMe" class="form-check-input" />
+                                                        <input type="checkbox" name="remember-me"
+                                                            class="form-check-input" />
                                                         Ghi nhớ đăng nhập
                                                     </label>
                                                 </div>
@@ -78,7 +76,7 @@
                                                 Chưa có tài khoản? <a href="<c:url value='/signup'/>"
                                                     class="text-primary">Tạo tài khoản</a>
                                             </div>
-                                        </form:form>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

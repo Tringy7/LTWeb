@@ -25,6 +25,9 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
+    @Value("${security.jwt.remember-me-expiration-time}")
+    private long rememberMeExpiration;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -41,7 +44,11 @@ public class JwtService {
     public String generateToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+        return generateToken(extraClaims, userDetails, false);
+    }
+
+    public String generateToken(UserDetails userDetails, boolean rememberMe) {
+        return generateToken(new HashMap<>(), userDetails, rememberMe);
     }
 
     public long getExpirationTime() {
@@ -51,14 +58,15 @@ public class JwtService {
     private String buildToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails,
-            long expiration) {
+            long expiration,
+            boolean isRememberMe) {
+        long finalExpiration = isRememberMe ? rememberMeExpiration : expiration;
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                // The token will be expired in 30 hours
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + finalExpiration))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -66,6 +74,14 @@ public class JwtService {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, boolean rememberMe) {
+        return buildToken(extraClaims, userDetails, jwtExpiration, rememberMe);
+    }
+
+    public long getExpirationTime(boolean rememberMe) {
+        return rememberMe ? rememberMeExpiration : jwtExpiration;
     }
 
     private boolean isTokenExpired(String token) {

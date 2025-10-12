@@ -52,9 +52,14 @@ public class SecurityConfig {
                 .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
+                .usernameParameter("email")
                 .successHandler(customAuthenticationSuccessHandler)
                 .failureUrl("/login?error=true")
                 .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                .key("a-very-secret-key-that-should-be-in-properties-file")
+                .tokenValiditySeconds(86400 * 7) // 7 ngày
+                .rememberMeParameter("remember-me"))
                 .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
@@ -71,7 +76,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:8080")); // Allow your frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
-        configuration.setAllowCredentials(true); // Allow credentials (cookies, authorization headers)
+        configuration.setAllowCredentials(true); 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
