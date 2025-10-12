@@ -1,249 +1,214 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-            <style>
-                table th {
-                    white-space: nowrap;
-                }
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@
+taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <%@ taglib
+uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-                table td:nth-child(2) {
-                    max-width: 300px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            </style>
-            <div class="main-panel">
-                <div class="content-wrapper">
-                    <div class="row align-items-center mb-4">
-                        <div class="col-6">
-                            <h2 class="mb-0">Admin Product</h2>
-                        </div>
-                        <style>
-                            /* Cho input và nút tìm kiếm cùng chiều cao */
-                            .search-group .form-control,
-                            .search-group .btn {
-                                height: 32px;
-                                font-size: 0.875rem;
-                            }
+<!-- Include CSS Files -->
+<link rel="stylesheet" href="/admin/css/product-base.css" />
+<link rel="stylesheet" href="/admin/css/product-search.css" />
+<link rel="stylesheet" href="/admin/css/product-table.css" />
 
-                            /* Bo góc mềm mại */
-                            .search-group .form-control {
-                                border-top-left-radius: 4px;
-                                border-bottom-left-radius: 4px;
-                            }
+<div class="main-panel">
+  <div class="content-wrapper">
+    <!-- Flash Messages -->
+    <c:if test="${not empty success}">
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="typcn typcn-tick mr-2"></i>
+        ${success}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </c:if>
 
-                            .search-group .btn {
-                                border-top-right-radius: 4px;
-                                border-bottom-right-radius: 4px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                            }
+    <c:if test="${not empty error}">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="typcn typcn-warning mr-2"></i>
+        ${error}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </c:if>
 
-                            .search-group .btn i {
-                                line-height: 1;
-                            }
-                        </style>
+    <!-- Search Card -->
+    <div class="search-card">
+      <h4 class="mb-3">
+        <i class="typcn typcn-shopping-bag mr-2"></i>
+        Quản lý sản phẩm theo cửa hàng
+      </h4>
 
-                        <div class="col-6 text-right d-flex justify-content-end align-items-center">
-                            <div class="input-group search-group" style="width: 250px; margin-right: 8px;">
-                                <input type="text" class="form-control" placeholder="Tìm kiếm cửa hàng..."
-                                    id="searchShop">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" id="btnSearch">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </button>
-                                </div>
-                            </div>
+      <form method="GET" action="/admin/product" class="search-form">
+        <div class="row align-items-end">
+          <div class="col-md-6">
+            <label for="keyword" class="form-label">Tìm kiếm cửa hàng</label>
+            <input
+              type="text"
+              name="keyword"
+              value="${keyword}"
+              class="form-control"
+              placeholder="Tên cửa hàng, mô tả..."
+              id="keyword"
+            />
+          </div>
 
-                            <button type="button" class="btn btn-outline-primary btn-sm mx-1"
-                                onclick="location.reload()">
-                                <i class="fa-solid fa-rotate-right mr-1"></i> <span>Refresh</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p></p>
-                                    <div class="table-responsive">
-                                        <style>
-                                            table th {
-                                                white-space: nowrap;
-                                                vertical-align: middle !important;
-                                            }
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-light">
+              <i class="typcn typcn-zoom mr-1"></i> Tìm kiếm
+            </button>
+            <a href="/admin/product" class="btn btn-outline-light">
+              <i class="typcn typcn-refresh mr-1"></i> Làm mới
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
 
-                                            table td {
-                                                vertical-align: middle !important;
-                                            }
+    <!-- Statistics -->
+    <div class="stats-card">
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="mb-1">Tổng số cửa hàng</h6>
+          <h3 class="text-primary mb-0">${shops.size()}</h3>
+        </div>
+        <div class="col-md-6 text-md-right">
+          <c:if test="${not empty keyword}">
+            <span class="badge badge-info">Kết quả tìm kiếm</span>
+          </c:if>
+        </div>
+      </div>
+    </div>
 
-                                            /* Cho phép xuống dòng tự nhiên, không bị cắt chữ */
-                                            table td:nth-child(2) {
-                                                max-width: 350px;
-                                                white-space: normal;
-                                                word-wrap: break-word;
-                                            }
+    <!-- Search Result Info -->
+    <c:if test="${not empty keyword}">
+      <div class="search-result-info">
+        <i class="typcn typcn-info mr-1"></i>
+        Tìm thấy ${shops.size()} cửa hàng với từ khóa
+        "<strong>${keyword}</strong>"
+      </div>
+    </c:if>
 
-                                            /* Canh giữa cột Action */
-                                            table th:last-child,
-                                            table td:last-child {
-                                                text-align: center;
-                                            }
+    <!-- Shops Table -->
+    <div class="table-container">
+      <c:choose>
+        <c:when test="${not empty shops}">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên cửa hàng</th>
+                  <th>Mô tả</th>
+                  <th>Chủ cửa hàng</th>
+                  <th>Trạng thái</th>
+                  <th>Số sản phẩm</th>
+                  <th>Ngày tạo</th>
+                  <th class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="shop" items="${shops}" varStatus="status">
+                  <tr>
+                    <td><strong>#${shop.id}</strong></td>
+                    <td>
+                      <div class="font-weight-bold">${shop.shopName}</div>
+                    </td>
+                    <td>
+                      <c:choose>
+                        <c:when test="${not empty shop.description}">
+                          <span title="${shop.description}">
+                            ${shop.description.length() > 50 ?
+                            shop.description.substring(0, 50).concat('...') :
+                            shop.description}
+                          </span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="text-muted">Chưa có mô tả</span>
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                    <td>
+                      <div>
+                        <div class="font-weight-bold">${shop.ownerName}</div>
+                        <small class="text-muted">${shop.ownerEmail}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <c:choose>
+                        <c:when test="${shop.status == 'Active'}">
+                          <span class="badge badge-success">Hoạt động</span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="badge badge-secondary"
+                            >${shop.status}</span
+                          >
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                    <td>
+                      <span class="badge badge-info"
+                        >${shop.totalProducts} sản phẩm</span
+                      >
+                    </td>
+                    <td>
+                      <fmt:formatDate
+                        value="${shop.createdAt}"
+                        pattern="dd/MM/yyyy HH:mm"
+                      />
+                    </td>
+                    <td class="text-center">
+                      <div class="action-buttons">
+                        <a
+                          href="/admin/product/shop/${shop.id}"
+                          class="btn btn-sm btn-outline-primary"
+                          title="Xem sản phẩm"
+                        >
+                          <i class="typcn typcn-shopping-bag"></i> Sản phẩm
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <div class="no-results">
+            <i class="typcn typcn-shopping-bag"></i>
+            <h5>Không tìm thấy cửa hàng nào</h5>
+            <p class="text-muted">
+              <c:choose>
+                <c:when test="${not empty keyword}">
+                  Thử thay đổi từ khóa tìm kiếm.
+                </c:when>
+                <c:otherwise>
+                  Chưa có cửa hàng nào trong hệ thống.
+                </c:otherwise>
+              </c:choose>
+            </p>
+            <a href="/admin/product" class="btn btn-outline-primary">
+              <i class="typcn typcn-refresh mr-1"></i> Làm mới
+            </a>
+          </div>
+        </c:otherwise>
+      </c:choose>
+    </div>
+  </div>
+</div>
 
-                                            /* Link View màu xanh, căn giữa biểu tượng và chữ */
-                                            .nav-link.text-primary {
-                                                color: #007bff !important;
-                                                display: inline-flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                gap: 4px;
-                                                text-decoration: none;
-                                                font-weight: 500;
-                                            }
-
-                                            .nav-link.text-primary:hover {
-                                                text-decoration: underline;
-                                            }
-
-                                            /* Cải thiện khoảng cách hàng cho đều */
-                                            table.table tbody tr {
-                                                height: 55px;
-                                            }
-                                        </style>
-
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Shop Name</th>
-                                                    <th>Description</th>
-                                                    <th>Created At</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Urban Style Boutique</td>
-                                                    <td>Cửa hàng thời trang phong cách đường phố hiện đại, chuyên áo
-                                                        phông, hoodie
-                                                        và quần jeans unisex.</td>
-                                                    <td>09 Oct 2025</td>
-                                                    <td><label class="badge badge-success">Active</label></td>
-                                                    <td>
-                                                        <a href="/admin/product/detail" class="nav-link text-primary">
-                                                            <i class="typcn typcn-eye menu-icon"></i> View
-                                                        </a>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Vintage Corner</td>
-                                                    <td>Chuyên các mẫu quần áo cổ điển và phụ kiện mang hơi hướng retro
-                                                        cho cả nam
-                                                        và nữ.</td>
-                                                    <td>07 Oct 2025</td>
-                                                    <td><label class="badge badge-info">Pending</label></td>
-                                                    <td>
-                                                        <a href="/admin/product/detail" class="nav-link text-primary">
-                                                            <i class="typcn typcn-eye menu-icon"></i> View
-                                                        </a>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Men’s Wear House</td>
-                                                    <td>Cửa hàng thời trang nam cao cấp, cung cấp vest, áo sơ mi và quần
-                                                        tây thiết
-                                                        kế sang trọng.</td>
-                                                    <td>05 Oct 2025</td>
-                                                    <td><label class="badge badge-success">Active</label></td>
-                                                    <td>
-                                                        <a href="/admin/product/detail" class="nav-link text-primary">
-                                                            <i class="typcn typcn-eye menu-icon"></i> View
-                                                        </a>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>Elegant Lady</td>
-                                                    <td>Thương hiệu thời trang nữ thanh lịch, chuyên váy dạ hội, đầm
-                                                        công sở và phụ
-                                                        kiện cao cấp.</td>
-                                                    <td>02 Oct 2025</td>
-                                                    <td><label class="badge badge-success">Active</label></td>
-                                                    <td>
-                                                        <a href="/admin/product/detail" class="nav-link text-primary">
-                                                            <i class="typcn typcn-eye menu-icon"></i> View
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- main-panel ends -->
-                        </div>
-                        <!-- page-body-wrapper ends -->
-                    </div>
-                    <!-- container-scroller -->
-                    <!-- base:js -->
-                    <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
-                    <!-- endinject -->
-                    <!-- Plugin js for this page-->
-                    <!-- End plugin js for this page-->
-                    <!-- inject:js -->
-                    <script src="/admin/js/off-canvas.js"></script>
-                    <script src="/admin/js/hoverable-collapse.js"></script>
-                    <script src="/admin/js/template.js"></script>
-                    <!-- <script src="js/settings.js"></script> -->
-                    <script src="/admin/js/todolist.js"></script>
-                    <!-- endinject -->
-                    <!-- plugin js for this page -->
-                    <!-- End plugin js for this page -->
-                    <!-- Custom js for this page-->
-                    <!-- End custom js for this page-->
-                    <!-- Code injected by live-server -->
-                    <script>
-                        // <![CDATA[  <-- For SVG support
-                        if ('WebSocket' in window) {
-                            (function () {
-                                function refreshCSS() {
-                                    var sheets = [].slice.call(document.getElementsByTagName("link"));
-                                    var head = document.getElementsByTagName("head")[0];
-                                    for (var i = 0; i < sheets.length; ++i) {
-                                        var elem = sheets[i];
-                                        var parent = elem.parentElement || head;
-                                        parent.removeChild(elem);
-                                        var rel = elem.rel;
-                                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-                                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-                                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-                                        }
-                                        parent.appendChild(elem);
-                                    }
-                                }
-                                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-                                var address = protocol + window.location.host + window.location.pathname + '/ws';
-                                var socket = new WebSocket(address);
-                                socket.onmessage = function (msg) {
-                                    if (msg.data == 'reload') window.location.reload();
-                                    else if (msg.data == 'refreshcss') refreshCSS();
-                                };
-                                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-                                    console.log('Live reload enabled.');
-                                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-                                }
-                            })();
-                        }
-                        else {
-                            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-                        }
-                        // ]]>
-                    </script>
-
-
-
-                </div>
-            </div>
+<!-- Include Base Scripts -->
+<script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+<script src="/admin/js/off-canvas.js"></script>
+<script src="/admin/js/hoverable-collapse.js"></script>
+<script src="/admin/js/template.js"></script>
+<script src="/admin/js/todolist.js"></script>

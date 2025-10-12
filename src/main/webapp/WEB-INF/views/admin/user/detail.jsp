@@ -97,17 +97,14 @@
             <h2 class="mb-2">${user.fullName}</h2>
             <p class="mb-0">
                 <c:choose>
-                    <c:when test="${user.role.name == 'Admin'}">
-                        <span class="badge badge-danger" style="font-size: 1rem; padding: 8px 20px;">${user.role.name}</span>
+                    <c:when test="${user.role.name == 'ROLE_ADMIN'}">
+                        <span class="badge badge-danger" style="font-size: 1rem; padding: 8px 20px;">Admin</span>
                     </c:when>
-                    <c:when test="${user.role.name == 'Vendor'}">
-                        <span class="badge badge-warning" style="font-size: 1rem; padding: 8px 20px;">${user.role.name}</span>
+                    <c:when test="${user.role.name == 'ROLE_VENDOR'}">
+                        <span class="badge badge-warning" style="font-size: 1rem; padding: 8px 20px;">Vendor</span>
                     </c:when>
-                    <c:when test="${user.role.name == 'Customer'}">
-                        <span class="badge badge-success" style="font-size: 1rem; padding: 8px 20px;">${user.role.name}</span>
-                    </c:when>
-                    <c:when test="${user.role.name == 'Staff'}">
-                        <span class="badge badge-info" style="font-size: 1rem; padding: 8px 20px;">${user.role.name}</span>
+                    <c:when test="${user.role.name == 'ROLE_USER'}">
+                        <span class="badge badge-success" style="font-size: 1rem; padding: 8px 20px;">User</span>
                     </c:when>
                     <c:otherwise>
                         <span class="badge badge-secondary" style="font-size: 1rem; padding: 8px 20px;">${user.role.name}</span>
@@ -164,17 +161,14 @@
                         <span class="info-label">Vai trò:</span>
                         <span class="info-value">
                             <c:choose>
-                                <c:when test="${user.role.name == 'Admin'}">
-                                    <span class="role-badge role-admin">${user.role.name}</span>
+                                <c:when test="${user.role.name == 'ROLE_ADMIN'}">
+                                    <span class="role-badge role-admin">Admin</span>
                                 </c:when>
-                                <c:when test="${user.role.name == 'Vendor'}">
-                                    <span class="role-badge role-vendor">${user.role.name}</span>
+                                <c:when test="${user.role.name == 'ROLE_VENDOR'}">
+                                    <span class="role-badge role-vendor">Vendor</span>
                                 </c:when>
-                                <c:when test="${user.role.name == 'Customer'}">
-                                    <span class="role-badge role-customer">${user.role.name}</span>
-                                </c:when>
-                                <c:when test="${user.role.name == 'Staff'}">
-                                    <span class="role-badge role-staff">${user.role.name}</span>
+                                <c:when test="${user.role.name == 'ROLE_USER'}">
+                                    <span class="role-badge role-customer">User</span>
                                 </c:when>
                                 <c:otherwise>
                                     <span class="role-badge" style="background-color: #6c757d; color: white;">${user.role.name}</span>

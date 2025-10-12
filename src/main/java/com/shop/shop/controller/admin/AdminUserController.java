@@ -152,7 +152,8 @@ public class AdminUserController {
             // Get existing user
             Optional<User> existingUserOptional = userService.getUserById(id);
             if (existingUserOptional.isEmpty()) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng cần cập nhật!");
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Không tìm thấy người dùng cần cập nhật!");
                 return "redirect:/admin/user";
             }
 
@@ -180,8 +181,8 @@ public class AdminUserController {
                 User user = userOptional.get();
 
                 // Check if this is the last admin user
-                if (user.getRole() != null && "ADMIN".equals(user.getRole().getName())) {
-                    long adminCount = userService.countUsersByRole("ADMIN");
+                if (user.getRole() != null && "ROLE_ADMIN".equals(user.getRole().getName())) {
+                    long adminCount = userService.countUsersByRole("ROLE_ADMIN");
                     if (adminCount <= 1) {
                         redirectAttributes.addFlashAttribute("errorMessage",
                                 "Không thể xóa admin cuối cùng trong hệ thống!");

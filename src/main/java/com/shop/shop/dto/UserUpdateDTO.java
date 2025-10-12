@@ -11,9 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO for updating existing users with validation annotations
- */
+// DTO for updating existing users with validation annotations
+
 @Getter
 @Setter
 @NoArgsConstructor

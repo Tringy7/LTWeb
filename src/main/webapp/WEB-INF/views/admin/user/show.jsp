@@ -184,17 +184,14 @@
                                         </td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${user.roleName == 'Admin'}">
-                                                    <span class="role-badge role-admin">${user.roleName}</span>
+                                                <c:when test="${user.roleName == 'ROLE_ADMIN'}">
+                                                    <span class="role-badge role-admin">Admin</span>
                                                 </c:when>
-                                                <c:when test="${user.roleName == 'Vendor'}">
-                                                    <span class="role-badge role-vendor">${user.roleName}</span>
+                                                <c:when test="${user.roleName == 'ROLE_VENDOR'}">
+                                                    <span class="role-badge role-vendor">Vendor</span>
                                                 </c:when>
-                                                <c:when test="${user.roleName == 'Customer'}">
-                                                    <span class="role-badge role-customer">${user.roleName}</span>
-                                                </c:when>
-                                                <c:when test="${user.roleName == 'Staff'}">
-                                                    <span class="role-badge role-staff">${user.roleName}</span>
+                                                <c:when test="${user.roleName == 'ROLE_USER'}">
+                                                    <span class="role-badge role-customer">User</span>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <span class="role-badge" style="background-color: #6c757d; color: white;">${user.roleName}</span>

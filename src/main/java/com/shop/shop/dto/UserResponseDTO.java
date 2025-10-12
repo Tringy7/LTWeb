@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * DTO for returning user data to the client (no sensitive information)
- */
+// DTO for returning user data to the client 
+
 @Getter
 @Setter
 @NoArgsConstructor
