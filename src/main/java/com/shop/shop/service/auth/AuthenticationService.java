@@ -26,7 +26,7 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User signup(UserDTO input) {
+    public void signup(UserDTO input) {
         User user = new User();
         user.setFullName(input.getFullName());
         user.setEmail(input.getEmail());
@@ -34,7 +34,7 @@ public class AuthenticationService {
         Role role = new Role();
         role.setId(2L);
         user.setRole(role);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public User authenticate(UserDTO input) {
@@ -46,5 +46,9 @@ public class AuthenticationService {
         );
 
         return userRepository.findByEmail(input.getEmail()).orElseThrow();
+    }
+
+    public boolean checkEmail(UserDTO user) {
+        return userRepository.findByEmail(user.getEmail()).isPresent();
     }
 }

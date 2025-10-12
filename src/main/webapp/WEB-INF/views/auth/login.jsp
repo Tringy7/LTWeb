@@ -73,8 +73,8 @@
                                                 <a href="#" class="auth-link text-black">Quên mật khẩu?</a>
                                             </div>
                                             <div class="text-center mt-4 font-weight-light">
-                                                Chưa có tài khoản? <a href="<c:url value='/signup'/>"
-                                                    class="text-primary">Tạo tài khoản</a>
+                                                Chưa có tài khoản? <a href="/register" class="text-primary">Tạo tài
+                                                    khoản</a>
                                             </div>
                                         </form>
                                     </div>

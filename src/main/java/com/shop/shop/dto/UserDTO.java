@@ -1,5 +1,7 @@
 package com.shop.shop.dto;
 
+import com.shop.shop.service.auth.validator.RegisterChecked;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@RegisterChecked
 public class UserDTO {
 
     private Long id;
@@ -17,21 +20,10 @@ public class UserDTO {
     @Email(message = "Email không đúng định dạng")
     private String email;
 
-    @NotEmpty(message = "Mật khẩu không được để trống")
+    // @PasswordValidator
     private String password;
+    private String confirmPassword;
 
+    @NotEmpty(message = "Họ tên không được để trống")
     private String fullName;
-
-    private String address;
-
-    private String phone;
-
-    private String avatar;
-
-    private boolean rememberMe;
-
-    // Constructors, Getters, and Setters
-    public boolean isRememberMe() {
-        return rememberMe;
-    }
 }

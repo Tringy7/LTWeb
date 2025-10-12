@@ -43,8 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()) // <-- Thêm dòng này
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/signup", "/client/**", "/error", "/admin/css/**", "/admin/js/**", "/admin/images/**",
-                        "/admin/vendors/**", "/admin/fonts/**")
+                .requestMatchers("/", "/login", "/register", "/client/**", "/error", "/admin/css/**", "/admin/js/**", "/admin/images/**","/admin/vendors/**", "/admin/fonts/**")
                 .permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/vendor/**").hasAuthority("ROLE_VENDOR")
