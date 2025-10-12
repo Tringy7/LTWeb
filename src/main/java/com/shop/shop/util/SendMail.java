@@ -56,7 +56,7 @@ public class SendMail {
 
             // set to email address or destination email address
             mess.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            // mess.setSubject("Yêu cầu đặt lại mật khẩu - Mã xác thực của bạn", "UTF-8");
+            mess.setSubject("Yêu cầu đặt lại mật khẩu");
 
             // Read HTML template
             String htmlContent = readEmailTemplate();
