@@ -38,4 +38,9 @@ public class Order {
 
     @Column(length = 50)
     private String voucherCode;
+
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
 }

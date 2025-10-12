@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class AdminOrderController {
-    @GetMapping("admin/order")
-    public String showOder() {
-        return "admin/order/show";
+    @GetMapping("/admin/order")
+    public String redirectToCommission() {
+        return "redirect:/admin/commission";
     }
 }
