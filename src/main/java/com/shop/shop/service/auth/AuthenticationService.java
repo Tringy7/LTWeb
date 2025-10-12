@@ -48,7 +48,13 @@ public class AuthenticationService {
         return userRepository.findByEmail(input.getEmail()).orElseThrow();
     }
 
-    public boolean checkEmail(UserDTO user) {
-        return userRepository.findByEmail(user.getEmail()).isPresent();
+    public boolean checkEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    public void updatePassword(String email, String password) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

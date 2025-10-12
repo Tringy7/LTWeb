@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()) // <-- Thêm dòng này
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/register", "/client/**", "/error", "/admin/css/**", "/admin/js/**", "/admin/images/**","/admin/vendors/**", "/admin/fonts/**")
+                .requestMatchers("/", "/login", "/register", "/forgot-password", "/verify-code", "/reset-password", "/client/**", "/error", "/admin/css/**", "/admin/js/**", "/admin/images/**", "/admin/vendors/**", "/admin/fonts/**")
                 .permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/vendor/**").hasAuthority("ROLE_VENDOR")
@@ -75,7 +75,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:8080")); // Allow your frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
-        configuration.setAllowCredentials(true); 
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -26,4 +26,11 @@ public class UserDTO {
 
     @NotEmpty(message = "Họ tên không được để trống")
     private String fullName;
+
+    private int code;
+
+    public UserDTO(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }

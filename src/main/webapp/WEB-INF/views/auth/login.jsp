@@ -40,12 +40,16 @@
                                         <h6 class="font-weight-light">Đăng nhập để tiếp tục.</h6>
                                         <c:if test="${param.error != null}">
                                             <div class="my-2" style="color: red;">Tên đăng nhập hoặc mật khẩu không
-                                                đúng!
-                                            </div>
+                                                đúng!</div>
                                         </c:if>
                                         <c:if test="${param.logout != null}">
-                                            <div class="my-2" style="color: green;">Đăng xuất thành công!
-                                            </div>
+                                            <div class="my-2" style="color: green;">Đăng xuất thành công!</div>
+                                        </c:if>
+                                        <c:if test="${not empty error}">
+                                            <div class="alert alert-danger">${error}</div>
+                                        </c:if>
+                                        <c:if test="${not empty message}">
+                                            <div class="alert alert-success">${message}</div>
                                         </c:if>
                                         <form class="pt-3" action="/login" method="post">
                                             <div class="form-group">
@@ -70,7 +74,8 @@
                                                         Ghi nhớ đăng nhập
                                                     </label>
                                                 </div>
-                                                <a href="#" class="auth-link text-black">Quên mật khẩu?</a>
+                                                <a href="#" class="auth-link text-black" data-toggle="modal"
+                                                    data-target="#forgotPasswordModal">Quên mật khẩu?</a>
                                             </div>
                                             <div class="text-center mt-4 font-weight-light">
                                                 Chưa có tài khoản? <a href="/register" class="text-primary">Tạo tài
@@ -78,6 +83,111 @@
                                             </div>
                                         </form>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Forgot Password Modal -->
+                        <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog"
+                            aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="forgotPasswordModalLabel">Đặt lại mật khẩu</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="<c:url value='/forgot-password' />" method="post">
+                                        <div class="modal-body">
+                                            <c:if test="${not empty forgotPasswordError}">
+                                                <div class="alert alert-danger">${forgotPasswordError}</div>
+                                            </c:if>
+                                            <p>Vui lòng nhập địa chỉ email của bạn. Chúng tôi sẽ gửi cho bạn một mã để
+                                                đặt lại mật khẩu.</p>
+                                            <div class="form-group">
+                                                <label for="forgot-email">Email</label>
+                                                <input type="email" class="form-control" id="forgot-email" name="email"
+                                                    placeholder="Nhập email của bạn" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Gửi mã</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verify Code Modal -->
+                        <div class="modal fade" id="verifyCodeModal" tabindex="-1" role="dialog"
+                            aria-labelledby="verifyCodeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="verifyCodeModalLabel">Nhập mã xác thực</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="<c:url value='/verify-code' />" method="post">
+                                        <div class="modal-body">
+                                            <c:if test="${not empty verifyCodeError}">
+                                                <div class="alert alert-danger">${verifyCodeError}</div>
+                                            </c:if>
+                                            <p>Mã xác thực đã được gửi đến email của bạn. Vui lòng nhập mã vào ô bên
+                                                dưới.</p>
+                                            <div class="form-group">
+                                                <label for="verification-code">Mã xác thực</label>
+                                                <input type="text" class="form-control" id="verification-code"
+                                                    name="code" placeholder="Nhập mã xác thực" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Xác nhận</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reset Password Modal -->
+                        <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog"
+                            aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="resetPasswordModalLabel">Đặt lại mật khẩu mới</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="<c:url value='/reset-password' />" method="post">
+                                        <div class="modal-body">
+                                            <c:if test="${not empty resetPasswordError}">
+                                                <div class="alert alert-danger">${resetPasswordError}</div>
+                                            </c:if>
+                                            <p>Nhập mật khẩu mới và xác nhận mật khẩu để hoàn tất việc đặt lại.</p>
+                                            <div class="form-group">
+                                                <label for="password">Mật khẩu mới</label>
+                                                <input type="password" class="form-control" id="password"
+                                                    name="password" placeholder="Nhập mật khẩu mới" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="confirmPassword">Xác nhận mật khẩu</label>
+                                                <input type="password" class="form-control" id="confirmPassword"
+                                                    name="confirmPassword" placeholder="Xác nhận mật khẩu" required>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Đặt lại mật khẩu</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -93,6 +203,27 @@
                 <script src="<c:url value='/admin/js/settings.js'/>"></script>
                 <script src="<c:url value='/admin/js/todolist.js'/>"></script>
                 <!-- endinject -->
+                <script>
+                    $(document).ready(function () {
+                        <c:if test="${not empty showVerifyModal and showVerifyModal}">
+                            $('#verifyCodeModal').modal('show');
+                        </c:if>
+                    });
+                </script>
+                <script>
+                    $(document).ready(function () {
+                        <c:if test="${not empty showForgotPasswordModal and showForgotPasswordModal}">
+                            $('#forgotPasswordModal').modal('show');
+                        </c:if>
+                    });
+                </script>
+                <script>
+                    $(document).ready(function () {
+                        <c:if test="${not empty showResetPasswordModal and showResetPasswordModal}">
+                            $('#resetPasswordModal').modal('show');
+                        </c:if>
+                    });
+                </script>
             </body>
 
             </html>

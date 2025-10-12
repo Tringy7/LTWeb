@@ -24,7 +24,7 @@ public class RegisterValidator implements ConstraintValidator<RegisterChecked, U
             check = false;
         }
 
-        if (authenticationService.checkEmail(user)) {
+        if (authenticationService.checkEmail(user.getEmail())) {
             context.buildConstraintViolationWithTemplate("Email đã tồn tại")
                     .addPropertyNode("email")
                     .addConstraintViolation()
