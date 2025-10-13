@@ -12,6 +12,7 @@ public class CustomSiteMeshFilter extends ConfigurableSiteMeshFilter {
         builder
                 .addExcludedPath("/login")
                 .addExcludedPath("/register")
+                .addExcludedPath("/error")
                 // layout cho admin
                 .addDecoratorPath("/admin", "/admin/layout.jsp")
                 .addDecoratorPath("/admin/*", "/admin/layout.jsp")

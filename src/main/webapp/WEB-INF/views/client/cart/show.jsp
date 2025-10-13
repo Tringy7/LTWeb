@@ -15,9 +15,9 @@
             style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">Cart Page</h1>
         <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s"
             style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInUp;">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/shop">Shop</a></li>
-            <li class="breadcrumb-item active text-white">Cart</li>
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Cart Page</li>
         </ol>
     </div>
     <!-- Single Page Header End -->
@@ -183,7 +183,7 @@
 
     <!-- Footer Start -->
     <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s"
-        style="visibility: hidden; animation-delay: 0.2s; animation-name: none;">
+        style="visibility: visible; animation-delay: 0.2s; animation-name: fadeIn;">
         <div class="container py-5">
             <div class="row g-4 rounded mb-5" style="background: rgba(255, 255, 255, .03);">
                 <div class="col-md-6 col-lg-6 col-xl-3">
@@ -324,12 +324,12 @@
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/client/lib/wow/wow.min.js"></script>
+    <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
 
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="/client/js/main.js"></script>
     <!-- Code injected by live-server -->
     <script>
         // <![CDATA[  <-- For SVG support

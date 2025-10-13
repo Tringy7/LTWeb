@@ -1,5 +1,6 @@
 package com.shop.shop.controller.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,21 +8,31 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
+import com.shop.shop.domain.Review;
+import com.shop.shop.domain.User;
 import com.shop.shop.service.client.ProductService;
+import com.shop.shop.service.client.ReviewService;
 
 @Controller
 public class ShopController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping("/shop")
     public String show(Model model,
@@ -36,16 +47,15 @@ public class ShopController {
         } else if ("desc".equals(sort)) {
             pageable = PageRequest.of(page, pageSize, Sort.by("price").descending());
         } else {
-            pageable = PageRequest.of(page, pageSize); // Mặc định không sắp xếp
+            pageable = PageRequest.of(page, pageSize);
         }
 
         Page<Product> productPage = productService.getProductPage(pageable);
 
-        model.addAttribute("productList", productPage.getContent()); // Danh sách sản phẩm trên trang hiện tại
-        model.addAttribute("currentPage", page); // Trang hiện tại
-        model.addAttribute("totalPages", productPage.getTotalPages()); // Tổng số trang
-        model.addAttribute("sort", sort); // Giá trị sắp xếp hiện tại
-
+        model.addAttribute("productList", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("sort", sort);
         model.addAttribute("filterList", productService.getBraList());
 
         return "client/shop/show";
@@ -62,14 +72,35 @@ public class ShopController {
                     .orElse(0.0);
         }
         long roundedRating = Math.round(averageRating); // Làm tròn
-        model.addAttribute("averageRating", roundedRating);
-        model.addAttribute("product", product);
 
         List<ProductDetail> productDetails = product.getProductDetails();
         int sum = 0;
+        int quantity = 0;
+        List<String> sizes = new ArrayList<>();
         for (ProductDetail pd : productDetails) {
             sum += pd.getSold();
+            quantity += pd.getQuantity();
+            sizes.add(pd.getSize());
         }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        User user = (User) authentication.getPrincipal();
+        Review review = new Review();
+        review.setProduct(product);
+        review.setUser(user);
+        review.setMessage("");
+
+        model.addAttribute("review", review);
+        model.addAttribute("shop", product.getShop());
+        model.addAttribute("averageRating", roundedRating);
+        model.addAttribute("product", product);
+        model.addAttribute("sizes", sizes);
+        model.addAttribute("quantity", quantity);
         model.addAttribute("sumSold", sum);
         model.addAttribute("productDetail", product.getProductDetails());
         model.addAttribute("reviews", product.getReviews());
@@ -84,8 +115,8 @@ public class ShopController {
             products = productService.searchProductsByName(name);
             model.addAttribute("searchName", name);
         } else {
-            products = productService.getAllProduct(); // Nếu không có name, trả về tất cả sản phẩm
-            model.addAttribute("searchName", ""); // Để trống giá trị searchName
+            products = productService.getAllProduct();
+            model.addAttribute("searchName", "");
         }
 
         model.addAttribute("productList", products);
@@ -104,7 +135,7 @@ public class ShopController {
         List<Product> filteredProducts = productService.filterProducts(maxPrice, selectedBrands, selectedSizes, selectedColors, selectedGenders);
 
         model.addAttribute("productList", filteredProducts);
-        model.addAttribute("filterList", productService.getBraList()); // Truyền lại danh sách bộ lọc
+        model.addAttribute("filterList", productService.getBraList());
         model.addAttribute("selectedBrands", selectedBrands);
         model.addAttribute("selectedSizes", selectedSizes);
         model.addAttribute("selectedColors", selectedColors);
@@ -112,5 +143,12 @@ public class ShopController {
         model.addAttribute("maxPrice", maxPrice);
 
         return "client/shop/show";
+    }
+
+    @PostMapping("/shop/product/{id}/review")
+    public String handleReviewProduct(@PathVariable("id") Long id, @ModelAttribute("review") Review review) {
+        review.setId(null);
+        reviewService.saveReview(review);
+        return "redirect:/shop/product/{id}";
     }
 }

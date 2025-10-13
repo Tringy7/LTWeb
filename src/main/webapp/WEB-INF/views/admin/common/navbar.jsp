@@ -22,7 +22,7 @@
                         <i class="typcn typcn-cog text-primary"></i>
                         Settings
                     </a>
-                    <a class="dropdown-item">
+                    <a class="dropdown-item" href="/logout">
                         <i class="typcn typcn-power text-primary"></i>
                         Logout
                     </a>
