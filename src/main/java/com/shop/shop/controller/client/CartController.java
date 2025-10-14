@@ -41,8 +41,9 @@ public class CartController {
     }
 
     @PostMapping("/cart")
-    public String handleSaveProductToCart(@ModelAttribute("cart") Cart cart) {
-        return null;
+    public String handleUpdateCart(@ModelAttribute("cart") Cart cartFromForm) {
+        cartService.updateCart(cartFromForm);
+        return "redirect:/checkout";
     }
 
     @PostMapping("/cart/delete/{id}")

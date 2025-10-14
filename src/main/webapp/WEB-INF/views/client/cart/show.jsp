@@ -30,6 +30,7 @@
                     <!-- Cart Page Start -->
                     <div class="container-fluid py-5">
                         <form action="/cart" method="post">
+                            <input type="hidden" name="id" value="${cart.id}" />
                             <div class="container py-5">
                                 <div class="table-responsive">
                                     <table class="table">

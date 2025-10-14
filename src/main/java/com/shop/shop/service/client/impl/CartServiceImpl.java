@@ -1,5 +1,7 @@
 package com.shop.shop.service.client.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,8 +75,33 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public void updateCart(Cart cartFromForm) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateCart'");
+        // 1. Lấy đối tượng Cart đầy đủ từ DB bằng ID gửi từ form.
+        Cart cartInDB = cartRepository.findById(cartFromForm.getId()).orElse(null);
+
+        if (cartInDB != null) {
+            List<CartDetail> detailsFromForm = cartFromForm.getCartDetails();
+            double newTotalCartPrice = 0.0;
+
+            // 2. Duyệt qua từng CartDetail được gửi từ form.
+            for (CartDetail detailFromForm : detailsFromForm) {
+                // 3. Lấy đối tượng CartDetail đầy đủ từ DB.
+                CartDetail cartDetailInDB = cartDetailRepository.findById(detailFromForm.getId()).orElse(null);
+
+                if (cartDetailInDB != null) {
+                    // 4. Cập nhật số lượng (quantity).
+                    cartDetailInDB.setQuantity(detailFromForm.getQuantity());
+
+                    // 5. Tính toán lại giá cho CartDetail này một cách an toàn.
+                    double newPrice = cartDetailInDB.getProduct().getPrice() * detailFromForm.getQuantity();
+                    cartDetailInDB.setPrice(newPrice);
+
+                    newTotalCartPrice += newPrice;
+                }
+            }
+            // 6. Cập nhật tổng giá trị cho toàn bộ giỏ hàng.
+            cartInDB.setTotalPrice(newTotalCartPrice);
+        }
     }
 }
