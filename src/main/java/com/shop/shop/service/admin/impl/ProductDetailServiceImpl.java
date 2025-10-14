@@ -1,4 +1,4 @@
-package com.shop.shop.service.impl;
+package com.shop.shop.service.admin.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -32,6 +32,8 @@ public class CartDetail {
     @JoinColumn(name = "productId")
     private Product product;
 
+    private String size;
+
     private Long quantity = 1L;
 
     private Double price;
