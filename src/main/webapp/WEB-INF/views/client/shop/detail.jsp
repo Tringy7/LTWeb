@@ -40,6 +40,23 @@
                         </div>
                         <!-- Spinner End -->
 
+                        <!-- Toast Notification -->
+                        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+                            <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <i id="toastIcon" class="fas fa-check-circle text-success me-2"></i>
+                                    <strong class="me-auto">Thông báo</strong>
+                                    <small>Vừa xong</small>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body" id="toastMessage">
+                                    ${cartMessage}
+                                </div>
+                            </div>
+                        </div>
+
+
                         <!-- Single Page Header start -->
                         <div class="container-fluid page-header py-5">
                             <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s"
@@ -82,7 +99,11 @@
                                             </div>
                                             <div class="col-xl-6">
                                                 <h4 class="fw-bold mb-3">${product.name}</h4>
-                                                <h5 class="fw-bold mb-3">${product.price} VND</h5>
+                                                <h5 class="fw-bold mb-3">
+                                                    <fmt:formatNumber value="${product.price}" type="currency"
+                                                        currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
+                                                    VND
+                                                </h5>
                                                 <div class="d-flex mb-4">
                                                     <c:choose>
                                                         <c:when test="${averageRating == null || averageRating == 0}">
@@ -114,9 +135,10 @@
                                                     <small>Available: <strong class="text-primary">${quantity} sản phẩm
                                                             trong kho</strong></small>
                                                 </div>
-                                                <form id="addToCartForm"
-                                                    action="${pageContext.request.contextPath}/cart/add" method="post">
+                                                <form id="addToCartForm" action="/shop/product/${product.id}"
+                                                    method="post">
                                                     <input type="hidden" name="productId" value="${product.id}">
+                                                    <input type="hidden" name="price" value="${product.price}">
                                                     <input type="hidden" name="size" id="selected-size" value="">
 
                                                     <div class="mb-4">
@@ -137,7 +159,7 @@
                                                         </div>
                                                         <input type="text"
                                                             class="form-control form-control-sm text-center border-0"
-                                                            value="1">
+                                                            value="1" name="quantity">
                                                         <div class="input-group-btn">
                                                             <button type="button"
                                                                 class="btn btn-sm btn-plus rounded-circle bg-light border">
@@ -435,6 +457,25 @@
                                     });
                                 });
                             });
+
+                            // Toast logic
+                            const cartStatus = "${cartStatus}";
+                            if (cartStatus) {
+                                const cartToast = new bootstrap.Toast(document.getElementById('cartToast'));
+                                const toastIcon = document.getElementById('toastIcon');
+                                const toastMessage = document.getElementById('toastMessage');
+
+                                if (cartStatus === 'success') {
+                                    toastIcon.className = 'fas fa-check-circle text-success me-2';
+                                    toastMessage.textContent = "${cartMessage}";
+                                } else if (cartStatus === 'failure') {
+                                    toastIcon.className = 'fas fa-times-circle text-danger me-2';
+                                    toastMessage.textContent = "${cartMessage}";
+                                }
+
+                                cartToast.show();
+                            }
+
                         </script>
 
 

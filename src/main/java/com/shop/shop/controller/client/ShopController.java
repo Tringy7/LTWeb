@@ -8,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +15,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.Review;
 import com.shop.shop.domain.User;
+import com.shop.shop.dto.ProductDTO;
+import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductService;
 import com.shop.shop.service.client.ReviewService;
+import com.shop.shop.util.UserAfterLogin;
 
 @Controller
 public class ShopController {
@@ -33,6 +36,12 @@ public class ShopController {
 
     @Autowired
     private ReviewService reviewService;
+
+    @Autowired
+    private UserAfterLogin userAfterLogin;
+
+    @Autowired
+    private CartService cartService;
 
     @GetMapping("/shop")
     public String show(Model model,
@@ -82,14 +91,7 @@ public class ShopController {
             quantity += pd.getQuantity();
             sizes.add(pd.getSize());
         }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-
-        User user = (User) authentication.getPrincipal();
+        User user = userAfterLogin.getUser();
         Review review = new Review();
         review.setProduct(product);
         review.setUser(user);
@@ -105,6 +107,22 @@ public class ShopController {
         model.addAttribute("productDetail", product.getProductDetails());
         model.addAttribute("reviews", product.getReviews());
         return "client/shop/detail";
+    }
+
+    @PostMapping("/shop/product/{id}")
+    public String postMethodName(@PathVariable("id") Long id, @ModelAttribute ProductDTO productDTO,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = userAfterLogin.getUser();
+            Cart cart = cartService.getCart(user);
+            cartService.handleCart(productDTO, cart);
+            redirectAttributes.addFlashAttribute("cartStatus", "success");
+            redirectAttributes.addFlashAttribute("cartMessage", "Đã thêm sản phẩm vào giỏ hàng thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("cartStatus", "failure");
+            redirectAttributes.addFlashAttribute("cartMessage", "Thêm sản phẩm thất bại. Vui lòng thử lại.");
+        }
+        return "redirect:/shop/product/{id}";
     }
 
     @GetMapping("/shop/search")

@@ -1,14 +1,60 @@
 package com.shop.shop.controller.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import com.shop.shop.domain.Cart;
+import com.shop.shop.domain.CartDetail;
+import com.shop.shop.domain.User;
+import com.shop.shop.dto.CartDTO;
+import com.shop.shop.service.client.CartService;
+import com.shop.shop.util.UserAfterLogin;
 
 @Controller
 public class CartController {
 
+    @Autowired
+    private UserAfterLogin userAfterLogin;
+
+    @Autowired
+    private CartService cartService;
+
     @GetMapping("/cart")
-    public String show() {
+    public String showCart(Model model) {
+        User user = userAfterLogin.getUser();
+        Cart cart = cartService.getCart(user);
+        List<CartDetail> cardDetails = new ArrayList<>();
+        if (cart.getCartDetails() != null) {
+            cardDetails = cart.getCartDetails();
+        } else {
+            cart.setCartDetails(cardDetails);
+        }
+        model.addAttribute("cart", cart);
         return "client/cart/show";
+    }
+
+    @PostMapping("/cart")
+    public String handleSaveProductToCart(@ModelAttribute("cart") CartDTO cart) {
+        return null;
+    }
+
+    @PostMapping("/cart/delete/{id}")
+    public String deleteCartDetail(@PathVariable("id") Long cartDetailId) {
+        cartService.deleteCartDetail(cartDetailId);
+        return "redirect:/cart";
+    }
+
+    @GetMapping("/checkout")
+    public String showCheckout(Model model) {
+        return "client/cart/checkout";
     }
 
 }

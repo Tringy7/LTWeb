@@ -40,10 +40,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()) // <-- Thêm dòng này
+                .authorizeHttpRequests(authorize -> authorize.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/register", "/forgot-password", "/verify-code", "/reset-password", "/client/**", "/error", "/admin/css/**", "/admin/js/**", "/admin/images/**", "/admin/vendors/**", "/admin/fonts/**")
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/", "/login", "/register",
+                "/forgot-password", "/verify-code", "/reset-password", "/client/**", "/error", "/cart/add",
+                "/admin/css/**", "/admin/js/**", "/admin/images/**", "/admin/vendors/**", "/admin/fonts/**")
                 .permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/vendor/**").hasAuthority("ROLE_VENDOR")
