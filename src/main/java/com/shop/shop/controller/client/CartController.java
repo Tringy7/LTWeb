@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
 import com.shop.shop.domain.User;
+import com.shop.shop.domain.UserAddress;
 import com.shop.shop.service.client.CartService;
+import com.shop.shop.service.client.UserService;
 import com.shop.shop.util.UserAfterLogin;
 
 @Controller
@@ -22,6 +24,9 @@ public class CartController {
 
     @Autowired
     private UserAfterLogin userAfterLogin;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private CartService cartService;
@@ -54,6 +59,11 @@ public class CartController {
 
     @GetMapping("/checkout")
     public String showCheckout(Model model) {
+        User user = userAfterLogin.getUser();
+        Cart cart = cartService.getCart(user);
+        UserAddress userAddress = userService.handlUserAddress(user);
+        model.addAttribute("cart", cart);
+        model.addAttribute("userAddress", userAddress);
         return "client/cart/checkout";
     }
 
