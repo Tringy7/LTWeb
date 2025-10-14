@@ -11,4 +11,6 @@ public interface CartService {
     void handleCart(ProductDTO productDTO, Cart cart);
 
     void deleteCartDetail(Long cartDetailId);
+
+    void updateCart(Cart cartFromForm);
 }

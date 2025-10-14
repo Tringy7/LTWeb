@@ -71,4 +71,10 @@ public class CartServiceImpl implements CartService {
             cartDetailRepository.deleteById(cartDetailId);
         }
     }
+
+    @Override
+    public void updateCart(Cart cartFromForm) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCart'");
+    }
 }

@@ -29,141 +29,147 @@
 
                     <!-- Cart Page Start -->
                     <div class="container-fluid py-5">
-                        <div class="container py-5">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Image</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Size</th>
-                                            <th scope="col">Shop</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Total</th>
-                                            <th scope="col">Handle</th>
-                                        </tr>
-                                    </thead>
-                                    <c:choose>
-                                        <c:when
-                                            test="${not empty cart.cartDetails and fn:length(cart.cartDetails) > 0}">
-                                            <tbody>
-                                                <c:forEach var="item" items="${cart.cartDetails}" varStatus="status">
-                                                    <input type="hidden" name="cartDetails[${status.index}].id"
-                                                        value="${item.id}" />
-                                                    <tr class="cart-item-row">
-                                                        <th scope="row">
-                                                            <div class="d-flex align-items-center">
-                                                                <img src="/admin/images/product/${item.product.image}"
-                                                                    class="img-fluid me-5 rounded"
-                                                                    style="width: 80px; height: 80px;" alt="">
-                                                            </div>
-                                                        </th>
-                                                        <td>
-                                                            <p class="mb-0 mt-4">${item.product.name}</p>
-                                                        </td>
-                                                        <td>
-                                                            <p class="mb-0 mt-4">${item.size}</p>
-                                                        </td>
-                                                        <td>
-                                                            <p class="mb-0 mt-4">${item.product.shop.shopName}</p>
-                                                        </td>
-                                                        <td>
-                                                            <p class="mb-0 mt-4 item-price"
-                                                                data-price="${item.product.price}">
-                                                                <fmt:formatNumber value="${item.product.price}"
-                                                                    type="currency" currencySymbol=""
-                                                                    minFractionDigits="0" maxFractionDigits="0" />
-                                                                VND
-                                                            </p>
-                                                        </td>
-                                                        <td>
-                                                            <div class="input-group quantity mt-4"
-                                                                style="width: 100px;">
-                                                                <div class="input-group-btn">
-                                                                    <button
-                                                                        class="btn btn-sm btn-minus rounded-circle bg-light border">
-                                                                        <i class="fa fa-minus"></i>
-                                                                    </button>
+                        <form action="/cart" method="post">
+                            <div class="container py-5">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Image</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Size</th>
+                                                <th scope="col">Shop</th>
+                                                <th scope="col">Price</th>
+                                                <th scope="col">Quantity</th>
+                                                <th scope="col">Total</th>
+                                                <th scope="col">Handle</th>
+                                            </tr>
+                                        </thead>
+                                        <c:choose>
+                                            <c:when
+                                                test="${not empty cart.cartDetails and fn:length(cart.cartDetails) > 0}">
+                                                <tbody>
+                                                    <c:forEach var="item" items="${cart.cartDetails}"
+                                                        varStatus="status">
+                                                        <input type="hidden" name="cartDetails[${status.index}].id"
+                                                            value="${item.id}" />
+                                                        <tr class="cart-item-row">
+                                                            <th scope="row">
+                                                                <div class="d-flex align-items-center">
+                                                                    <img src="/admin/images/product/${item.product.image}"
+                                                                        class="img-fluid me-5 rounded"
+                                                                        style="width: 80px; height: 80px;" alt="">
                                                                 </div>
-                                                                <input type="text"
-                                                                    class="form-control form-control-sm text-center border-0"
-                                                                    min="1" value="${item.quantity}"
-                                                                    name="cartDetails[${status.index}].quantity" min="1"
-                                                                    value="${item.quantity}">
-                                                                <div class="input-group-btn">
-                                                                    <button
-                                                                        class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                                                        <i class="fa fa-plus"></i>
-                                                                    </button>
+                                                            </th>
+                                                            <td>
+                                                                <p class="mb-0 mt-4">${item.product.name}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="mb-0 mt-4">${item.size}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="mb-0 mt-4">${item.product.shop.shopName}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="mb-0 mt-4 item-price"
+                                                                    data-price="${item.product.price}">
+                                                                    <fmt:formatNumber value="${item.product.price}"
+                                                                        type="currency" currencySymbol=""
+                                                                        minFractionDigits="0" maxFractionDigits="0" />
+                                                                    VND
+                                                                </p>
+                                                            </td>
+                                                            <td>
+                                                                <div class="input-group quantity mt-4"
+                                                                    style="width: 100px;">
+                                                                    <div class="input-group-btn">
+                                                                        <button type="button"
+                                                                            class="btn btn-sm btn-minus rounded-circle bg-light border">
+                                                                            <i class="fa fa-minus"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                    <input type="text"
+                                                                        class="form-control form-control-sm text-center border-0"
+                                                                        min="1" value="${item.quantity}"
+                                                                        name="cartDetails[${status.index}].quantity">
+                                                                    <div class="input-group-btn">
+                                                                        <button type="button"
+                                                                            class="btn btn-sm btn-plus rounded-circle bg-light border">
+                                                                            <i class="fa fa-plus"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <p class="mb-0 mt-4 item-total">
-                                                                <fmt:formatNumber value="${item.price * item.quantity}"
-                                                                    type="currency" currencySymbol=""
-                                                                    minFractionDigits="0" maxFractionDigits="0" />
-                                                                VND
-                                                            </p>
-                                                        </td>
-                                                        <td class="mt-4">
-                                                            <form action="/cart/delete/${item.id}" method="post">
-                                                                <button
-                                                                    class="btn btn-md rounded-circle bg-light border mt-4"
-                                                                    type="submit">
-                                                                    <i class="fa fa-times text-danger"></i>
-                                                                </button>
-                                                            </form>
+                                                            </td>
+                                                            <td>
+                                                                <p class="mb-0 mt-4 item-total"
+                                                                    data-total="${item.price}">
+                                                                    <fmt:formatNumber value="${item.price}"
+                                                                        type="currency" currencySymbol=""
+                                                                        minFractionDigits="0" maxFractionDigits="0" />
+                                                                    VND
+                                                                </p>
+                                                            </td>
+                                                            <td class="mt-4">
+                                                                <button type="submit"
+                                                                    formaction="/cart/delete/${item.id}"
+                                                                    formmethod="post"
+                                                                    class="btn btn-md rounded-circle bg-light border mt-4">
+                                                                    <i class="fa fa-times text-danger"></i> </button>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </tbody>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="8" class="text-center py-5">
+                                                            <h4>Giỏ hàng của bạn đang trống!</h4>
+                                                            <a href="/shop"
+                                                                class="btn btn-primary rounded-pill px-4 py-2 mt-3">Tiếp
+                                                                tục mua sắm</a>
                                                         </td>
                                                     </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="8" class="text-center py-5">
-                                                        <h4>Giỏ hàng của bạn đang trống!</h4>
-                                                        <a href="/shop"
-                                                            class="btn btn-primary rounded-pill px-4 py-2 mt-3">Tiếp
-                                                            tục mua sắm</a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </table>
-                            </div>
-                            <div class="mt-5">
-                                <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4"
-                                    placeholder="Coupon Code">
-                                <button class="btn btn-primary rounded-pill px-4 py-3" type="button">Apply
-                                    Coupon</button>
-                            </div>
-                            <div class="row g-4 justify-content-end">
-                                <div class="col-8"></div>
-                                <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
-                                    <div class="bg-light rounded">
-                                        <div class="p-4">
-                                            <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
-                                            <hr>
-                                            <div class="d-flex justify-content-between mb-4">
-                                                <h5 class="mb-0 me-4">Total:</h5>
-                                                <p class="mb-0" id="cart-subtotal">
-                                                    <fmt:formatNumber value="${cart.totalPrice}" type="currency"
-                                                        currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
-                                                    VND
-                                                </p>
+                                                </tbody>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </table>
+                                </div>
+                                <div class="mt-5 d-flex justify-content-between">
+                                    <div>
+                                        <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4"
+                                            placeholder="Coupon Code">
+                                        <button class="btn btn-primary rounded-pill px-4 py-3" type="button">Apply
+                                            Coupon</button>
+                                    </div>
+                                </div>
+                                <div class="row g-4 justify-content-end">
+                                    <div class="col-8"></div>
+                                    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                                        <div class="bg-light rounded">
+                                            <div class="p-4">
+                                                <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span>
+                                                </h1>
+                                                <hr>
+                                                <div class="d-flex justify-content-between mb-4">
+                                                    <h5 class="mb-0 me-4">Total:</h5>
+                                                    <p class="mb-0" id="cart-subtotal">
+                                                        <fmt:formatNumber value="${cart.totalPrice}" type="currency"
+                                                            currencySymbol="" minFractionDigits="0"
+                                                            maxFractionDigits="0" />
+                                                        VND
+                                                    </p>
+                                                </div>
+                                                <hr>
                                             </div>
-                                            <hr>
+                                            <button
+                                                class="btn btn-primary rounded-pill px-4 py-3 text-uppercase mb-4 ms-4"
+                                                type="submit">Proceed Checkout</button>
                                         </div>
-                                        <button class="btn btn-primary rounded-pill px-4 py-3 text-uppercase mb-4 ms-4"
-                                            type="submit">Proceed Checkout</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                     <!-- Cart Page End -->
                     <!-- JavaScript Libraries -->
@@ -218,7 +224,7 @@
 
                             // Event listener for all quantity buttons (plus and minus)
                             document.querySelectorAll('.quantity button').forEach(button => {
-                                button.addEventListener('click', function () {
+                                button.addEventListener('click', function (e) {
                                     const row = this.closest('.cart-item-row');
                                     const quantityInput = row.querySelector('input');
                                     let quantity = parseInt(quantityInput.value) || 1;

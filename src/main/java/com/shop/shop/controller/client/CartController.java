@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
 import com.shop.shop.domain.User;
-import com.shop.shop.dto.CartDTO;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.util.UserAfterLogin;
 
@@ -42,7 +41,7 @@ public class CartController {
     }
 
     @PostMapping("/cart")
-    public String handleSaveProductToCart(@ModelAttribute("cart") CartDTO cart) {
+    public String handleSaveProductToCart(@ModelAttribute("cart") Cart cart) {
         return null;
     }
 
