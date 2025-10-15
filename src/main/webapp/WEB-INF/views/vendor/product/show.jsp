@@ -1,381 +1,320 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="main-panel">
-    <div class="content-wrapper">
-        <div class="row">
-            <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div
-                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 15px;">
-                            <!-- Tiêu đề -->
-                            <div>
-                                <h4 class="card-title" style="margin: 0;">Product table</h4>
-                            </div>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+            <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+                <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-                            <!-- Nút thêm sản phẩm -->
-                            <button type="button" class="btn btn-inverse-success btn-fw" data-toggle="modal"
-                                data-target="#addProductModal">
-                                Thêm sản phẩm
-                            </button>
-                        </div>
+                    <!DOCTYPE html>
+                    <html lang="vi">
 
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Quản lý sản phẩm</title>
+                        <link rel="stylesheet"
+                            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                        <link rel="stylesheet"
+                            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+                        <style>
+                            /* Giảm padding trên của container chính */
+                            .content-wrapper {
+                                padding-top: 5px;
+                                /* Giả sử giá trị mặc định lớn hơn, hãy giảm nó */
+                            }
 
-                        <div class="table-responsive pt-3">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            ID
-                                        </th>
-                                        <th>
-                                            Image
-                                        </th>
-                                        <th>
-                                            Name
-                                        </th>
-                                        <th>
-                                            Price
-                                        </th>
-                                        <th>
-                                            Brand
-                                        </th>
-                                        <th>
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td>
-                                            <img src="../../images/fashion/ao1.jpeg" alt="image"
-                                                style="width: 130px; height: 100%; object-fit: cover; display: block;">
-                                        </td>
-                                        <td>
-                                            Seasonal Long Sleeve Boxy Tee
-                                        </td>
-                                        <td>
-                                            600.000 VND
-                                        </td>
-                                        <td>
-                                            Levents
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-inverse-secondary btn-fw"
-                                                data-toggle="modal" data-target="#productDetailModal">Chi tiết</button>
-                                            <button type="button" class="btn btn-inverse-warning btn-fw"
-                                                data-toggle="modal" data-target="#editProductModal">Chỉnh sửa</button>
-                                            <button type="button" class="btn btn-inverse-danger btn-fw"
-                                                data-toggle="modal" data-target="#deleteProductModal">Xóa</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td>
-                                            <img src="../../images/fashion/ao2.jpg" alt="image"
-                                                style="width: 130px; height: 100%; object-fit: cover; display: block;">
-                                        </td>
-                                        <td>
-                                            ANTISOCIAL BOXY TEE
-                                        </td>
-                                        <td>
-                                            400.000 VND
-                                        </td>
-                                        <td>
-                                            BAD HABITS
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-inverse-secondary btn-fw"
-                                                data-toggle="modal" data-target="#productDetailModal">Chi tiết</button>
-                                            <button type="button" class="btn btn-inverse-warning btn-fw"
-                                                data-toggle="modal" data-target="#editProductModal">Chỉnh sửa</button>
-                                            <button type="button" class="btn btn-inverse-danger btn-fw"
-                                                data-toggle="modal" data-target="#deleteProductModal">Xóa</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                            /* === Card bo tròn, bóng mượt === */
+                            .card-custom {
+                                border-radius: 15px;
+                                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+                                overflow: hidden;
+                                transition: transform 0.2s ease-in-out;
+                                margin-bottom: 5px;
+                            }
 
-    <!-- Modal Bảng size-->
-    <div class="modal fade" id="productDetailModal" tabindex="-1" role="dialog"
-        aria-labelledby="productDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <!-- Xóa modal-sm để không bị ép nhỏ -->
-            <div class="modal-content" style="min-width: 562px;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body d-flex justify-content-center">
-                    <!-- Bảng size căn giữa -->
-                    <div class="table-responsive" style="max-width: 500px;">
-                        <table class="table table-bordered text-center mb-0">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Số lượng</th>
-                                    <th>Màu sắc</th>
-                                    <th>Số lượng bán</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>S</td>
-                                    <td>20</td>
-                                    <td>Đen</td>
-                                    <td>15</td>
-                                </tr>
-                                <tr>
-                                    <td>M</td>
-                                    <td>30</td>
-                                    <td>Trắng</td>
-                                    <td>22</td>
-                                </tr>
-                                <tr>
-                                    <td>L</td>
-                                    <td>25</td>
-                                    <td>Xanh</td>
-                                    <td>18</td>
-                                </tr>
-                                <tr>
-                                    <td>XL</td>
-                                    <td>10</td>
-                                    <td>Đỏ</td>
-                                    <td>8</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                            .card-custom:hover {
+                                transform: translateY(-3px);
+                            }
 
+                            .card-header-custom {
+                                background: linear-gradient(90deg, #4e73df 0%, #1cc88a 100%);
+                                color: #fff;
+                                font-weight: bold;
+                                font-size: 1.2rem;
+                            }
 
-    <!-- Modal thêm sản phẩm -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <!-- modal-lg để to hơn -->
-            <div class="modal-content" style="width: 700px; margin: auto;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Thêm sản phẩm mới</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
+                            /* Nút hành động bo tròn, màu đẹp */
+                            .action-btn {
+                                width: 38px;
+                                height: 38px;
+                                border-radius: 50%;
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.2s;
+                                font-size: 16px;
+                                border: 1px solid transparent;
+                            }
 
-                <form>
-                    <div class="modal-body d-flex justify-content-center">
-                        <div class="card-body" style="max-width: 650px; width: 100%;">
-                            <div class="form-group">
-                                <label for="productName">Name</label>
-                                <input type="text" class="form-control" id="productName"
-                                    placeholder="Nhập tên sản phẩm">
-                            </div>
+                            .detail-btn {
+                                color: #1d72b8;
+                                border-color: #1d72b8;
+                            }
 
-                            <div class="form-group">
-                                <label for="productImage">Image</label>
-                                <input type="file" class="form-control-file" id="productImage">
-                            </div>
+                            .detail-btn:hover {
+                                background-color: #1d72b8;
+                                color: #fff;
+                            }
 
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="editProductBrand">Brand</label>
-                                    <input type="text" class="form-control" id="editProductBrand" value="">
+                            .edit-btn {
+                                color: #f0ad4e;
+                                border-color: #f0ad4e;
+                            }
+
+                            .edit-btn:hover {
+                                background-color: #f0ad4e;
+                                color: #212529;
+                            }
+
+                            .delete-btn {
+                                color: #dc3545;
+                                border-color: #dc3545;
+                            }
+
+                            .delete-btn:hover {
+                                background-color: #dc3545;
+                                color: #fff;
+                            }
+
+                            /* Ảnh sản phẩm bo tròn và bóng */
+                            .product-img {
+                                width: 55px;
+                                height: 55px;
+                                object-fit: cover;
+                                border-radius: 10px;
+                                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+                            }
+
+                            /* Table bo tròn */
+                            .table-custom thead th {
+                                background-color: #4e73df;
+                                color: #fff;
+                                text-align: center;
+                                vertical-align: middle;
+                            }
+
+                            .table-custom tbody tr {
+                                transition: background-color 0.2s;
+                            }
+
+                            .table-custom tbody tr:hover {
+                                background-color: #f8f9fc;
+                            }
+
+                            .table-custom td,
+                            .table-custom th {
+                                vertical-align: middle;
+                                padding: 12px;
+                                border-top: 1px solid #dee2e6;
+                            }
+
+                            /* Badge count */
+                            .product-count {
+                                font-size: 0.95rem;
+                                border-radius: 12px;
+                            }
+                        </style>
+                    </head>
+
+                    <body class="bg-light">
+                        <div class="container py-3">
+
+                            <!-- Card Action -->
+                            <div class="card card-custom mb-3">
+                                <div
+                                    class="card-header card-header-custom d-flex justify-content-between align-items-center">
+                                    <h4><i class="fas fa-box-open me-2"></i>QUẢN LÝ SẢN PHẨM</h4>
+                                    <span class="badge bg-light text-dark product-count">
+                                        <i class="fas fa-cubes me-1"></i> Đang có: ${fn:length(products)} sản phẩm
+                                    </span>
                                 </div>
-                                <div class="form-group col-md-6">
-                                    <label for="editProductColor">Color</label>
-                                    <select class="form-control" id="editProductColor" style="height:45px;">
-                                        <option>Chọn màu</option>
-                                        <option>Đỏ</option>
-                                        <option>Xanh</option>
-                                        <option>Đen</option>
-                                        <option>Trắng</option>
-                                    </select>
+                                <div class="card-body bg-white">
+                                    <form method="get" action="${pageContext.request.contextPath}/vendor/product"
+                                        class="row g-3 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold text-muted">Tìm kiếm nhanh</label>
+                                            <div class="input-group">
+                                                <input type="text" name="keyword" class="form-control"
+                                                    placeholder="Tên, mã ID hoặc Thương hiệu..."
+                                                    value="${param.keyword}">
+                                                <button class="btn btn-outline-primary" type="submit"><i
+                                                        class="fas fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold text-muted">Lọc theo Danh mục</label>
+                                            <select name="category" class="form-select">
+                                                <option value="">-- Tất cả Danh mục --</option>
+                                                <option value="Thời trang nam" ${param.category=='Thời trang nam'
+                                                    ? 'selected' :''}>Thời trang nam</option>
+                                                <option value="Thời trang nữ" ${param.category=='Thời trang nữ'
+                                                    ? 'selected' :''}>Thời trang nữ</option>
+                                                <option value="Phụ kiện" ${param.category=='Phụ kiện' ? 'selected' :''}>
+                                                    Phụ kiện</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 text-end">
+                                            <a href="${pageContext.request.contextPath}/vendor/product/add"
+                                                class="btn btn-success fw-bold w-100 shadow-sm">
+                                                <i class="fas fa-plus me-1"></i> Thêm Sản phẩm
+                                            </a>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="productPrice">Price (VND)</label>
-                                    <input type="number" class="form-control" id="productPrice"
-                                        placeholder="Nhập giá sản phẩm">
-                                </div>
-                            </div>
+                            <!-- Card Data -->
+                            <div class="card card-custom">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-custom table-hover align-middle text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Ảnh</th>
+                                                    <th class="text-start">Tên sản phẩm</th>
+                                                    <th>Giá bán</th>
+                                                    <th>Thương hiệu</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="product" items="${products}">
+                                                    <tr>
+                                                        <td class="text-muted fw-bold">#${product.id}</td>
+                                                        <td>
+                                                            <img src="/resources/admin/images/product/${product.image}"
+                                                                alt="${product.name}" class="product-img">
+                                                        </td>
+                                                        <td class="text-start">${product.name}</td>
+                                                        <td class="fw-bold text-success">
+                                                            <fmt:formatNumber value="${product.price}" type="number"
+                                                                pattern="#,##0" />₫
+                                                        </td>
+                                                        <td>${product.brand}</td>
+                                                        <td>
+                                                            <a href="<c:url value='/vendor/product/detail?id=${product.id}'/>"
+                                                                class="btn action-btn detail-btn"
+                                                                data-bs-toggle="tooltip" title="Xem chi tiết"><i
+                                                                    class="fas fa-eye"></i></a>
+                                                            <a href="${pageContext.request.contextPath}/vendor/product/edit/${product.id}"
+                                                                class="btn action-btn edit-btn" data-bs-toggle="tooltip"
+                                                                title="Chỉnh sửa"><i class="fas fa-edit"></i></a>
+                                                            <button type="button" class="btn action-btn delete-btn"
+                                                                data-id="${product.id}" data-name="${product.name}"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#deleteProductModal"
+                                                                aria-label="Xóa sản phẩm">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
 
-                            <!-- Size + Quantity theo hàng ngang -->
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label>Size &amp; Quantity</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">S</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                placeholder="SL">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">M</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                placeholder="SL">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">L</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                placeholder="SL">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">XL</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                placeholder="SL">
-                                        </div>
+
+
+                                                        </td>
+                                                    </tr>
+                                                </c:forEach>
+                                                <c:if test="${empty products}">
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-danger py-4"><i
+                                                                class="fas fa-exclamation-circle me-2"></i>Không tìm
+                                                            thấy sản phẩm nào.</td>
+                                                    </tr>
+                                                </c:if>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-success">Lưu sản phẩm</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Chỉnh sửa sản phẩm -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <!-- modal-lg để to hơn -->
-            <div class="modal-content" style="width: 700px; margin: auto;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Chỉnh sửa sản phẩm</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-
-                <form>
-                    <div class="modal-body d-flex justify-content-center">
-                        <div class="card-body" style="max-width: 650px; width: 100%;">
-
-                            <div class="form-group">
-                                <label for="editProductName">Name</label>
-                                <input type="text" class="form-control" id="editProductName"
-                                    value="Seasonal Long Sleeve Boxy Tee">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editProductImage">Image</label>
-                                <input type="file" class="form-control-file" id="editProductImage">
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group col-md-6">
-                                    <label for="editProductBrand">Brand</label>
-                                    <input type="text" class="form-control" id="editProductBrand" value="Levents">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="editProductColor">Color</label>
-                                    <select class="form-control" id="editProductColor" style="height:45px;">
-                                        <option>Chọn màu</option>
-                                        <option>Đỏ</option>
-                                        <option>Xanh</option>
-                                        <option selected="">Đen</option>
-                                        <option>Trắng</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label for="editProductPrice">Price (VND)</label>
-                                    <input type="number" class="form-control" id="editProductPrice" value="600000">
-                                </div>
-                            </div>
-
-                            <!-- Size + Quantity theo hàng ngang -->
-                            <div class="row">
-                                <div class="form-group col-md-12">
-                                    <label>Size &amp; Quantity</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">S</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                value="5">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">M</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                value="7">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">L</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                value="4">
-                                        </div>
-                                        <div class="d-flex align-items-center mr-4">
-                                            <span class="mr-2 font-weight-bold">XL</span>
-                                            <input type="number" class="form-control text-center" style="width: 100px;"
-                                                value="4">
-                                        </div>
+                        <!-- Modal Xóa -->
+                        <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 shadow-lg">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Xác nhận Xóa Sản
+                                            phẩm
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white"
+                                            data-bs-dismiss="modal"></button>
                                     </div>
+                                    <form:form method="post"
+                                        action="${pageContext.request.contextPath}/vendor/product/delete"
+                                        modelAttribute="product">
+                                        <form:hidden path="id" />
+                                        <div class="modal-body text-center py-4">
+                                            <i class="fas fa-question-circle text-warning fs-1 mb-3"></i>
+                                            <p class="mb-3 fs-5">Bạn có chắc chắn muốn xóa sản phẩm <strong
+                                                    id="deleteProductName" class="text-danger"></strong> không?</p>
+                                            <p class="text-danger fw-bold">Dữ liệu sẽ bị xóa vĩnh viễn!</p>
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="button" class="btn btn-secondary fw-bold"
+                                                data-bs-dismiss="modal">Hủy</button>
+                                            <button type="submit" class="btn btn-danger fw-bold">Xóa Vĩnh
+                                                Viễn</button>
+                                        </div>
+                                    </form:form>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
 
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-warning">Cập nhật</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                        <script
+                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                        <!-- <script>
+                            $(document).ready(function () {
+                                // Tooltips
+                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                                tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
 
+                                // Modal Delete
+                                $('.delete-btn').click(function () {
+                                    const id = $(this).data('id');
+                                    const name = $(this).data('name');
+                                    $('#deleteProductModal input[name="id"]').val(id);
+                                    $('#deleteProductName').text(name);
+                                });
+                            });
+                        </script> -->
 
-    <!-- Modal Xóa sản phẩm -->
-    <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog"
-        aria-labelledby="deleteProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="width: auto; min-width: 562px; margin: auto;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteProductModalLabel">Xóa sản phẩm</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <p>Bạn có chắc chắn muốn xóa sản phẩm <strong>Seasonal Long Sleeve Boxy Tee</strong> không?</p>
-                    <p class="text-danger">Hành động này không thể hoàn tác!</p>
-                </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger">Xóa</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                        <script>
 
-</div>
+                            $(document).ready(function () {
+                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                    return new bootstrap.Tooltip(tooltipTriggerEl, {
+                                        delay: { "show": 100, "hide": 50 }, // hiện nhanh
+                                        boundary: 'window',
+                                        fallbackPlacements: ['top', 'bottom'], // đảm bảo tooltip không bị cắt
+                                    })
+                                })
+
+                                // Khắc phục: Lắng nghe sự kiện "show.bs.modal"
+                                $('#deleteProductModal').on('show.bs.modal', function (event) {
+                                    // Lấy nút đã kích hoạt modal
+                                    var button = $(event.relatedTarget);
+
+                                    // Lấy dữ liệu từ các thuộc tính data- của nút
+                                    var productId = button.data('id');
+                                    var productName = button.data('name');
+
+                                    // Cập nhật nội dung modal và form ẩn
+                                    var modal = $(this);
+                                    modal.find('input[name="id"]').val(productId); // Cập nhật form:hidden
+                                    modal.find('#deleteProductName').text(productName); // Cập nhật tên SP trong modal
+                                });
+                            });
+                        </script>
+
+                    </body>
+
+                    </html>

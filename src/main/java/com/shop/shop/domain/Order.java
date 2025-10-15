@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Orders")
@@ -38,4 +41,13 @@ public class Order {
 
     @Column(length = 50)
     private String voucherCode;
+
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
+    @OneToMany(mappedBy = "order")
+    @JsonIgnoreProperties({ "order" })
+    private List<OrderDetail> orderDetails;
+
 }

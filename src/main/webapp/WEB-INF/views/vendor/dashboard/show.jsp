@@ -1,430 +1,418 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<div class="main-panel">
-    <div class="content-wrapper">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0 font-weight-bold">Anh Vũ</h3>
-                <p>Welcome to the Admin Homepage</p>
-            </div>
-            <div class="col-sm-6">
-                <div class="d-flex align-items-center justify-content-md-end">
-                    <div class="mb-3 mb-xl-0 pr-1">
-                        <div class="dropdown">
-                            <button class="btn bg-white btn-sm dropdown-toggle btn-icon-text border mr-2" type="button"
-                                id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="typcn typcn-calendar-outline mr-2"></i>Last 7
-                                days
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3"
-                                data-x-placement="top-start">
-                                <h6 class="dropdown-header">Last 14 days</h6>
-                                <a class="dropdown-item" href="#">Last 21 days</a>
-                                <a class="dropdown-item" href="#">Last 28 days</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pr-1 mb-3 mr-2 mb-xl-0">
-                        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
-                            <i class="typcn typcn-arrow-forward-outline mr-2"></i>Export
-                        </button>
-                    </div>
-                    <div class="pr-1 mb-3 mb-xl-0">
-                        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
-                            <i class="typcn typcn-info-large-outline mr-2"></i>info
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-xl-5 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
-            </div>
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
-            </div>
-            <div class="col-xl-4 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                    <div class="card-body"></div>
-                  </div> -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Sales Performance</h4>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="font-weight-medium">
-                                                Empolyee Name
-                                            </div>
-                                            <div class="font-weight-medium">This Month</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Vũ
-                                            </div>
-                                            <div class="small">$ 4909</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Minh Trí
-                                            </div>
-                                            <div class="small">$857</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Hữu Trí
-                                            </div>
-                                            <div class="small">$612</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Minh Danh
-                                            </div>
-                                            <div class="small">$233</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Thanh Lâm
-                                            </div>
-                                            <div class="small">$233</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Kiệt
-                                            </div>
-                                            <div class="small">$35</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Huy
-                                            </div>
-                                            <div class="small">$43</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <div class="text-secondary font-weight-medium">
-                                                Thế Vinh
-                                            </div>
-                                            <div class="small">$43</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 d-flex grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Business Overview</h4>
-                            <button type="button" class="btn btn-sm btn-light">
-                                Month
-                            </button>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <div class="d-md-flex mb-4">
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-globe-outline mr-1"></i>Total Revenue
-                                        </h5>
-                                        <h2 class="text-primary mb-1 font-weight-bold">
-                                            23,342
-                                        </h2>
-                                    </div>
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-archive mr-1"></i>Total
-                                            Profit
-                                        </h5>
-                                        <h2 class="text-secondary mb-1 font-weight-bold">
-                                            13,221
-                                        </h2>
-                                    </div>
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-tags mr-1"></i>Total Orders
-                                        </h5>
-                                        <h2 class="text-warning mb-1 font-weight-bold">
-                                            1,542
-                                        </h2>
-                                    </div>
-                                </div>
-                                <canvas id="salesanalyticChart" width="657" height="328"
-                                    style="display: block; height: 263px; width: 526px;"
-                                    class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Card Title</h4>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="mr-1">col-12
-                                        <div class="text-info mb-1">Total Earning</div>
-                                        <h2 class="mb-2 mt-2 font-weight-bold">287,493$</h2>
-                                        <div class="font-weight-bold">
-                                            1.4% Since Last Month
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="mr-1">
-                                        <div class="text-info mb-1">Total Earning</div>
-                                        <h2 class="mb-2 mt-2 font-weight-bold">87,493</h2>
-                                        <div class="font-weight-bold">
-                                            5.43% Since Last Month
-                                        </div>
-                                    </div>
-                                </div>
-                                <canvas id="barChartStacked" width="271" height="135"
-                                    style="display: block; height: 108px; width: 217px;"
-                                    class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4 d-flex grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div class="chartjs-size-monitor">
-                        <div class="chartjs-size-monitor-expand">
-                            <div class=""></div>
-                        </div>
-                        <div class="chartjs-size-monitor-shrink">
-                            <div class=""></div>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <h4 class="card-title mb-3">Sale Analysis Trend</h4>
-                    </div>
-                    <div class="mt-2">
-                        <div class="d-flex justify-content-between">
-                            <small>Order Value</small>
-                            <small>155.5%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 80%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between">
-                            <small>Total Products</small>
-                            <small>238.2%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 mb-5">
-                        <div class="d-flex justify-content-between">
-                            <small>Quantity</small>
-                            <small>23.30%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 70%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <canvas id="salesTopChart" width="425" height="212"
-                        style="display: block; height: 170px; width: 340px;" class="chartjs-render-monitor"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-8 d-flex grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <h4 class="card-title mb-3">Latest Orders</h4>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Invoice ID</th>
-                                    <th>Name</th>
-                                    <th>Total Amount</th>
-                                    <th>Status</th>
-                                    <th>Delivery Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>HD001</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face30.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Quốc Đạt</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$2322</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            88%
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">07 Nov 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-                                <tr>
-                                    <td>HD002</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face31.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Quốc Huy</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$12022</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            done
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">08 Nov 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
+            <head>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+            </head>
 
-                                <tr>
-                                    <td>HD003</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face32.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Vũ Quân</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$8,725</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            87%
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">11 Jun 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
+            <style>
+                .stat-row {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                    justify-content: space-between;
+                }
 
-                                <tr>
-                                    <td>HD004</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face33.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Huỳnh Tự</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$5,220</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            done
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">26 Oct 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                .stat-card {
+                    flex: 1 1 calc(25% - 0.75rem);
+                    min-width: 150px;
+                    max-width: calc(25% - 0.75rem);
+                    background: #fff;
+                    border-radius: 15px;
+                    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+                    transition: transform 0.2s ease;
+                }
+
+                .stat-card:hover {
+                    transform: translateY(-3px);
+                }
+
+                .stat-card .card-body {
+                    padding: 1.25rem;
+                }
+
+                .stat-value {
+                    font-size: 1.7rem;
+                    font-weight: 700;
+                }
+
+                .stat-label {
+                    color: #6c757d;
+                    margin-bottom: 6px;
+                }
+
+                .stat-badge {
+                    font-size: 0.75rem;
+                    border-radius: 50px;
+                    padding: 4px 9px;
+                }
+
+                .stat-icon {
+                    width: 55px;
+                    height: 55px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.4rem;
+                }
+
+                .chart-container {
+                    background: #fff;
+                    border-radius: 15px;
+                    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+                    margin-top: 1.5rem;
+                }
+
+                .chart-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 1.5rem;
+                    border-bottom: 1px solid #eee;
+                }
+
+                .chart-legend {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 1.5rem;
+                }
+
+                .chart-title {
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                    margin-right: 1rem;
+                }
+
+                .legend-item {
+                    font-size: 0.85rem;
+                    color: #333;
+                    display: flex;
+                    align-items: center;
+                    font-weight: 500;
+                }
+
+                .legend-color {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    margin-right: 5px;
+                }
+
+                .legend-item.purple .legend-color {
+                    background-color: #8c57ff;
+                }
+
+                .legend-item.green .legend-color {
+                    background-color: #00c853;
+                }
+
+                .legend-item.orange .legend-color {
+                    background-color: #ff9800;
+                }
+
+                .chart-time-select .btn {
+                    background-color: #f8f9fa;
+                    color: #6c757d;
+                    border: 1px solid #dee2e6;
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                    font-size: 0.85rem;
+                }
+
+                .chart-body {
+                    padding: 1.5rem;
+                    min-height: 350px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .chart-placeholder {
+                    width: 100%;
+                    height: 100%;
+
+                }
+
+                .chart-filters {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.75rem;
+                    align-items: center;
+                    margin-bottom: 1rem;
+                }
+
+                .filter-item {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .filter-item label {
+                    font-size: 0.85rem;
+                    margin-bottom: 0.25rem;
+                    color: #555;
+                }
+
+                .filter-item .form-select {
+                    padding: 0.35rem 0.6rem;
+                    border-radius: 8px;
+                    border: 1px solid #ccc;
+                    font-size: 0.9rem;
+                    min-width: 80px;
+                    background-color: #fff;
+                    transition: border-color 0.2s ease;
+                }
+
+                .filter-item .form-select:focus {
+                    border-color: #8c57ff;
+                    outline: none;
+                    box-shadow: 0 0 3px rgba(140, 87, 255, 0.4);
+                }
+            </style>
+
+
+            <div class="main-panel">
+                <div class="content-wrapper">
+
+                    <div class="stat-row">
+                        <div class="card stat-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-value" id="totalProducts">${totalProducts}</div>
+                                    <div class="stat-label">Tổng số sản phẩm</div>
+                                </div>
+                                <div class="stat-icon" style="background-color: #E3FCEC;">
+                                    <i class="fas fa-box text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tổng voucher -->
+                        <div class="card stat-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-value" id="totalVouchers">${totalVouchers}</div>
+                                    <div class="stat-label">Tổng số voucher</div>
+                                </div>
+                                <div class="stat-icon" style="background-color: #EAE4FF;">
+                                    <i class="fas fa-ticket-alt text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tổng đơn hàng -->
+                        <div class="card stat-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-value" id="totalOrders">${totalOrders}</div>
+                                    <div class="stat-label">Tổng số đơn hàng</div>
+                                </div>
+                                <div class="stat-icon" style="background-color: #FFE9E3;">
+                                    <i class="fas fa-shopping-cart text-danger"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tổng doanh thu -->
+                        <div class="card stat-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="stat-value" id="totalRevenue">${totalRevenue}</div>
+                                    <div class="stat-label">Doanh thu (vnd)</div>
+                                </div>
+                                <div class="stat-icon" style="background-color: #FFF1E3;">
+                                    <i class="fas fa-coins text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <div class="card chart-container">
+                        <div class="card-header chart-header"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            <div class="chart-legend">
+                                <span class="chart-title">Revenue Report</span>
+                                <!-- <span class="legend-item purple"><span class="legend-color"></span>Earnings</span>
+                                <span class="legend-item green"><span class="legend-color"></span>Invested</span>
+                                <span class="legend-item orange"><span class="legend-color"></span>Expenses</span> -->
+                            </div>
+                            <div class="chart-controls" style="display:flex; gap:0.5rem;">
+                                <!-- Kiểu biểu đồ -->
+                                <!-- Kiểu biểu đồ -->
+                                <div class="filter-item">
+                                    <label for="chartType">Chart:</label>
+                                    <select id="chartType" class="form-select">
+                                        <option value="line" selected>Line</option>
+                                        <option value="bar">Bar</option>
+                                    </select>
+                                </div>
+
+                                <!-- From month -->
+                                <div class="filter-item">
+                                    <label for="monthStart">From:</label>
+                                    <select id="monthStart" class="form-select">
+                                        <option value="0">Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                        <option value="4">May</option>
+                                        <option value="5">Jun</option>
+                                        <option value="6">Jul</option>
+                                        <option value="7">Aug</option>
+                                        <option value="8">Sep</option>
+                                        <option value="9">Oct</option>
+                                        <option value="10">Nov</option>
+                                        <option value="11">Dec</option>
+                                    </select>
+                                </div>
+
+                                <!-- To month -->
+                                <div class="filter-item">
+                                    <label for="monthEnd">To:</label>
+                                    <select id="monthEnd" class="form-select">
+                                        <option value="0">Jan</option>
+                                        <option value="1">Feb</option>
+                                        <option value="2">Mar</option>
+                                        <option value="3">Apr</option>
+                                        <option value="4">May</option>
+                                        <option value="5" selected>Jun</option>
+                                        <option value="6">Jul</option>
+                                        <option value="7">Aug</option>
+                                        <option value="8">Sep</option>
+                                        <option value="9">Oct</option>
+                                        <option value="10">Nov</option>
+                                        <option value="11">Dec</option>
+                                    </select>
+                                </div>
+
+                                <!-- Year -->
+                                <div class="filter-item">
+                                    <label for="chartYear">Year:</label>
+                                    <select id="chartYear" class="form-select">
+                                        <c:forEach var="y" begin="2020" end="2025">
+                                            <option value="${y}">${y}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body chart-body">
+                            <canvas id="revenueChart" style="width:100%; height:350px;"></canvas>
+                        </div>
+                    </div>
+
                 </div>
+                <!-- content-wrapper ends -->
+                <!-- partial -->
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <script>
+                    const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                    function generateDataRange(startMonth, endMonth) {
+                        const labels = [];
+                        const earnings = [];
+                        const invested = [];
+                        const expenses = [];
+                        for (let i = startMonth; i <= endMonth; i++) {
+                            labels.push(monthsAbbr[i]);
+                            earnings.push(Math.floor(Math.random() * 4000 + 1000));
+                            invested.push(Math.floor(Math.random() * 3000 + 1000));
+                            expenses.push(Math.floor(Math.random() * 2000 + 500));
+                        }
+                        return { labels, earnings, invested, expenses };
+                    }
+
+                    let ctx = document.getElementById('revenueChart').getContext('2d');
+                    let revenueChart;
+
+                    function createChart(type, dataObj) {
+                        revenueChart = new Chart(ctx, {
+                            type: type,
+                            data: {
+                                labels: dataObj.labels,
+                                datasets: [
+                                    {
+                                        label: 'Earnings',
+                                        data: dataObj.earnings,
+                                        borderColor: '#8c57ff',
+                                        backgroundColor: type === 'pie' ? '#8c57ff' : 'rgba(140,87,255,0.2)',
+                                        fill: type !== 'pie',
+                                        tension: 0.3,
+                                        pointRadius: 5,
+                                        pointHoverRadius: 8
+                                    },
+                                    {
+                                        label: 'Invested',
+                                        data: dataObj.invested,
+                                        borderColor: '#00c853',
+                                        backgroundColor: type === 'pie' ? '#00c853' : 'rgba(0,200,83,0.2)',
+                                        fill: type !== 'pie',
+                                        tension: 0.3,
+                                        pointRadius: 5,
+                                        pointHoverRadius: 8
+                                    },
+                                    {
+                                        label: 'Expenses',
+                                        data: dataObj.expenses,
+                                        borderColor: '#ff9800',
+                                        backgroundColor: type === 'pie' ? '#ff9800' : 'rgba(255,152,0,0.2)',
+                                        fill: type !== 'pie',
+                                        tension: 0.3,
+                                        pointRadius: 5,
+                                        pointHoverRadius: 8
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { display: true },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                if (context.parsed?.y !== undefined) {
+                                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString('vi-VN') + ' VND';
+                                                } else {
+                                                    return context.dataset.label + ': ' + context.raw.toLocaleString('vi-VN') + ' VND';
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: type === 'pie' ? {} : { y: { beginAtZero: true } }
+                            }
+                        });
+                    }
+
+                    function updateChart() {
+                        const type = document.getElementById('chartType').value;
+                        const start = parseInt(document.getElementById('monthStart').value);
+                        const end = parseInt(document.getElementById('monthEnd').value);
+                        const year = parseInt(document.getElementById('chartYear').value);
+
+                        if (end < start) {
+                            alert('Tháng kết thúc phải lớn hơn hoặc bằng tháng bắt đầu!');
+                            return;
+                        }
+
+                        const dataObj = generateDataRange(start, end);
+
+                        if (revenueChart) revenueChart.destroy();
+                        createChart(type, dataObj);
+                    }
+
+                    document.getElementById('chartType').addEventListener('change', updateChart);
+                    document.getElementById('monthStart').addEventListener('change', updateChart);
+                    document.getElementById('monthEnd').addEventListener('change', updateChart);
+                    document.getElementById('chartYear').addEventListener('change', updateChart);
+
+                    // Khởi tạo chart lần đầu
+                    updateChart();
+                </script>
             </div>
-        </div>
-    </div>
-    <!-- content-wrapper ends -->
-    <!-- partial:partials/_footer.html -->
-    <footer class="footer">
-        <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-center text-sm-left d-block d-sm-inline-block">Copyright ©
-                <a href="https://www.bootstrapdash.com/" target="_blank">bootstrapdash.com</a>
-                2020</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Free
-                <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap dashboard </a>templates from
-                Bootstrapdash.com</span>
-        </div>
-    </footer>
-    <!-- partial -->
-</div>

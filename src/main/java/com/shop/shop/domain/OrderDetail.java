@@ -1,5 +1,7 @@
 package com.shop.shop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,17 +28,22 @@ public class OrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "orderId", nullable = false)
+    @JsonIgnoreProperties({"orderDetails"})
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "productId", nullable = false)
+    @JsonIgnoreProperties({ "orderDetails" })
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "shopId", nullable = false)
+    @JsonIgnoreProperties({ "orderDetails" })
     private Shop shop;
 
     private Long quantity;
 
     private Double price;
+
+    
 }
