@@ -13,4 +13,6 @@ public interface CartService {
     void deleteCartDetail(Long cartDetailId);
 
     void updateCart(Cart cartFromForm);
+
+    boolean handleCheckout(User user, String payment);
 }

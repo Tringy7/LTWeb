@@ -52,6 +52,14 @@
                                                 <tbody>
                                                     <c:forEach var="item" items="${cart.cartDetails}"
                                                         varStatus="status">
+                                                        <form:hidden path="cart.cartDetails[${i.index}].product.id"
+                                                            value="${item.product.id}" />
+                                                        <form:hidden path="cart.cartDetails[${i.index}].quantity"
+                                                            value="${item.quantity}" />
+                                                        <form:hidden path="cart.cartDetails[${i.index}].price"
+                                                            value="${item.price}" />
+                                                        <form:hidden path="cart.cartDetails[${i.index}].size"
+                                                            value="${item.size}" />
                                                         <input type="hidden" name="cartDetails[${status.index}].id"
                                                             value="${item.id}" />
                                                         <tr class="cart-item-row">

@@ -1,5 +1,6 @@
 package com.shop.shop.service.client.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,17 @@ import org.springframework.stereotype.Service;
 
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
+import com.shop.shop.domain.Order;
+import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.domain.Product;
+import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.User;
 import com.shop.shop.dto.ProductDTO;
 import com.shop.shop.repository.client.CartDetailRepository;
 import com.shop.shop.repository.client.CartRepository;
+import com.shop.shop.repository.client.OrderRepository;
 import com.shop.shop.service.client.CartService;
+import com.shop.shop.service.client.ProductDetailService;
 import com.shop.shop.service.client.ProductService;
 
 import jakarta.transaction.Transactional;
@@ -28,6 +34,12 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductDetailService productDetailService;
 
     @Override
     @Transactional
@@ -102,6 +114,60 @@ public class CartServiceImpl implements CartService {
             }
             // 6. Cập nhật tổng giá trị cho toàn bộ giỏ hàng.
             cartInDB.setTotalPrice(newTotalCartPrice);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean handleCheckout(User user, String payment) {
+        Cart cart = cartRepository.findByUser(user);
+        if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
+            return false;
+        }
+
+        try {
+            // Create a new Order
+            Order order = new Order();
+            order.setUser(user);
+            order.setTotalPrice(cart.getTotalPrice());
+            order.setPaymentMethod(payment);
+            order.setStatus("PENDING");
+
+            // Create OrderDetail list from CartDetail list
+            List<OrderDetail> orderDetails = new ArrayList<>();
+            for (CartDetail cd : cart.getCartDetails()) {
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setOrder(order);
+                orderDetail.setProduct(cd.getProduct());
+                orderDetail.setPrice(cd.getPrice());
+                orderDetail.setQuantity(cd.getQuantity());
+                orderDetail.setShop(cd.getProduct().getShop());
+                orderDetail.setSize(cd.getSize());
+                orderDetails.add(orderDetail);
+
+                // Update product quantity
+                ProductDetail productDetail = productDetailService.findByProductAndSize(cd.getProduct(), cd.getSize());
+                if (productDetail != null) {
+                    productDetail.setQuantity(productDetail.getQuantity() - cd.getQuantity());
+                    productDetail.setSold(productDetail.getSold() + cd.getQuantity());
+                }
+            }
+            order.setOrderDetails(orderDetails);
+
+            // Save the order
+            orderRepository.save(order);
+
+            // Clear the cart
+            cartDetailRepository.deleteAll(cart.getCartDetails());
+            // Important: Clear the list in the parent entity to break the association
+            cart.getCartDetails().clear();
+            cart.setTotalPrice(0.0);
+            cartRepository.save(cart);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

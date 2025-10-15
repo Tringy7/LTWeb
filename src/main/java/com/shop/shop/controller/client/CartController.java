@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
@@ -62,9 +64,29 @@ public class CartController {
         User user = userAfterLogin.getUser();
         Cart cart = cartService.getCart(user);
         UserAddress userAddress = userService.handlUserAddress(user);
+        model.addAttribute("user", user);
         model.addAttribute("cart", cart);
-        model.addAttribute("userAddress", userAddress);
+
         return "client/cart/checkout";
+    }
+
+    @PostMapping("/checkout")
+    public String handleCheckout(@RequestParam("paymentMethod") String payment, RedirectAttributes redirectAttributes) {
+        User currentUser = userAfterLogin.getUser();
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        boolean isSuccess = cartService.handleCheckout(currentUser, payment);
+        if (isSuccess) {
+            return "client/cart/success";
+        }
+        redirectAttributes.addFlashAttribute("error", "Thanh toán không thành công, vui lòng thử lại!");
+        return "redirect:/checkout";
+    }
+
+    @GetMapping("/success")
+    public String success() {
+        return "client/cart/success";
     }
 
 }

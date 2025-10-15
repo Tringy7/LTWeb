@@ -109,165 +109,185 @@
                         <div class="container-fluid bg-light overflow-hidden py-5">
                             <div class="container py-5">
                                 <h1 class="mb-4 wow fadeInUp" data-wow-delay="0.1s">Billing details</h1>
+                                <form:form action="/checkout" method="post" modelAttribute="user">
 
-                                <div class="row g-5">
+                                    <form:hidden path="cart" />
+                                    <div class="row g-5">
 
-                                    <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-                                        <form:form action="/checkout" method="post" modelAttribute="userAddress">
+                                        <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
+
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="form-item w-100">
                                                         <label class="form-label my-3">Tên người nhận
                                                             <sup>*</sup></label>
-                                                        <form:input path="receiverName" type="text"
+                                                        <form:input path="address.receiverName" type="text"
                                                             class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Địa chỉ người nhận <sup>*</sup></label>
-                                                <form:input path="receiverAddress" type="text" class="form-control" />
+                                                <form:input path="address.receiverAddress" type="text"
+                                                    class="form-control" />
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Số điện thoại người nhận
                                                     <sup>*</sup></label>
-                                                <form:input path="receiverPhone" type="tel" class="form-control" />
+                                                <form:input path="address.receiverPhone" type="tel"
+                                                    class="form-control" />
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Ghi chú cho người bán</label>
-                                                <form:textarea path="note" name="text" class="form-control"
+                                                <form:textarea path="address.note" name="text" class="form-control"
                                                     spellcheck="false" cols="30" rows="11" placeholder="Ghi chú" />
                                             </div>
-                                        </form:form>
-                                    </div>
-                                    <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.3s">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr class="text-center">
-                                                        <th scope="col">Image</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Size</th>
-                                                        <th scope="col">Shop</th>
-                                                        <th scope="col">Price</th>
-                                                        <th scope="col">Quantity</th>
-                                                        <th scope="col">Total</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="item" items="${cart.cartDetails}">
+
+                                        </div>
+                                        <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.3s">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
                                                         <tr class="text-center">
-                                                            <th scope="row">
-                                                                <div class="d-flex align-items-center">
-                                                                    <img src="/admin/images/product/${item.product.image}"
-                                                                        class="img-fluid me-5 rounded"
-                                                                        style="width: 80px; height: 80px;" alt="">
+                                                            <th scope="col">Image</th>
+                                                            <th scope="col">Name</th>
+                                                            <th scope="col">Size</th>
+                                                            <th scope="col">Shop</th>
+                                                            <th scope="col">Price</th>
+                                                            <th scope="col">Quantity</th>
+                                                            <th scope="col">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td colspan="7">
+                                                                <div style="max-height: 260px; overflow-y: auto;">
+                                                                    <c:forEach var="item" items="${cart.cartDetails}">
+                                                                        <div class="row text-center mx-0">
+                                                                            <div
+                                                                                class="col-2 d-flex align-items-center">
+                                                                                <img src="/admin/images/product/${item.product.image}"
+                                                                                    class="img-fluid rounded"
+                                                                                    style="width: 80px; height: 80px;"
+                                                                                    alt="">
+                                                                            </div>
+                                                                            <div class="col-2 py-5">${item.product.name}
+                                                                            </div>
+                                                                            <div class="col-1 py-5">${item.size}</div>
+                                                                            <div class="col-2 py-5">
+                                                                                ${item.product.shop.shopName}</div>
+                                                                            <div class="col-2 py-5">
+                                                                                <fmt:formatNumber
+                                                                                    value="${item.product.price}"
+                                                                                    type="currency" currencySymbol=""
+                                                                                    minFractionDigits="0"
+                                                                                    maxFractionDigits="0" />
+                                                                                VND
+                                                                            </div>
+                                                                            <div class="col-1 py-5">${item.quantity}
+                                                                            </div>
+                                                                            <div class="col-2 py-5">
+                                                                                <fmt:formatNumber value="${item.price}"
+                                                                                    type="currency" currencySymbol=""
+                                                                                    minFractionDigits="0"
+                                                                                    maxFractionDigits="0" />
+                                                                                VND
+                                                                            </div>
+                                                                        </div>
+                                                                    </c:forEach>
                                                                 </div>
-                                                            </th>
-                                                            <td class="py-5">${item.product.name}</td>
-                                                            <td class="py-5">${item.size}</td>
-                                                            <td class="py-5">${item.product.shop.shopName}</td>
-                                                            <td class="py-5">
-                                                                <fmt:formatNumber value="${item.product.price}"
-                                                                    type="currency" currencySymbol=""
-                                                                    minFractionDigits="0" maxFractionDigits="0" />
-                                                                VND
-                                                            </td>
-                                                            <td class="py-5">${item.quantity}</td>
-                                                            <td class="py-5">
-                                                                <fmt:formatNumber value="${item.price}" type="currency"
-                                                                    currencySymbol="" minFractionDigits="0"
-                                                                    maxFractionDigits="0" />
-                                                                VND
                                                             </td>
                                                         </tr>
-                                                    </c:forEach>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="d-flex justify-content-end">
-                                            <h5 class="mb-0 me-4">Total:</h5>
-                                            <p class="mb-0">
-                                                <fmt:formatNumber value="${cart.totalPrice}" type="currency"
-                                                    currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
-                                                VND
-                                            </p>
-                                        </div>
-                                        <div
-                                            class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
-                                            <div class="col-12">
-                                                <div class="form-check text-start my-2">
-                                                    <input type="checkbox" class="form-check-input bg-primary border-0"
-                                                        id="Transfer-1" name="Transfer" value="Transfer">
-                                                    <label class="form-check-label" for="Transfer-1">Direct Bank
-                                                        Transfer</label>
-                                                </div>
-                                                <p class="text-start text-dark">Make your payment directly into our
-                                                    bank
-                                                    account. Please
-                                                    use your Order ID as the payment reference. Your order will not
-                                                    be
-                                                    shipped until the
-                                                    funds have cleared in our account.</p>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        </div>
-                                        <div
-                                            class="row g-4 text-center align-items-center justify-content-center border-bottom py-2">
-                                            <div class="col-12">
-                                                <div class="form-check text-start my-2">
-                                                    <input type="checkbox" class="form-check-input bg-primary border-0"
-                                                        id="Payments-1" name="Payments" value="Payments">
-                                                    <label class="form-check-label" for="Payments-1">Check
-                                                        Payments</label>
+                                            <div class="d-flex justify-content-end">
+                                                <h5 class="mb-0 me-4">Total:</h5>
+                                                <p class="mb-0">
+                                                    <fmt:formatNumber value="${user.cart.totalPrice}" type="currency"
+                                                        currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
+                                                    VND
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
+                                                <div class="col-12">
+                                                    <div class="form-check text-start my-2">
+                                                        <input type="radio" class="form-check-input bg-primary border-0"
+                                                            checked id="Transfer-1" name="paymentMethod"
+                                                            value="Direct Bank Transfer">
+                                                        <label class="form-check-label" for="Transfer-1">Direct Bank
+                                                            Transfer</label>
+                                                    </div>
+                                                    <p class="text-start text-dark">Make your payment directly into our
+                                                        bank
+                                                        account. Please
+                                                        use your Order ID as the payment reference. Your order will not
+                                                        be
+                                                        shipped until the
+                                                        funds have cleared in our account.</p>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div
-                                            class="row g-4 text-center align-items-center justify-content-center border-bottom py-2">
-                                            <div class="col-12">
-                                                <div class="form-check text-start my-2">
-                                                    <input type="checkbox" class="form-check-input bg-primary border-0"
-                                                        id="Delivery-1" name="Delivery" value="Delivery">
-                                                    <label class="form-check-label" for="Delivery-1">Cash On
-                                                        Delivery</label>
+                                            <div
+                                                class="row g-4 text-center align-items-center justify-content-center border-bottom py-2">
+                                                <div class="col-12">
+                                                    <div class="form-check text-start my-2">
+                                                        <input type="radio" class="form-check-input bg-primary border-0"
+                                                            id="Payments-1" name="paymentMethod" value="Check Payments">
+                                                        <label class="form-check-label" for="Payments-1">Check
+                                                            Payments</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div
-                                            class="row g-4 text-center align-items-center justify-content-center border-bottom py-2">
-                                            <div class="col-12">
-                                                <div class="form-check text-start my-2">
-                                                    <input type="checkbox" class="form-check-input bg-primary border-0"
-                                                        id="Paypal-1" name="Paypal" value="Paypal">
-                                                    <label class="form-check-label" for="Paypal-1">Paypal</label>
+                                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
+                                                data-wow-delay="0.1s">
+                                                <div class="col-12">
+                                                    <div class="form-check text-start my-2">
+                                                        <input type="radio" class="form-check-input bg-primary border-0"
+                                                            id="Delivery-1" name="paymentMethod"
+                                                            value="Cash On Delivery">
+                                                        <label class="form-check-label" for="Delivery-1">Cash On
+                                                            Delivery</label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-                                            <button type="button"
-                                                class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place
-                                                Order</button>
+                                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
+                                                data-wow-delay="0.2s">
+                                                <div class="col-12">
+                                                    <div class="form-check text-start my-2">
+                                                        <input type="radio" class="form-check-input bg-primary border-0"
+                                                            id="Paypal-1" name="paymentMethod" value="Paypal">
+                                                        <label class="form-check-label" for="Paypal-1">Paypal</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="row g-4 text-center align-items-center justify-content-center pt-4">
+                                                <button type="submit"
+                                                    class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place
+                                                    Order</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form:form>
                             </div>
-                        </div>
-                        <!-- Checkout Page End -->
+                            <!-- Checkout Page End -->
 
-                        <!-- Back to Top -->
-                        <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
-
-
-                        <!-- JavaScript Libraries -->
-                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-                        <script
-                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-                        <script src="/client/lib/wow/wow.min.js"></script>
-                        <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
+                            <!-- Back to Top -->
+                            <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i
+                                    class="fa fa-arrow-up"></i></a>
 
 
-                        <!-- Template Javascript -->
-                        <script src="/client/js/main.js"></script>
+                            <!-- JavaScript Libraries -->
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+                            <script
+                                src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+                            <script src="/client/lib/wow/wow.min.js"></script>
+                            <script src="/client/lib/owlcarousel/owl.carousel.min.js"></script>
+
+
+                            <!-- Template Javascript -->
+                            <script src="/client/js/main.js"></script>
                     </body>
 
                     </html>

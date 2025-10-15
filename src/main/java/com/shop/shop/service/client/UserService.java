@@ -6,4 +6,6 @@ import com.shop.shop.domain.UserAddress;
 public interface UserService {
 
     UserAddress handlUserAddress(User user);
+
+    User findById(Long id);
 }
