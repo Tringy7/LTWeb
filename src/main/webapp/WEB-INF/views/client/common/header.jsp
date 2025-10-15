@@ -1,47 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-        <!-- Topbar Start -->
-        <div class="container-fluid px-5 d-none border-bottom d-lg-block">
-            <div class="row gx-0 align-items-center">
-                <div class="col-lg-4 text-center text-lg-start mb-lg-0">
-                    <div class="d-inline-flex align-items-center" style="height: 45px;">
-                        <a href="#" class="text-muted me-2"> Help</a><small> / </small>
-                        <a href="#" class="text-muted mx-2"> Support</a><small> / </small>
-                        <a href="#" class="text-muted ms-2"> Contact</a>
-
-                    </div>
-                </div>
-                <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
-                    <small class="text-dark">Call Us:</small>
-                    <a href="#" class="text-muted">(+84) 346500557</a>
-                </div>
-
-                <div class="col-lg-4 text-center text-lg-end">
-                    <div class="d-inline-flex align-items-center" style="height: 45px;">
-                        <div class="dropdown">
-                            <a href="/" class="dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown"><small><i
-                                        class="fa fa-home me-2"></i> My Dashboard</small></a>
-                            <div class="dropdown-menu rounded">
-                                <a href="/login" class="dropdown-item"> Login</a>
-                                <a href="#" class="dropdown-item"> Wishlist</a>
-                                <a href="#" class="dropdown-item"> My Card</a>
-                                <a href="#" class="dropdown-item"> Notifications</a>
-                                <a href="#" class="dropdown-item"> Account Settings</a>
-                                <a href="#" class="dropdown-item"> My Account</a>
-                                <a href="/logout" class="dropdown-item"> Log Out</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="container-fluid px-5 py-4 d-none d-lg-block">
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo bên trái -->
                 <div>
                     <a href="" class="navbar-brand p-0">
                         <h1 class="display-5 text-primary m-0">
-                            <i class="fas fa-shopping-bag text-secondary me-2"></i>Electro
+                            <i class="fas fa-shopping-bag text-secondary me-2"></i>Fashion
                         </h1>
                     </a>
                 </div>
@@ -76,7 +41,7 @@
                     <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
                         <a href="" class="navbar-brand d-block d-lg-none">
                             <h1 class="display-5 text-secondary m-0"><i
-                                    class="fas fa-shopping-bag text-white me-2"></i>Electro
+                                    class="fas fa-shopping-bag text-white me-2"></i>Fashion
                             </h1>
                             <!-- <img src="img/logo.png" alt="Logo"> -->
                         </a>
@@ -88,58 +53,18 @@
                             <div class="navbar-nav ms-auto py-0">
                                 <a href="/" class="nav-item nav-link">Home</a>
                                 <a href="/shop" class="nav-item nav-link">Shop</a>
-                                <a href="single.html" class="nav-item nav-link">Single Page</a>
                                 <div class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Setting</a>
                                     <div class="dropdown-menu m-0">
-                                        <a href="bestseller.html" class="dropdown-item">Bestseller</a>
-                                        <a href="cart.html" class="dropdown-item">Cart Page</a>
-                                        <a href="cheackout.html" class="dropdown-item">Cheackout</a>
-                                        <a href="404.html" class="dropdown-item">404 Page</a>
+                                        <a href="bestseller.html" class="dropdown-item">My Account</a>
+                                        <a href="/voucher" class="dropdown-item">My voucher</a>
+                                        <a href="/order" class="dropdown-item">History</a>
+                                        <a href="/login" class="dropdown-item">Log in</a>
+                                        <a href="/logout" class="dropdown-item">Log out</a>
                                     </div>
                                 </div>
-                                <a href="contact.html" class="nav-item nav-link me-2">Contact</a>
-                                <div class="nav-item dropdown d-block d-lg-none mb-3">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">All
-                                        Category</a>
-                                    <div class="dropdown-menu m-0">
-                                        <ul class="list-unstyled categories-bars">
-                                            <li>
-                                                <div class="categories-bars-item">
-                                                    <a href="#">Accessories</a>
-                                                    <span>(3)</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="categories-bars-item">
-                                                    <a href="#">Electronics & Computer</a>
-                                                    <span>(5)</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="categories-bars-item">
-                                                    <a href="#">Laptops & Desktops</a>
-                                                    <span>(2)</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="categories-bars-item">
-                                                    <a href="#">Mobiles & Tablets</a>
-                                                    <span>(8)</span>
-                                                </div>
-                                            </li>
-                                            <li>
-                                                <div class="categories-bars-item">
-                                                    <a href="#">SmartPhone & Smart TV</a>
-                                                    <span>(5)</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                <a href="/contact" class="nav-item nav-link me-2">Contact</a>
                             </div>
-                            <a href="" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i
-                                    class="fa fa-mobile-alt me-2"></i> +0123 456 7890</a>
                         </div>
                     </nav>
                 </div>
