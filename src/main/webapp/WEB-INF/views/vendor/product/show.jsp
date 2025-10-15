@@ -121,6 +121,15 @@
                                 font-size: 0.95rem;
                                 border-radius: 12px;
                             }
+
+                            .btn-lift:hover {
+                                transform: translateY(-3px);
+                                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+                            }
+
+                            .btn-lift {
+                                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                            }
                         </style>
                     </head>
 
@@ -151,22 +160,22 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label fw-bold text-muted">Lọc theo Danh mục</label>
-                                            <select name="category" class="form-select">
+                                            <select name="category" class="form-select" onchange="this.form.submit()">
                                                 <option value="">-- Tất cả Danh mục --</option>
-                                                <option value="Thời trang nam" ${param.category=='Thời trang nam'
-                                                    ? 'selected' :''}>Thời trang nam</option>
-                                                <option value="Thời trang nữ" ${param.category=='Thời trang nữ'
-                                                    ? 'selected' :''}>Thời trang nữ</option>
-                                                <option value="Phụ kiện" ${param.category=='Phụ kiện' ? 'selected' :''}>
-                                                    Phụ kiện</option>
+                                                <c:forEach var="cat" items="${categories}">
+                                                    <option value="${cat}" ${param.category==cat ? 'selected' :''}>
+                                                        ${cat}</option>
+                                                </c:forEach>
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 text-end">
                                             <a href="${pageContext.request.contextPath}/vendor/product/add"
-                                                class="btn btn-success fw-bold w-100 shadow-sm">
+                                                class="btn btn-success fw-bold w-100 shadow-sm btn-lift">
                                                 <i class="fas fa-plus me-1"></i> Thêm Sản phẩm
                                             </a>
                                         </div>
+
                                     </form>
                                 </div>
                             </div>

@@ -320,6 +320,19 @@
                         .modal-footer button {
                             min-width: 100px;
                         }
+
+                        .btn-lift:hover {
+                            transform: translateY(-3px);
+                            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+                        }
+
+                        .btn-lift {
+                            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                        }
+
+                        .top-spacing {
+                            margin-top: 30px;
+                        }
                     </style>
 
                     <div class="main-panel">
@@ -331,11 +344,11 @@
                                     <!-- Card Header Quản lý sự kiện -->
                                     <div class="card text-white w-100" style="border-radius: 15px 15px 0 0;">
                                         <div class="card-header card-header-custom d-flex justify-content-between align-items-center"
-                                            style="background: linear-gradient(135deg, #396afc, #2948ff); 
+                                            style="background: linear-gradient(135deg, #396afc, #35edbc); 
                                                         border-radius: 15px 15px 0 0; 
                                                         padding: 20px 30px;">
-                                            <h4 class="mb-0 fs-4"><i class="fas fa-ticket-alt me-2"></i>QUẢN LÝ SỰ KIỆN
-                                            </h4>
+                                            <h3 class="mb-0 fs-4"><i class="fas fa-ticket-alt me-2"></i>QUẢN LÝ SỰ KIỆN
+                                            </h3>
                                             <span class="badge bg-light text-dark event-count fs-6">
                                                 <i class="fas fa-calendar-alt me-1"></i> Tổng: ${fn:length(vouchers)} sự
                                                 kiện
@@ -351,21 +364,25 @@
                                     <div class="card promo-card"
                                         style="border-radius: 0 0 15px 15px; margin-top: -5px;">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <div class="d-flex justify-content-between align-items-center mb-1"
+                                                style="margin-top: -15px;">
                                                 <!-- Filter -->
                                                 <div class="btn-group" role="group" id="filter-group">
-                                                    <button type="button" class="btn btn-sm btn-primary active"
+                                                    <button type="button" class="btn btn-sm btn-primary active btn-lift"
                                                         data-filter="all">All
                                                         Promos</button>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-lift"
                                                         data-filter="active">Active</button>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-lift"
                                                         data-filter="upcoming">Upcoming</button>
-                                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-lift"
                                                         data-filter="expired">Expired</button>
                                                 </div>
-                                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                                    data-bs-target="#newCouponModal">
+                                                <button type="button" class="btn btn-success btn-lift"
+                                                    data-bs-toggle="modal" data-bs-target="#newCouponModal">
                                                     <i class="fa-solid fa-plus"></i> Add Coupon
                                                 </button>
                                             </div>
@@ -373,7 +390,8 @@
                                             <hr class="custom-divider">
 
                                             <!-- Coupons -->
-                                            <div class="row">
+                                            <div class="row top-spacing">
+
                                                 <c:forEach var="voucher" items="${vouchers}">
                                                     <c:set var="statusClass">
                                                         <c:choose>
@@ -414,8 +432,8 @@
                                                                 <span
                                                                     class="public-badge badge-${statusClass}">${voucher.status}</span>
                                                             </div>
-                                                            <div class="circle1"></div>
-                                                            <div class="circle2"></div>
+                                                            <!-- <div class="circle1"></div>
+                                                            <div class="circle2"></div> -->
                                                         </div>
                                                     </div>
                                                 </c:forEach>

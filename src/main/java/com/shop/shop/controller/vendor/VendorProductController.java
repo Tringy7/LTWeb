@@ -31,11 +31,31 @@ public class VendorProductController {
     }
 
     @GetMapping("/vendor/product")
-    public String showProducts(Model model) {
-        List<Product> products = productService.getProductsByShopId(SHOP_ID);
+    public String showProducts(
+            Model model,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "category", required = false) String category) {
+
+        List<Product> products;
+
+        if ((keyword != null && !keyword.isEmpty()) && (category != null && !category.isEmpty())) {
+            products = productService.searchProductsByNameAndCategory(SHOP_ID, keyword, category);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            products = productService.searchProductsByName(SHOP_ID, keyword);
+        } else if (category != null && !category.isEmpty()) {
+            products = productService.getProductsByShopIdAndCategory(SHOP_ID, category);
+        } else {
+            products = productService.getProductsByShopId(SHOP_ID);
+        }
+
         products.forEach(p -> p.getProductDetails().size());
         model.addAttribute("products", products);
         model.addAttribute("product", new Product());
+
+        // Lấy danh sách category hiện có
+        List<String> categories = productService.getCategoriesByShopId(SHOP_ID);
+        model.addAttribute("categories", categories);
+
         return "vendor/product/show";
     }
 

@@ -39,4 +39,21 @@ public class ProductService {
     public Optional<Product> getProductByIdAndShopId(Long id, Long shopId) {
         return productRepository.findByIdAndShopId(id, shopId);
     }
+
+    public List<Product> searchProductsByName(Long shopId, String keyword) {
+        return productRepository.findByShopIdAndNameContaining(shopId, keyword);
+    }
+
+    public List<String> getCategoriesByShopId(Long shopId) {
+        return productRepository.findDistinctCategoriesByShopId(shopId);
+    }
+
+    public List<Product> getProductsByShopIdAndCategory(Long shopId, String category) {
+        return productRepository.findByShopIdAndCategory(shopId, category);
+    }
+
+    public List<Product> searchProductsByNameAndCategory(Long shopId, String keyword, String category) {
+        return productRepository.findByShopIdAndNameAndCategory(shopId, keyword, category);
+    }
+
 }

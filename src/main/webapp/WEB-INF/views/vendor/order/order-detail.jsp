@@ -78,6 +78,15 @@
                         background-color: #f8f9fa;
                         text-align: end;
                     }
+
+                    .btn-lift:hover {
+                                transform: translateY(-3px);
+                                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+                            }
+
+                            .btn-lift {
+                                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                            }
                 </style>
             </head>
 
@@ -90,7 +99,7 @@
                         <div class="card-body p-4">
 
                             <!-- Thông tin đơn hàng -->
-                            <div class="row mb-4">
+                            <div class="row mb-1">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Mã đơn hàng:</label>
                                     <input type="text" class="form-control" value="${order.id}" readonly>
@@ -101,7 +110,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-4">
+                            <div class="row mb-1">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Trạng thái:</label>
                                     <input type="text" class="form-control" value="${order.status}" readonly>
@@ -154,7 +163,7 @@
                         <!-- Nút quay lại dưới cùng -->
                         <div class="card-footer card-footer-custom text-center">
                             <a href="${pageContext.request.contextPath}/vendor/order"
-                                class="btn btn-primary btn-sm px-4 py-2">
+                                class="btn btn-primary btn-sm px-4 py-2 btn-lift">
                                 <i class="fas fa-arrow-left me-1"></i> Quay lại
                             </a>
                         </div>

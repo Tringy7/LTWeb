@@ -147,6 +147,15 @@
                     .card-action .btn {
                         margin-right: 8px;
                     }
+
+                    .btn-lift:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+                    }
+
+                    .btn-lift {
+                        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                    }
                 </style>
 
                 <div class="main-panel">
@@ -155,7 +164,7 @@
                         <!-- Card Action -->
                         <div class="card card-action">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0"><i class="fas fa-gear me-2"></i> Hành động</h4>
+                                <h4 class="mb-0"><i class="fas fa-gear me-2"></i> Thao tác</h4>
                                 <div>
                                     <button type="button" class="btn btn-outline-primary btn-sm"
                                         onclick="location.reload()">
@@ -321,7 +330,7 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body text-center">Bạn có chắc muốn xuất danh sách đơn hàng đã lọc
+                            <div class="modal-body text-center">Bạn có chắc muốn xuất danh sách đơn hàng
                                 không?</div>
                             <div class="modal-footer justify-content-center">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -388,6 +397,8 @@
                 <!-- End custom js for this page-->
                 <!-- Code injected by live-server -->
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <!-- Bootstrap 5 Bundle (có cả PopperJS & Modal) -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
                 <script>
                     // <![CDATA[  <-- For SVG support
