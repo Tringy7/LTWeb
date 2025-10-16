@@ -180,8 +180,6 @@
                                         style="height: 250px;" alt="Image">
                                     <div class="position-absolute rounded d-flex flex-column align-items-center justify-content-center text-center"
                                         style="width: 100%; height: 250px; top: 0; left: 0; background: rgba(242, 139, 0, 0.3);">
-                                        <h4 class="display-5 text-primary">SALE</h4>
-                                        <h3 class="display-4 text-white mb-4">Get UP To 50% Off</h3>
                                         <a href="#" class="btn btn-primary rounded-pill">Shop Now</a>
                                     </div>
                                 </div>
@@ -368,46 +366,6 @@
                     </div>
                 </div>
                 <!-- Shop Page End -->
-
-                <!-- Product Banner Start -->
-                <div class="container-fluid py-5">
-                    <div class="container pb-5">
-                        <div class="row g-4">
-                            <div class="col-lg-6 wow fadeInLeft" data-wow-delay="0.1s">
-                                <a href="#">
-                                    <div class="bg-primary rounded position-relative">
-                                        <img src="/client/img/product-banner.jpg" class="img-fluid w-100 rounded"
-                                            alt="">
-                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center rounded p-4"
-                                            style="background: rgba(255, 255, 255, 0.5);">
-                                            <h3 class="display-5 text-primary">EOS Rebel <br> <span>T7i Kit</span></h3>
-                                            <p class="fs-4 text-muted">$899.99</p>
-                                            <a href="#"
-                                                class="btn btn-primary rounded-pill align-self-start py-2 px-4">Shop
-                                                Now</a>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-6 wow fadeInRight" data-wow-delay="0.2s">
-                                <a href="#">
-                                    <div class="text-center bg-primary rounded position-relative">
-                                        <img src="/client/img/product-banner-2.jpg" class="img-fluid w-100" alt="">
-                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center rounded p-4"
-                                            style="background: rgba(242, 139, 0, 0.5);">
-                                            <h2 class="display-2 text-secondary">SALE</h2>
-                                            <h4 class="display-5 text-white mb-4">Get UP To 50% Off</h4>
-                                            <a href="#"
-                                                class="btn btn-secondary rounded-pill align-self-center py-2 px-4">Shop
-                                                Now</a>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Banner End -->
                 <script>
                     function updateSort() {
                         const sort = document.getElementById("sort").value; // Lấy giá trị được chọn

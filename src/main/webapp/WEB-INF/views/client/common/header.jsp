@@ -63,7 +63,7 @@
                                         <a href="/logout" class="dropdown-item">Log out</a>
                                     </div>
                                 </div>
-                                <a href="/contact" class="nav-item nav-link me-2">Contact</a>
+                                <!-- <  a href="/contact" class="nav-item nav-link me-2">Contact</> -->
                             </div>
                         </div>
                     </nav>
