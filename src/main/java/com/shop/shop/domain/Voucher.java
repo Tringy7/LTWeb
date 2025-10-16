@@ -36,7 +36,13 @@ public class Voucher {
 
     private LocalDateTime endDate;
 
+    private boolean status;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "shop_id", nullable = false)
+    private Shop shop;
 }

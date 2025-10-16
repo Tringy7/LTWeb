@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.Order;
@@ -40,12 +39,6 @@ public class HomePageController {
         model.addAttribute("productSoldOver10", productService.getAllProductSoldOver10());
         model.addAttribute("productList", productService.getAllProduct());
         return "client/homepage/show";
-    }
-
-    @GetMapping("/contact")
-    @ResponseBody
-    public String show() {
-        return "Contact Page - Under construction";
     }
 
     @GetMapping("/order")
@@ -98,5 +91,10 @@ public class HomePageController {
         List<Voucher> voucher = currentUser.getVouchers() != null ? currentUser.getVouchers() : new ArrayList<>();
         model.addAttribute("vouchers", voucher);
         return "client/homepage/voucher";
+    }
+
+    @GetMapping("/about")
+    public String showAbout() {
+        return "client/homepage/about";
     }
 }

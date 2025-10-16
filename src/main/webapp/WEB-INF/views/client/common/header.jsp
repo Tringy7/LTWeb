@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+    
         <div class="container-fluid px-5 py-4 d-none d-lg-block">
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo bên trái -->
@@ -63,7 +64,7 @@
                                         <a href="/logout" class="dropdown-item">Log out</a>
                                     </div>
                                 </div>
-                                <!-- <  a href="/contact" class="nav-item nav-link me-2">Contact</> -->
+                                <a href="/about" class="nav-item nav-link me-2">About</a>
                             </div>
                         </div>
                     </nav>
