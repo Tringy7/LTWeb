@@ -63,13 +63,13 @@ public class CartController {
     public String handleVoucher(@RequestParam("voucherCode") String voucherCode, RedirectAttributes redirectAttributes) {
         User user = userAfterLogin.getUser();
         Cart cart = cartService.handleApplyVoucher(voucherCode, user);
-        
+
         if (cart == null) {
             redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
         } else {
             redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
         }
-        
+
         return "redirect:/cart";
     }
 
