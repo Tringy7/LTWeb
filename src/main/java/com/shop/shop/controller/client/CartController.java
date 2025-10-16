@@ -59,6 +59,20 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    @PostMapping("/cart/apply-voucher")
+    public String handleVoucher(@RequestParam("voucherCode") String voucherCode, RedirectAttributes redirectAttributes) {
+        User user = userAfterLogin.getUser();
+        Cart cart = cartService.handleApplyVoucher(voucherCode, user);
+        
+        if (cart == null) {
+            redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
+        } else {
+            redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
+        }
+        
+        return "redirect:/cart";
+    }
+
     @GetMapping("/checkout")
     public String showCheckout(Model model) {
         User user = userAfterLogin.getUser();
@@ -88,7 +102,4 @@ public class CartController {
     public String success() {
         return "client/cart/success";
     }
-
-    
-
 }

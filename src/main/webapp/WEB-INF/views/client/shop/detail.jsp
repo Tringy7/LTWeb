@@ -41,7 +41,7 @@
                         <!-- Spinner End -->
 
                         <!-- Toast Notification -->
-                        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1055">
+                        <div class="position-fixed end-0 p-3" style="z-index: 1055; top: 200px;">
                             <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
                                 <div class="toast-header">
                                     <i id="toastIcon" class="fas fa-check-circle text-success me-2"></i>

@@ -104,8 +104,7 @@
                                                         </div>
                                                         <div class="voucher-details">
                                                             <h5 class="voucher-title">Giảm ${voucher.discountPercent}%
-                                                                cho đơn
-                                                                hàng</h5>
+                                                                cho sản phẩm</h5>
                                                             <p class="voucher-code">
                                                                 Mã:
                                                                 <strong

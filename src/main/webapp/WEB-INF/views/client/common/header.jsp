@@ -5,7 +5,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo bên trái -->
                 <div>
-                    <a href="" class="navbar-brand p-0">
+                    <a href="/" class="navbar-brand p-0">
                         <h1 class="display-5 text-primary m-0">
                             <i class="fas fa-shopping-bag text-secondary me-2"></i>Fashion
                         </h1>

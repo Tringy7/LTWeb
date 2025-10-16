@@ -10,4 +10,6 @@ import com.shop.shop.domain.Voucher;
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     List<Voucher> findByUserAndStatus(User user, boolean status);
+
+    Voucher findByCode(String code);
 }

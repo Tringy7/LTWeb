@@ -15,4 +15,6 @@ public interface CartService {
     void updateCart(Cart cartFromForm);
 
     boolean handleCheckout(User user, String payment);
+
+    Cart handleApplyVoucher(String voucher, User user);
 }
