@@ -144,9 +144,9 @@
                                         </c:choose>
                                     </table>
                                 </div>
-                                <div class="mt-5 d-flex justify-content-between">
+                                <div class="mt-5 d-flex justify-content-between align-items-center">
                                     <div>
-                                        <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4"
+                                        <input type="text" class="border-0 border-bottom rounded me-3 py-3 mb-4"
                                             placeholder="Coupon Code">
                                         <button class="btn btn-primary rounded-pill px-4 py-3" type="button">Apply
                                             Coupon</button>

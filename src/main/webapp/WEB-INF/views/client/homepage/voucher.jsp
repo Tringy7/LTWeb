@@ -100,14 +100,25 @@
                                                 <div class="col-md-6">
                                                     <div class="voucher-card h-100">
                                                         <div class="voucher-brand">
-                                                            <span>SHOP</span>
+                                                            <span>${voucher.shop.shopName}</span>
                                                         </div>
                                                         <div class="voucher-details">
                                                             <h5 class="voucher-title">Giảm ${voucher.discountPercent}%
                                                                 cho đơn
                                                                 hàng</h5>
-                                                            <p class="voucher-code">Mã:
-                                                                <strong>${voucher.code}</strong>
+                                                            <p class="voucher-code">
+                                                                Mã:
+                                                                <strong
+                                                                    id="voucher-code-${voucher.code}">${voucher.code}</strong>
+                                                                <span class="copy-icon" data-code="${voucher.code}"
+                                                                    style="cursor: pointer;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                                        height="16" fill="currentColor"
+                                                                        class="bi bi-copy" viewBox="0 0 16 16">
+                                                                        <path fill-rule="evenodd"
+                                                                            d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z" />
+                                                                    </svg>
+                                                                </span>
                                                             </p>
                                                             <p class="voucher-expiry">
                                                                 HSD:
@@ -145,6 +156,27 @@
 
                 <!-- Template Javascript -->
                 <script src="/client/js/main.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Lấy tất cả các biểu tượng "Sao chép"
+                        const copyIcons = document.querySelectorAll('.copy-icon');
+
+                        // Thêm sự kiện click cho từng biểu tượng
+                        copyIcons.forEach(icon => {
+                            icon.addEventListener('click', function () {
+                                const code = this.getAttribute('data-code'); // Lấy mã voucher từ thuộc tính data-code
+
+                                // Tạo một input tạm để sao chép mã
+                                const tempInput = document.createElement('input');
+                                tempInput.value = code;
+                                document.body.appendChild(tempInput);
+                                tempInput.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(tempInput);
+                            });
+                        });
+                    });
+                </script>
 
             </body>
 

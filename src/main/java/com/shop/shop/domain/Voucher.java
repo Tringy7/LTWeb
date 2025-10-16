@@ -36,7 +36,7 @@ public class Voucher {
 
     private LocalDateTime endDate;
 
-    private boolean status;
+    private Boolean status;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

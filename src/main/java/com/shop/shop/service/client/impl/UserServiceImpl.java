@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
+import com.shop.shop.domain.Voucher;
 import com.shop.shop.repository.UserAddressRepository;
 import com.shop.shop.repository.UserRepository;
+import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.UserService;
 
 import jakarta.servlet.ServletContext;
@@ -31,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ServletContext servletContext;
+
+    @Autowired
+    private VoucherRepository voucherRepository;
 
     @Override
     public UserAddress handlUserAddress(User user) {
@@ -108,5 +115,15 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(userInDB);
+    }
+
+    @Override
+    public List<Voucher> getVoucherForUser(User user) {
+        List<Voucher> vouchers = voucherRepository.findByUserAndStatus(user, true);
+        if (vouchers == null) {
+            return new ArrayList<>();
+        } else {
+            return vouchers;
+        }
     }
 }

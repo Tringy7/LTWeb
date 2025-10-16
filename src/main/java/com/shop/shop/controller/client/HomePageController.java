@@ -1,6 +1,5 @@
 package com.shop.shop.controller.client;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,7 +87,7 @@ public class HomePageController {
     @GetMapping("/voucher")
     public String showVoucher(Model model) {
         User currentUser = userAfterLogin.getUser();
-        List<Voucher> voucher = currentUser.getVouchers() != null ? currentUser.getVouchers() : new ArrayList<>();
+        List<Voucher> voucher = userService.getVoucherForUser(currentUser);
         model.addAttribute("vouchers", voucher);
         return "client/homepage/voucher";
     }
