@@ -56,7 +56,7 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Setting</a>
                                     <div class="dropdown-menu m-0">
-                                        <a href="bestseller.html" class="dropdown-item">My Account</a>
+                                        <a href="/account" class="dropdown-item">My Account</a>
                                         <a href="/voucher" class="dropdown-item">My voucher</a>
                                         <a href="/order" class="dropdown-item">History</a>
                                         <a href="/login" class="dropdown-item">Log in</a>

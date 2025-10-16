@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
-import com.shop.shop.repository.client.ProductDetailRepository;
+import com.shop.shop.repository.ProductDetailRepository;
 import com.shop.shop.service.client.ProductDetailService;
 
 @Service

@@ -1,5 +1,6 @@
 package com.shop.shop.controller.client;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,10 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.Order;
 import com.shop.shop.domain.User;
+import com.shop.shop.domain.Voucher;
 import com.shop.shop.service.client.ProductService;
 import com.shop.shop.service.client.UserService;
 import com.shop.shop.util.UserAfterLogin;
@@ -61,4 +67,36 @@ public class HomePageController {
         return "client/homepage/order";
     }
 
+    @GetMapping("/account")
+    public String showAccount(Model model) {
+        User currentUser = userAfterLogin.getUser();
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", currentUser);
+        return "client/homepage/account";
+    }
+
+    @PostMapping("/account/update-info")
+    public String handleUpdateAccount(@ModelAttribute User user, @RequestParam("avatarFile") MultipartFile avatarFile) {
+        User userInSession = userAfterLogin.getUser();
+        if (userInSession == null) {
+            return "redirect:/login";
+        }
+        user.setId(userInSession.getId());
+
+        userService.handleUpdateAccount(user, avatarFile);
+
+        userAfterLogin.updateUserInSession(user.getId());
+
+        return "redirect:/account";
+    }
+
+    @GetMapping("/voucher")
+    public String showVoucher(Model model) {
+        User currentUser = userAfterLogin.getUser();
+        List<Voucher> voucher = currentUser.getVouchers() != null ? currentUser.getVouchers() : new ArrayList<>();
+        model.addAttribute("vouchers", voucher);
+        return "client/homepage/voucher";
+    }
 }

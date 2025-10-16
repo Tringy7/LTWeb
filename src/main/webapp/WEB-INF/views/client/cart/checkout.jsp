@@ -121,25 +121,25 @@
                                                     <div class="form-item w-100">
                                                         <label class="form-label my-3">Tên người nhận
                                                             <sup>*</sup></label>
-                                                        <form:input path="address.receiverName" type="text"
+                                                        <form:input path="receiver.receiverName" type="text"
                                                             class="form-control" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Địa chỉ người nhận <sup>*</sup></label>
-                                                <form:input path="address.receiverAddress" type="text"
+                                                <form:input path="receiver.receiverAddress" type="text"
                                                     class="form-control" />
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Số điện thoại người nhận
                                                     <sup>*</sup></label>
-                                                <form:input path="address.receiverPhone" type="tel"
+                                                <form:input path="receiver.receiverPhone" type="tel"
                                                     class="form-control" />
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Ghi chú cho người bán</label>
-                                                <form:textarea path="address.note" name="text" class="form-control"
+                                                <form:textarea path="receiver.note" name="text" class="form-control"
                                                     spellcheck="false" cols="30" rows="11" placeholder="Ghi chú" />
                                             </div>
 
@@ -204,7 +204,7 @@
                                             <div class="d-flex justify-content-end">
                                                 <h5 class="mb-0 me-4">Total:</h5>
                                                 <p class="mb-0">
-                                                    <fmt:formatNumber value="${user.cart.totalPrice}" type="currency"
+                                                    <fmt:formatNumber value="${cart.totalPrice}" type="currency"
                                                         currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
                                                     VND
                                                 </p>
@@ -288,6 +288,42 @@
 
                             <!-- Template Javascript -->
                             <script src="/client/js/main.js"></script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const form = document.querySelector('form');
+                                    const requiredFields = [
+                                        { selector: 'input[name="receiver.receiverName"]', message: 'Tên người nhận là bắt buộc.' },
+                                        { selector: 'input[name="receiver.receiverAddress"]', message: 'Địa chỉ người nhận là bắt buộc.' },
+                                        { selector: 'input[name="receiver.receiverPhone"]', message: 'Số điện thoại người nhận là bắt buộc.' }
+                                    ];
+
+                                    form.addEventListener('submit', function (event) {
+                                        let isValid = true;
+
+                                        // Xóa thông báo lỗi cũ
+                                        document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+                                        // Kiểm tra từng trường bắt buộc
+                                        requiredFields.forEach(field => {
+                                            const input = document.querySelector(field.selector);
+                                            if (input && !input.value.trim()) {
+                                                isValid = false;
+
+                                                // Hiển thị thông báo lỗi
+                                                const errorMessage = document.createElement('div');
+                                                errorMessage.className = 'error-message text-danger mt-2';
+                                                errorMessage.textContent = field.message;
+                                                input.parentElement.appendChild(errorMessage);
+                                            }
+                                        });
+
+                                        // Ngăn gửi biểu mẫu nếu có lỗi
+                                        if (!isValid) {
+                                            event.preventDefault();
+                                        }
+                                    });
+                                });
+                            </script>
                     </body>
 
                     </html>

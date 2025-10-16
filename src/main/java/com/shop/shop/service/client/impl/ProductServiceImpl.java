@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.dto.FilterDTO;
-import com.shop.shop.repository.client.ProductRepository;
+import com.shop.shop.repository.ProductRepository;
 import com.shop.shop.service.client.ProductService;
 
 @Service

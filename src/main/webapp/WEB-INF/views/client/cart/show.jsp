@@ -219,13 +219,20 @@
                                     subtotal += price * quantity;
                                 });
 
-                                // Nếu bạn muốn thêm phí vận chuyển, hãy định nghĩa nó ở đây (ví dụ: data-shipping trên một element)
-                                // Hiện tại không có, nên shippingCost = 0
                                 const shippingCost = 0; // Thay đổi nếu cần
                                 const total = subtotal + shippingCost;
 
-                                // Cập nhật subtotal (là total trong HTML hiện tại)
                                 document.getElementById('cart-subtotal').textContent = formatCurrency(total);
+
+                                // Disable the checkout button if the cart is empty
+                                const checkoutButton = document.querySelector('.btn-primary[type="submit"]');
+                                if (subtotal === 0) {
+                                    checkoutButton.disabled = true;
+                                    checkoutButton.classList.add('disabled');
+                                } else {
+                                    checkoutButton.disabled = false;
+                                    checkoutButton.classList.remove('disabled');
+                                }
                             }
 
                             // Remove any existing jQuery click handlers from the template's main.js
@@ -255,7 +262,6 @@
                             // Event listener for manual input changes on quantity fields
                             document.querySelectorAll('.quantity input').forEach(input => {
                                 input.addEventListener('input', function () {
-                                    // Allow only numbers
                                     this.value = this.value.replace(/[^0-9]/g, '');
                                 });
 
@@ -269,6 +275,8 @@
                             // Initial calculation in case the page is loaded with items
                             if (document.querySelectorAll('.cart-item-row').length > 0) {
                                 document.querySelectorAll('.cart-item-row').forEach(row => updateItemTotal(row));
+                                updateCartTotal();
+                            } else {
                                 updateCartTotal();
                             }
                         });

@@ -16,20 +16,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Product_Voucher")
+@Table(name = "voucher")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductVoucher {
+public class Voucher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "productId", nullable = false)
-    private Product product;
 
     @Column(unique = true, length = 50)
     private String code;
@@ -39,4 +35,8 @@ public class ProductVoucher {
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

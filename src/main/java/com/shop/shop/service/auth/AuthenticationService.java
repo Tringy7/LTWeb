@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.shop.shop.domain.Role;
 import com.shop.shop.domain.User;
 import com.shop.shop.dto.UserDTO;
-import com.shop.shop.repository.client.UserRepository;
+import com.shop.shop.repository.UserRepository;
 
 @Service
 public class AuthenticationService {

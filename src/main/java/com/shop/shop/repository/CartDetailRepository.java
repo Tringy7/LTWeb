@@ -1,4 +1,4 @@
-package com.shop.shop.repository.client;
+package com.shop.shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
