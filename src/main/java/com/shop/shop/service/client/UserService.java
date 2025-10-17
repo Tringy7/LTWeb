@@ -17,4 +17,6 @@ public interface UserService {
     void handleUpdateAccount(User user, MultipartFile avatarFile);
 
     List<Voucher> getVoucherForUser(User user);
+
+    void handleReceiverUser(User user, UserAddress receiver);
 }

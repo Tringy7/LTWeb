@@ -20,6 +20,7 @@ import com.shop.shop.dto.ProductDTO;
 import com.shop.shop.repository.CartDetailRepository;
 import com.shop.shop.repository.CartRepository;
 import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductDetailService;
@@ -47,6 +48,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private VoucherRepository voucherRepository;
+
+    @Autowired
+    private UserVoucherRepository userVoucherRepository;
 
     @Override
     @Transactional
@@ -115,6 +119,9 @@ public class CartServiceImpl implements CartService {
                     // 5. Tính toán lại giá cho CartDetail này một cách an toàn.
                     double newPrice = cartDetailInDB.getProduct().getPrice() * detailFromForm.getQuantity();
                     cartDetailInDB.setPrice(newPrice);
+                    if (cartDetailInDB.getVoucher() != null && cartDetailInDB.getVoucher().getDiscountPercent() != null) {
+                        newPrice = newPrice * (1 - cartDetailInDB.getVoucher().getDiscountPercent() / 100);
+                    }
 
                     newTotalCartPrice += newPrice;
                 }
@@ -150,6 +157,12 @@ public class CartServiceImpl implements CartService {
                 orderDetail.setQuantity(cd.getQuantity());
                 orderDetail.setShop(cd.getProduct().getShop());
                 orderDetail.setSize(cd.getSize());
+
+                // Lưu thông tin voucher nếu có
+                if (cd.getVoucher() != null) {
+                    orderDetail.setVoucher(cd.getVoucher());
+                }
+
                 orderDetails.add(orderDetail);
 
                 // Update product quantity
@@ -157,6 +170,15 @@ public class CartServiceImpl implements CartService {
                 if (productDetail != null) {
                     productDetail.setQuantity(productDetail.getQuantity() - cd.getQuantity());
                     productDetail.setSold(productDetail.getSold() + cd.getQuantity());
+                }
+
+                // Cập nhật status của UserVoucher thành false nếu có sử dụng voucher
+                if (cd.getVoucher() != null) {
+                    userVoucherRepository.findByUserAndVoucher(user, cd.getVoucher())
+                            .ifPresent(userVoucher -> {
+                                userVoucher.setStatus(false);
+                                userVoucherRepository.save(userVoucher);
+                            });
                 }
             }
             order.setOrderDetails(orderDetails);
@@ -224,8 +246,8 @@ public class CartServiceImpl implements CartService {
             double itemPrice = cd.getPrice(); // This is price * quantity
             if (cd.getVoucher() != null && cd.getVoucher().getDiscountPercent() != null) {
                 double discount = cd.getVoucher().getDiscountPercent();
-                // Apply discount to the item's total price
-                itemPrice = itemPrice * (1 - discount / 100);
+                // // Apply discount to the item's total price
+                // itemPrice = itemPrice * (1 - discount / 100);
             }
             newTotalCartPrice += itemPrice;
         }

@@ -21,7 +21,6 @@ import com.shop.shop.domain.Voucher;
 import com.shop.shop.repository.UserAddressRepository;
 import com.shop.shop.repository.UserRepository;
 import com.shop.shop.repository.UserVoucherRepository;
-import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.UserService;
 
 import jakarta.servlet.ServletContext;
@@ -40,9 +39,6 @@ public class UserServiceImpl implements UserService {
     private ServletContext servletContext;
 
     @Autowired
-    private VoucherRepository voucherRepository;
-
-    @Autowired
     private UserVoucherRepository userVoucherRepository;
 
     @Override
@@ -51,7 +47,6 @@ public class UserServiceImpl implements UserService {
         if (userAddress == null) {
             userAddress = new UserAddress();
             userAddress.setUser(user);
-            userAddress.setIsDefault(true);
             userAddressRepository.save(userAddress);
         }
         return userAddress;
@@ -139,5 +134,21 @@ public class UserServiceImpl implements UserService {
         return userVouchers.stream()
                 .map(com.shop.shop.domain.UserVoucher::getVoucher)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void handleReceiverUser(User user, UserAddress receiver) {
+        UserAddress userAddress = userAddressRepository.findByUser(user);
+        if (userAddress != null) {
+            userAddress.setReceiverAddress(receiver.getReceiverAddress());
+            userAddress.setReceiverName(receiver.getReceiverName());
+            userAddress.setReceiverPhone(receiver.getReceiverPhone());
+            userAddress.setNote(receiver.getNote());
+            userAddressRepository.save(userAddress);
+        } else {
+            receiver.setUser(user);
+            userAddressRepository.save(receiver);
+        }
     }
 }

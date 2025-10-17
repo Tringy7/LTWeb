@@ -43,4 +43,8 @@ public class OrderDetail {
     private String size;
 
     private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "voucherId")
+    private Voucher voucher;
 }

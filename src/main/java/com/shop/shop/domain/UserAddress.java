@@ -40,7 +40,4 @@ public class UserAddress {
 
     @Column(columnDefinition = "TEXT")
     private String note;
-
-    @Column(nullable = false)
-    private Boolean isDefault = false;
 }

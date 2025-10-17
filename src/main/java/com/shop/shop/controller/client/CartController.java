@@ -43,7 +43,22 @@ public class CartController {
         } else {
             cart.setCartDetails(cardDetails);
         }
+
+        // Tìm mã voucher đang được áp dụng (nếu có)
+        String appliedVoucherCode = null;
+        if (cart.getCartDetails() != null) {
+            for (CartDetail cd : cart.getCartDetails()) {
+                if (cd.getVoucher() != null) {
+                    appliedVoucherCode = cd.getVoucher().getCode();
+                    break;
+                }
+            }
+        }
+
         model.addAttribute("cart", cart);
+        if (appliedVoucherCode != null) {
+            model.addAttribute("appliedVoucherCode", appliedVoucherCode);
+        }
         return "client/cart/show";
     }
 
@@ -64,6 +79,8 @@ public class CartController {
         User user = userAfterLogin.getUser();
         Cart cart = cartService.handleApplyVoucher(voucherCode, user);
         if (cart == null) {
+            // Mã voucher không hợp lệ - hủy voucher hiện tại và đưa về trạng thái ban đầu
+            cartService.handleRemoveVoucher(user);
             redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
         } else {
             // Tìm discount percent từ cart details có voucher vừa được áp dụng
@@ -76,7 +93,7 @@ public class CartController {
             }
 
             redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
-            redirectAttributes.addFlashAttribute("appliedVoucherCode", voucherCode);
+            redirectAttributes.addFlashAttribute("voucherCodeApplied", voucherCode);
             if (discountPercent != null) {
                 redirectAttributes.addFlashAttribute("discountPercent", discountPercent);
             }
@@ -108,12 +125,14 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public String handleCheckout(@RequestParam("paymentMethod") String payment, RedirectAttributes redirectAttributes) {
+    public String handleCheckout(@RequestParam("paymentMethod") String payment, RedirectAttributes redirectAttributes, @ModelAttribute("user") User user) {
         User currentUser = userAfterLogin.getUser();
         if (currentUser == null) {
             return "redirect:/login";
         }
         boolean isSuccess = cartService.handleCheckout(currentUser, payment);
+        UserAddress receicer = user.getReceiver();
+        userService.handleReceiverUser(currentUser, receicer);
         if (isSuccess) {
             return "client/cart/success";
         }
