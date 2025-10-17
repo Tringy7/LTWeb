@@ -17,4 +17,6 @@ public interface CartService {
     boolean handleCheckout(User user, String payment);
 
     Cart handleApplyVoucher(String voucher, User user);
+
+    boolean handleRemoveVoucher(User user);
 }

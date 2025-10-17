@@ -63,13 +63,36 @@ public class CartController {
     public String handleVoucher(@RequestParam("voucherCode") String voucherCode, RedirectAttributes redirectAttributes) {
         User user = userAfterLogin.getUser();
         Cart cart = cartService.handleApplyVoucher(voucherCode, user);
-
         if (cart == null) {
             redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
         } else {
-            redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
-        }
+            // Tìm discount percent từ cart details có voucher vừa được áp dụng
+            Double discountPercent = null;
+            for (var cartDetail : cart.getCartDetails()) {
+                if (cartDetail.getVoucher() != null && cartDetail.getVoucher().getCode().equals(voucherCode)) {
+                    discountPercent = cartDetail.getVoucher().getDiscountPercent();
+                    break;
+                }
+            }
 
+            redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
+            redirectAttributes.addFlashAttribute("appliedVoucherCode", voucherCode);
+            if (discountPercent != null) {
+                redirectAttributes.addFlashAttribute("discountPercent", discountPercent);
+            }
+        }
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/remove-voucher")
+    public String handleRemoveVoucher(RedirectAttributes redirectAttributes) {
+        User user = userAfterLogin.getUser();
+        boolean isSuccess = cartService.handleRemoveVoucher(user);
+        if (isSuccess) {
+            redirectAttributes.addFlashAttribute("success", "Đã hủy mã giảm giá thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Không thể hủy mã giảm giá!");
+        }
         return "redirect:/cart";
     }
 

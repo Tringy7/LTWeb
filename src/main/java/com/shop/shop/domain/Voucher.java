@@ -41,12 +41,11 @@ public class Voucher {
     private Boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
+
+    @OneToMany(mappedBy = "voucher")
+    private List<UserVoucher> userVouchers;
 
     @OneToMany(mappedBy = "voucher")
     private List<CartDetail> cartDetails;

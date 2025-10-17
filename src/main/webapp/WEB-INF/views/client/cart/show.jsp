@@ -32,6 +32,27 @@
                         <form action="/cart" method="post">
                             <input type="hidden" name="id" value="${cart.id}" />
                             <div class="container py-5">
+                                <!-- Success/Error Messages -->
+                                <c:if test="${not empty success}">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="fa fa-check-circle me-2"></i>${success}
+                                        <c:if test="${not empty appliedVoucherCode}">
+                                            <strong> Mã: ${appliedVoucherCode}</strong>
+                                        </c:if>
+                                        <c:if test="${not empty discountPercent}">
+                                            <span> - Giảm <strong>${discountPercent}%</strong></span>
+                                        </c:if>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                </c:if>
+                                <c:if test="${not empty error}">
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>${error}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                </c:if>
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
@@ -80,26 +101,34 @@
                                                                 <p class="mb-0 mt-4">${item.product.shop.shopName}</p>
                                                             </td>
                                                             <td>
-                                                                <p class="mb-0 mt-4 item-price"
-                                                                    data-price="${item.product.price}">
-                                                                    <fmt:formatNumber value="${item.product.price}"
-                                                                        type="currency" currencySymbol=""
-                                                                        minFractionDigits="0" maxFractionDigits="0" />
-                                                                    VND
-                                                                </p>
-                                                                <div class="mb-0 mt-4 item-price" data-price="${item.product.price}">
+                                                                <div class="mb-0 mt-4 item-price"
+                                                                    data-price="${item.product.price}"
+                                                                    data-discount="${not empty item.voucher ? item.voucher.discountPercent : 0}">
                                                                     <c:if test="${not empty item.voucher}">
-                                                                        <c:set var="discountedUnitPrice" value="${item.product.price * (1 - item.voucher.discountPercent / 100)}" />
+                                                                        <c:set var="discountedUnitPrice"
+                                                                            value="${item.product.price * (1 - item.voucher.discountPercent / 100)}" />
                                                                         <del>
-                                                                            <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber
+                                                                                value="${item.product.price}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </del>
                                                                         <p class="mb-0" style="color: red;">
-                                                                            <fmt:formatNumber value="${discountedUnitPrice}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber
+                                                                                value="${discountedUnitPrice}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </p>
                                                                     </c:if>
                                                                     <c:if test="${empty item.voucher}">
                                                                         <p class="mb-0">
-                                                                            <fmt:formatNumber value="${item.product.price}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber
+                                                                                value="${item.product.price}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </p>
                                                                     </c:if>
                                                                 </div>
@@ -126,26 +155,31 @@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <p class="mb-0 mt-4 item-total"
+                                                                <div class="mb-0 mt-4 item-total"
                                                                     data-total="${item.price}">
-                                                                    <fmt:formatNumber value="${item.price}"
-                                                                        type="currency" currencySymbol=""
-                                                                        minFractionDigits="0" maxFractionDigits="0" />
-                                                                    VND
-                                                                </p>
-                                                                <div class="mb-0 mt-4 item-total" data-total="${item.price}">
                                                                     <c:if test="${not empty item.voucher}">
-                                                                        <c:set var="discountedTotalPrice" value="${item.price * (1 - item.voucher.discountPercent / 100)}" />
+                                                                        <c:set var="discountedTotalPrice"
+                                                                            value="${item.price * (1 - item.voucher.discountPercent / 100)}" />
                                                                         <del>
-                                                                            <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber value="${item.price}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </del>
                                                                         <p class="mb-0" style="color: red;">
-                                                                            <fmt:formatNumber value="${discountedTotalPrice}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber
+                                                                                value="${discountedTotalPrice}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </p>
                                                                     </c:if>
                                                                     <c:if test="${empty item.voucher}">
                                                                         <p class="mb-0">
-                                                                            <fmt:formatNumber value="${item.price}" type="currency" currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
+                                                                            <fmt:formatNumber value="${item.price}"
+                                                                                type="currency" currencySymbol=""
+                                                                                minFractionDigits="0"
+                                                                                maxFractionDigits="0" /> VND
                                                                         </p>
                                                                     </c:if>
                                                                 </div>
@@ -177,13 +211,18 @@
                                     </table>
                                 </div>
                                 <div class="mt-5 d-flex justify-content-between align-items-center">
-                                    <div>
+                                    <div class="d-flex align-items-center">
                                         <input type="text" class="border-0 border-bottom rounded me-3 py-3 mb-4"
                                             name="voucherCode" placeholder="Coupon Code">
                                         <button class="btn btn-primary rounded-pill px-4 py-3 me-2"
-                                            formaction="/cart/apply-voucher" formmethod="post" type="submit">Apply
-                                            Coupon</button>
-                                        <a href="/voucher" class="btn btn-primary rounded-pill px-4 py-3">
+                                            formaction="/cart/apply-voucher" formmethod="post" type="submit">
+                                            <i class="fa fa-check me-2"></i>Áp dụng Voucher
+                                        </button>
+                                        <button class="btn btn-danger rounded-pill px-4 py-3 me-2"
+                                            formaction="/cart/remove-voucher" formmethod="post" type="submit">
+                                            <i class="fa fa-times me-2"></i>Hủy Voucher
+                                        </button>
+                                        <a href="/voucher" class="btn btn-primary rounded-pill px-4 py-3 me-2">
                                             <i class="fa fa-ticket me-2"></i>Xem Voucher
                                         </a>
                                     </div>
@@ -235,39 +274,67 @@
 
                             // Function to update the item total for a specific row
                             function updateItemTotal(row) {
-                                const price = parseFloat(row.querySelector('.item-price').dataset.price);
-                                const voucherElement = row.querySelector('.item-total del'); // Check if voucher is applied
+                                const priceElement = row.querySelector('.item-price');
+                                const price = parseFloat(priceElement.dataset.price);
+                                const discount = parseFloat(priceElement.dataset.discount) || 0;
                                 const quantityInput = row.querySelector('.quantity input');
                                 let quantity = parseInt(quantityInput.value) || 1;
+
                                 if (quantity < 1) {
                                     quantity = 1;
                                     quantityInput.value = 1;
                                 }
-                                const newTotal = price * quantity;
-                                row.querySelector('.item-total').textContent = formatCurrency(newTotal);
-                                // This function will only update the client-side display before form submission.
-                                // The server-side rendering will handle the final discounted price display.
-                                // We can hide the client-side update for the total column to avoid confusion.
-                                // row.querySelector('.item-total').textContent = formatCurrency(newTotal);
+
+                                // Calculate discounted price
+                                const discountedPrice = price * (1 - discount / 100);
+                                const originalTotal = price * quantity;
+                                const newTotal = discountedPrice * quantity;
+
+                                // Update the total display
+                                const totalElement = row.querySelector('.item-total');
+
+                                if (discount > 0) {
+                                    // Has voucher - show strikethrough old price and new price
+                                    const delElement = document.createElement('del');
+                                    delElement.textContent = formatCurrency(originalTotal);
+
+                                    const priceElement = document.createElement('p');
+                                    priceElement.className = 'mb-0';
+                                    priceElement.style.color = 'red';
+                                    priceElement.textContent = formatCurrency(newTotal);
+
+                                    totalElement.innerHTML = '';
+                                    totalElement.appendChild(delElement);
+                                    totalElement.appendChild(priceElement);
+                                } else {
+                                    // No voucher - show regular price
+                                    const priceElement = document.createElement('p');
+                                    priceElement.className = 'mb-0';
+                                    priceElement.textContent = formatCurrency(newTotal);
+
+                                    totalElement.innerHTML = '';
+                                    totalElement.appendChild(priceElement);
+                                }
                             }
 
                             // Function to update the total cart summary
                             function updateCartTotal() {
                                 let subtotal = 0;
                                 document.querySelectorAll('.cart-item-row').forEach(function (row) {
-                                    const price = parseFloat(row.querySelector('.item-price').dataset.price);
+                                    const priceElement = row.querySelector('.item-price');
+                                    const price = parseFloat(priceElement.dataset.price);
+                                    const discount = parseFloat(priceElement.dataset.discount) || 0;
                                     const quantity = parseInt(row.querySelector('.quantity input').value);
-                                    subtotal += price * quantity;
-                                    let itemTotal = price * quantity;
-                                    // Client-side discount calculation is complex and might not match server logic perfectly.
-                                    // It's better to rely on the server-rendered total.
-                                    // This function is now less critical as the server calculates the final total.
+
+                                    // Calculate with discount
+                                    const discountedPrice = price * (1 - discount / 100);
+                                    const itemTotal = discountedPrice * quantity;
+
                                     subtotal += itemTotal;
                                 });
 
                                 const shippingCost = 0; // Thay đổi nếu cần
                                 const total = subtotal + shippingCost;
-
                                 // Update the subtotal displayed on the client side.
                                 document.getElementById('cart-subtotal').textContent = formatCurrency(total);
 
@@ -321,10 +388,8 @@
 
                             // Initial calculation in case the page is loaded with items
                             if (document.querySelectorAll('.cart-item-row').length > 0) {
-                                document.querySelectorAll('.cart-item-row').forEach(row => updateItemTotal(row));
+                                // Initial calculation on page load
                                 updateCartTotal();
-                                // No need for initial client-side calculation as server renders the correct state.
-                                // updateCartTotal();
                             } else {
                                 updateCartTotal();
                             }

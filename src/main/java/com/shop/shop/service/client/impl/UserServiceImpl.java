@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
+import com.shop.shop.domain.UserVoucher;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.repository.UserAddressRepository;
 import com.shop.shop.repository.UserRepository;
+import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.UserService;
 
@@ -38,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private VoucherRepository voucherRepository;
+
+    @Autowired
+    private UserVoucherRepository userVoucherRepository;
 
     @Override
     public UserAddress handlUserAddress(User user) {
@@ -119,11 +125,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Voucher> getVoucherForUser(User user) {
-        List<Voucher> vouchers = voucherRepository.findByUserAndStatus(user, true);
-        if (vouchers == null) {
+        if (user == null) {
             return new ArrayList<>();
-        } else {
-            return vouchers;
         }
+
+        List<UserVoucher> userVouchers = userVoucherRepository.findByUserAndStatus(user, true);
+
+        if (userVouchers == null || userVouchers.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Chuyển đổi từ UserVoucher sang Voucher
+        return userVouchers.stream()
+                .map(com.shop.shop.domain.UserVoucher::getVoucher)
+                .collect(Collectors.toList());
     }
 }
