@@ -1,430 +1,448 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/admin/css/dashboard.css">
+
 <div class="main-panel">
     <div class="content-wrapper">
+        
+        <!-- Page Header -->
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0 font-weight-bold">Anh Vũ</h3>
-                <p>Welcome to the Admin Homepage</p>
+                <h3 class="mb-0 font-weight-bold">Dashboard Tổng Quan</h3>
+                <p>Chào mừng bạn đến với trang quản trị</p>
             </div>
             <div class="col-sm-6">
                 <div class="d-flex align-items-center justify-content-md-end">
                     <div class="mb-3 mb-xl-0 pr-1">
-                        <div class="dropdown">
-                            <button class="btn bg-white btn-sm dropdown-toggle btn-icon-text border mr-2" type="button"
-                                id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="typcn typcn-calendar-outline mr-2"></i>Last 7
-                                days
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton3"
-                                data-x-placement="top-start">
-                                <h6 class="dropdown-header">Last 14 days</h6>
-                                <a class="dropdown-item" href="#">Last 21 days</a>
-                                <a class="dropdown-item" href="#">Last 28 days</a>
-                            </div>
-                        </div>
+                        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
+                            <i class="typcn typcn-calendar-outline mr-2"></i>
+                            ${currentDate}
+                        </button>
                     </div>
                     <div class="pr-1 mb-3 mr-2 mb-xl-0">
-                        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
-                            <i class="typcn typcn-arrow-forward-outline mr-2"></i>Export
-                        </button>
-                    </div>
-                    <div class="pr-1 mb-3 mb-xl-0">
-                        <button type="button" class="btn btn-sm bg-white btn-icon-text border">
-                            <i class="typcn typcn-info-large-outline mr-2"></i>info
+                        <button type="button" class="btn btn-sm bg-white btn-icon-text border" onclick="window.location.reload()">
+                            <i class="typcn typcn-refresh mr-2"></i>Làm mới
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-xl-5 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
+
+        <!-- Quick Stats Cards -->
+        <div class="row mt-4">
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">${dashboardStats.totalUsers}</h3>
+                                    <c:if test="${dashboardStats.userGrowthPercent >= 0}">
+                                        <p class="text-success ml-2 mb-0 font-weight-medium">+${dashboardStats.userGrowthPercent}%</p>
+                                    </c:if>
+                                    <c:if test="${dashboardStats.userGrowthPercent < 0}">
+                                        <p class="text-danger ml-2 mb-0 font-weight-medium">${dashboardStats.userGrowthPercent}%</p>
+                                    </c:if>
+                                </div>
+                                <h6 class="color-gray font-weight-normal mb-0">Tổng Người Dùng</h6>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-success">
+                                    <span class="typcn typcn-user-outline icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
+
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">${dashboardStats.totalShops}</h3>
+                                    <c:if test="${dashboardStats.shopGrowthPercent >= 0}">
+                                        <p class="text-success ml-2 mb-0 font-weight-medium">+${dashboardStats.shopGrowthPercent}%</p>
+                                    </c:if>
+                                    <c:if test="${dashboardStats.shopGrowthPercent < 0}">
+                                        <p class="text-danger ml-2 mb-0 font-weight-medium">${dashboardStats.shopGrowthPercent}%</p>
+                                    </c:if>
+                                </div>
+                                <h6 class="color-gray font-weight-normal mb-0">Tổng Cửa Hàng</h6>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-primary">
+                                    <span class="typcn typcn-briefcase icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-xl-4 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                    <div class="card-body"></div>
-                  </div> -->
+
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">${dashboardStats.totalProducts}</h3>
+                                    <c:if test="${dashboardStats.productGrowthPercent >= 0}">
+                                        <p class="text-success ml-2 mb-0 font-weight-medium">+${dashboardStats.productGrowthPercent}%</p>
+                                    </c:if>
+                                    <c:if test="${dashboardStats.productGrowthPercent < 0}">
+                                        <p class="text-danger ml-2 mb-0 font-weight-medium">${dashboardStats.productGrowthPercent}%</p>
+                                    </c:if>
+                                </div>
+                                <h6 class="color-gray font-weight-normal mb-0">Tổng Sản Phẩm</h6>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-warning">
+                                    <span class="typcn typcn-shopping-bag icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="d-flex align-items-center align-self-start">
+                                    <h3 class="mb-0">
+                                        <fmt:formatNumber value="${dashboardStats.totalRevenue}" type="currency" currencySymbol="₫"/>
+                                    </h3>
+                                    <c:if test="${dashboardStats.revenueGrowthPercent >= 0}">
+                                        <p class="text-success ml-2 mb-0 font-weight-medium">+${dashboardStats.revenueGrowthPercent}%</p>
+                                    </c:if>
+                                    <c:if test="${dashboardStats.revenueGrowthPercent < 0}">
+                                        <p class="text-danger ml-2 mb-0 font-weight-medium">${dashboardStats.revenueGrowthPercent}%</p>
+                                    </c:if>
+                                </div>
+                                <h6 class="color-gray font-weight-normal mb-0">Doanh Thu Tháng</h6>
+                            </div>
+                            <div class="col-3">
+                                <div class="icon icon-box-danger">
+                                    <span class="typcn typcn-chart-line-outline icon-item"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Charts and Detailed Stats -->
         <div class="row">
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
+            <!-- Recent Orders -->
+            <div class="col-lg-8 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Sales Performance</h4>
+                            <h4 class="card-title mb-3">Đơn Hàng Gần Đây</h4>
+                            <a href="/admin/order" class="btn btn-sm btn-primary">Xem Tất Cả</a>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="font-weight-medium">
-                                                Empolyee Name
-                                            </div>
-                                            <div class="font-weight-medium">This Month</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Vũ
-                                            </div>
-                                            <div class="small">$ 4909</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Minh Trí
-                                            </div>
-                                            <div class="small">$857</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Hữu Trí
-                                            </div>
-                                            <div class="small">$612</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Minh Danh
-                                            </div>
-                                            <div class="small">$233</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Thanh Lâm
-                                            </div>
-                                            <div class="small">$233</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Kiệt
-                                            </div>
-                                            <div class="small">$35</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <div class="text-secondary font-weight-medium">
-                                                Anh Huy
-                                            </div>
-                                            <div class="small">$43</div>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <div class="text-secondary font-weight-medium">
-                                                Thế Vinh
-                                            </div>
-                                            <div class="small">$43</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Mã Đơn</th>
+                                        <th>Khách Hàng</th>
+                                        <th>Cửa Hàng</th>
+                                        <th>Tổng Tiền</th>
+                                        <th>Trạng Thái</th>
+                                        <th>Ngày Tạo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="order" items="${recentOrders}" varStatus="status">
+                                        <c:if test="${status.index < 5}">
+                                            <tr>
+                                                <td>#${order.id}</td>
+                                                <td>
+                                                    <div class="customer-info">
+                                                        <span class="font-weight-bold">${order.user.fullName}</span>
+                                                        <small class="text-muted d-block">${order.user.email}</small>
+                                                    </div>
+                                                </td>
+                                                <td>${order.shop.shopName}</td>
+                                                <td>
+                                                    <span class="font-weight-bold text-success">
+                                                        <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="₫"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${order.status == 'New'}">
+                                                            <span class="badge badge-warning">Mới</span>
+                                                        </c:when>
+                                                        <c:when test="${order.status == 'PROCESSING'}">
+                                                            <span class="badge badge-info">Đang Xử Lý</span>
+                                                        </c:when>
+                                                        <c:when test="${order.status == 'DELIVERED'}">
+                                                            <span class="badge badge-success">Đã Giao</span>
+                                                        </c:when>
+                                                        <c:when test="${order.status == 'CANCELLED'}">
+                                                            <span class="badge badge-danger">Đã Hủy</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge badge-secondary">${order.status}</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${not empty order.createdAt}">
+                                                            ${order.createdAt.toString().substring(0, 16).replace('T', ' ')}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            N/A
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                    </c:forEach>
+                                    
+                                    <c:if test="${empty recentOrders}">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">
+                                                <i class="typcn typcn-inbox"></i>
+                                                Chưa có đơn hàng nào
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 d-flex grid-margin stretch-card">
+
+            <!-- Quick Actions & Stats -->
+            <div class="col-lg-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Business Overview</h4>
-                            <button type="button" class="btn btn-sm btn-light">
-                                Month
-                            </button>
+                        <h4 class="card-title mb-3">Thao Tác Nhanh</h4>
+                        
+                        <div class="d-grid gap-2 mb-4">
+                            <a href="/admin/user/add" class="btn btn-outline-primary">
+                                <i class="typcn typcn-user-add mr-2"></i>Thêm Người Dùng
+                            </a>
+                            <a href="/admin/product/add" class="btn btn-outline-success">
+                                <i class="typcn typcn-plus mr-2"></i>Thêm Sản Phẩm
+                            </a>
+                            <a href="/admin/commission/calculate-this-month" class="btn btn-outline-info">
+                                <i class="typcn typcn-calculator mr-2"></i>Tính Hoa Hồng
+                            </a>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <div class="d-md-flex mb-4">
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-globe-outline mr-1"></i>Total Revenue
-                                        </h5>
-                                        <h2 class="text-primary mb-1 font-weight-bold">
-                                            23,342
-                                        </h2>
-                                    </div>
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-archive mr-1"></i>Total
-                                            Profit
-                                        </h5>
-                                        <h2 class="text-secondary mb-1 font-weight-bold">
-                                            13,221
-                                        </h2>
-                                    </div>
-                                    <div class="mr-md-5 mb-4">
-                                        <h5 class="mb-1">
-                                            <i class="typcn typcn-tags mr-1"></i>Total Orders
-                                        </h5>
-                                        <h2 class="text-warning mb-1 font-weight-bold">
-                                            1,542
-                                        </h2>
-                                    </div>
-                                </div>
-                                <canvas id="salesanalyticChart" width="657" height="328"
-                                    style="display: block; height: 263px; width: 526px;"
-                                    class="chartjs-render-monitor"></canvas>
+
+                        <hr>
+
+                        <h6 class="mb-3">Thống Kê Chi Tiết</h6>
+                        
+                        <!-- Order Status Distribution -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small>Đơn Mới</small>
+                                <small class="text-primary">${orderStats.newOrders}</small>
+                            </div>
+                            <div class="progress progress-md">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     data-width="${orderStats.newOrdersPercent}"></div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 d-flex grid-margin stretch-card">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-between">
-                            <h4 class="card-title mb-3">Card Title</h4>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small>Đang Xử Lý</small>
+                                <small class="text-info">${orderStats.processingOrders}</small>
+                            </div>
+                            <div class="progress progress-md">
+                                <div class="progress-bar bg-info" role="progressbar" 
+                                     data-width="${orderStats.processingOrdersPercent}"></div>
+                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="mr-1">col-12
-                                        <div class="text-info mb-1">Total Earning</div>
-                                        <h2 class="mb-2 mt-2 font-weight-bold">287,493$</h2>
-                                        <div class="font-weight-bold">
-                                            1.4% Since Last Month
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="mr-1">
-                                        <div class="text-info mb-1">Total Earning</div>
-                                        <h2 class="mb-2 mt-2 font-weight-bold">87,493</h2>
-                                        <div class="font-weight-bold">
-                                            5.43% Since Last Month
-                                        </div>
-                                    </div>
-                                </div>
-                                <canvas id="barChartStacked" width="271" height="135"
-                                    style="display: block; height: 108px; width: 217px;"
-                                    class="chartjs-render-monitor"></canvas>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small>Đã Giao</small>
+                                <small class="text-success">${orderStats.deliveredOrders}</small>
+                            </div>
+                            <div class="progress progress-md">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     data-width="${orderStats.deliveredOrdersPercent}"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <small>Đã Hủy</small>
+                                <small class="text-danger">${orderStats.cancelledOrders}</small>
+                            </div>
+                            <div class="progress progress-md">
+                                <div class="progress-bar bg-danger" role="progressbar" 
+                                     data-width="${orderStats.cancelledOrdersPercent}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Additional Stats Row -->
         <div class="row">
-            <div class="col-lg-12 d-flex grid-margin stretch-card">
-                <!-- <div class="card">
-                  <div class="card-body"></div>
-                </div> -->
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4 d-flex grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div class="chartjs-size-monitor">
-                        <div class="chartjs-size-monitor-expand">
-                            <div class=""></div>
+            <!-- Top Products -->
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">
+                            <i class="typcn typcn-star-outline mr-2"></i>
+                            Sản Phẩm Mới Nhất
+                        </h4>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Sản Phẩm</th>
+                                        <th>Cửa Hàng</th>
+                                        <th>Giá</th>
+                                        <th>Danh Mục</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="product" items="${topProducts}" varStatus="status">
+                                        <c:if test="${status.index < 10}">
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <c:if test="${not empty product.image}">
+                                                            <img src="/images/products/${product.image}" 
+                                                                 alt="${product.name}" class="product-thumb mr-2">
+                                                        </c:if>
+                                                        <div>
+                                                            <span class="font-weight-bold">${product.name}</span>
+                                                            <c:if test="${not empty product.brand}">
+                                                                <small class="text-muted d-block">${product.brand}</small>
+                                                            </c:if>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>${product.shop.shopName}</td>
+                                                <td>
+                                                    <span class="font-weight-bold text-primary">
+                                                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="₫"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-outline-info">${product.category}</span>
+                                                </td>
+                                            </tr>
+                                        </c:if>
+                                    </c:forEach>
+                                    
+                                    <c:if test="${empty topProducts}">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">
+                                                <i class="typcn typcn-shopping-bag"></i>
+                                                Chưa có dữ liệu sản phẩm
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="chartjs-size-monitor-shrink">
-                            <div class=""></div>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <h4 class="card-title mb-3">Sale Analysis Trend</h4>
-                    </div>
-                    <div class="mt-2">
-                        <div class="d-flex justify-content-between">
-                            <small>Order Value</small>
-                            <small>155.5%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 80%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between">
-                            <small>Total Products</small>
-                            <small>238.2%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 50%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 mb-5">
-                        <div class="d-flex justify-content-between">
-                            <small>Quantity</small>
-                            <small>23.30%</small>
-                        </div>
-                        <div class="progress progress-md mt-2">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 70%"
-                                aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                    <canvas id="salesTopChart" width="425" height="212"
-                        style="display: block; height: 170px; width: 340px;" class="chartjs-render-monitor"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-8 d-flex grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <h4 class="card-title mb-3">Latest Orders</h4>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Invoice ID</th>
-                                    <th>Name</th>
-                                    <th>Total Amount</th>
-                                    <th>Status</th>
-                                    <th>Delivery Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>HD001</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face30.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Quốc Đạt</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$2322</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            88%
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">07 Nov 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>HD002</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face31.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Quốc Huy</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$12022</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            done
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">08 Nov 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>HD003</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face32.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Vũ Quân</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$8,725</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            87%
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">11 Jun 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>HD004</td>
-                                    <td>
-                                        <div class="d-flex">
-                                            <img class="img-sm rounded-circle mb-md-0 mr-2"
-                                                src="/admin/images/faces/face33.png" alt="profile image">
-                                            <div class="font-weight-bold mt-1">Huỳnh Tự</div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">$5,220</div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold text-success mt-1">
-                                            done
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="font-weight-bold mt-1">26 Oct 2019</div>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-secondary">
-                                            Edit
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- content-wrapper ends -->
-    <!-- partial:partials/_footer.html -->
-    <footer class="footer">
-        <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-center text-sm-left d-block d-sm-inline-block">Copyright ©
-                <a href="https://www.bootstrapdash.com/" target="_blank">bootstrapdash.com</a>
-                2020</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Free
-                <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap dashboard </a>templates from
-                Bootstrapdash.com</span>
+
+        <!-- Commission Summary -->
+        <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between mb-3">
+                            <h4 class="card-title">
+                                <i class="typcn typcn-chart-pie-outline mr-2"></i>
+                                Tổng Quan Hoa Hồng
+                            </h4>
+                            <a href="/admin/commission" class="btn btn-sm btn-primary">
+                                <i class="typcn typcn-calculator mr-1"></i>Quản Lý Hoa Hồng
+                            </a>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="commission-stat">
+                                    <div class="stat-value text-primary">
+                                        <fmt:formatNumber value="${commissionStats.totalCommissionAmount}" type="currency" currencySymbol="₫"/>
+                                    </div>
+                                    <div class="stat-label">Tổng Hoa Hồng</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="commission-stat">
+                                    <div class="stat-value text-success">
+                                        <fmt:formatNumber value="${commissionStats.collectedAmount}" type="currency" currencySymbol="₫"/>
+                                    </div>
+                                    <div class="stat-label">Đã Thu</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="commission-stat">
+                                    <div class="stat-value text-warning">
+                                        <fmt:formatNumber value="${commissionStats.pendingAmount}" type="currency" currencySymbol="₫"/>
+                                    </div>
+                                    <div class="stat-label">Chờ Thu</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="commission-stat">
+                                    <div class="stat-value text-info">
+                                        ${commissionStats.totalShops}
+                                    </div>
+                                    <div class="stat-label">Cửa Hàng Có Hoa Hồng</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
-    <!-- partial -->
+
+    </div>
 </div>
+
+<!-- Include Dashboard Scripts -->
+<script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+<script src="/admin/js/off-canvas.js"></script>
+<script src="/admin/js/hoverable-collapse.js"></script>
+<script src="/admin/js/template.js"></script>
+
+<script>
+    // Initialize tooltips
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+    
+    // Set progress bar widths from data attributes
+    $(document).ready(function() {
+        $('.progress-bar[data-width]').each(function() {
+            var width = $(this).data('width');
+            $(this).css('width', width + '%');
+        });
+        
+     
+    });
+</script>

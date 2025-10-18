@@ -1,0 +1,160 @@
+/* Product Table Specific Styles */
+
+/* Product Image Styles */
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #e3e6f0;
+}
+
+.product-image-placeholder {
+    width: 50px;
+    height: 50px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+/* Product Name and Description */
+.table tbody td:nth-child(3) {
+    min-width: 200px;
+}
+
+.table tbody td:nth-child(3) .font-weight-bold {
+    color: #2e59d9;
+    margin-bottom: 2px;
+}
+
+.table tbody td:nth-child(3) small {
+    display: block;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+/* Price Styling */
+.text-primary {
+    color: #2e59d9 !important;
+}
+
+.font-weight-bold {
+    font-weight: 600 !important;
+}
+
+/* Category and Gender Badges */
+.badge-light {
+    background-color: #f1f3f4;
+    color: #5f6368;
+    border: 1px solid #dadce0;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Action Buttons for Product Table */
+.action-buttons .btn-outline-info {
+    color: #36b9cc;
+    border-color: #36b9cc;
+}
+
+.action-buttons .btn-outline-info:hover {
+    background-color: #36b9cc;
+    border-color: #36b9cc;
+    color: white;
+}
+
+.action-buttons .btn-outline-warning {
+    color: #f6c23e;
+    border-color: #f6c23e;
+}
+
+.action-buttons .btn-outline-warning:hover {
+    background-color: #f6c23e;
+    border-color: #f6c23e;
+    color: white;
+}
+
+.action-buttons .btn-outline-danger {
+    color: #e74a3b;
+    border-color: #e74a3b;
+}
+
+.action-buttons .btn-outline-danger:hover {
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+    color: white;
+}
+
+/* Shop Information Display */
+.table tbody td:nth-child(4) .font-weight-bold {
+    color: #5a5c69;
+}
+
+.table tbody td:nth-child(4) small {
+    color: #858796;
+}
+
+/* Number Formatting */
+.table tbody td:nth-child(7) {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+}
+
+/* Hover Effects */
+.table tbody tr:hover .action-buttons .btn {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Status Indicators */
+.badge-success {
+    background-color: #1cc88a;
+    box-shadow: 0 2px 4px rgba(28, 200, 138, 0.3);
+}
+
+.badge-info {
+    background-color: #36b9cc;
+    box-shadow: 0 2px 4px rgba(54, 185, 204, 0.3);
+}
+
+/* Mobile Table Adjustments */
+@media (max-width: 992px) {
+    .table thead th:nth-child(4), /* Brand */
+    .table tbody td:nth-child(4),
+    .table thead th:nth-child(5), /* Category */
+    .table tbody td:nth-child(5) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .table thead th:nth-child(6), /* Color */
+    .table tbody td:nth-child(6),
+    .table thead th:nth-child(8), /* Gender */
+    .table tbody td:nth-child(8) {
+        display: none;
+    }
+    
+    .product-image,
+    .product-image-placeholder {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+}
