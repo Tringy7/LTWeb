@@ -73,7 +73,13 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080")); // Allow your frontend origin
+
+        // THAY ĐỔI Ở ĐÂY: Thêm URL Public của ứng dụng bạn
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:8080", // Môi trường phát triển (Local Development)
+                "https://ltweb-production-c0a4.up.railway.app" // Môi trường Production trên Railway
+        ));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Cache-Control"));
         configuration.setAllowCredentials(true);
