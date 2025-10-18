@@ -369,21 +369,21 @@
                                                 <!-- Filter -->
                                                 <div class="btn-group" role="group" id="filter-group">
                                                     <button type="button" class="btn btn-sm btn-primary active btn-lift"
-                                                        data-filter="all">All
-                                                        Promos</button>
+                                                        data-filter="all">Tất cả</button>
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline-primary btn-lift"
-                                                        data-filter="active">Active</button>
+                                                        data-filter="active">Còn hạn</button>
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline-primary btn-lift"
-                                                        data-filter="upcoming">Upcoming</button>
+                                                        data-filter="expired">Hết hạn</button>
                                                     <button type="button"
                                                         class="btn btn-sm btn-outline-primary btn-lift"
-                                                        data-filter="expired">Expired</button>
+                                                        data-filter="upcoming">Sắp diễn ra</button>
+
                                                 </div>
                                                 <button type="button" class="btn btn-success btn-lift"
                                                     data-bs-toggle="modal" data-bs-target="#newCouponModal">
-                                                    <i class="fa-solid fa-plus"></i> Add Coupon
+                                                    <i class="fa-solid fa-plus"></i> Thêm mã giảm
                                                 </button>
                                             </div>
 
@@ -410,27 +410,42 @@
                                                             <div class="action-btns">
                                                                 <button type="button"
                                                                     class="edit-btn edit ${statusClass}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editCouponModal"
                                                                     data-id="${voucher.id}">
                                                                     <i class="fa-solid fa-pen"></i>
                                                                 </button>
                                                                 <button type="button"
                                                                     class="del-btn delete ${statusClass}"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#confirmDeleteModal"
                                                                     data-id="${voucher.id}">
                                                                     <i class="fa-solid fa-trash"></i>
                                                                 </button>
                                                             </div>
+
                                                             <h3 class="promo-title">${voucher.code}</h3>
-                                                            <p class="description">Discount
-                                                                <strong>${voucher.discount}</strong>% on
+                                                            <p class="description">Giảm giá
+                                                                <strong>${voucher.discount}</strong>%
                                                                 ${voucher.productName}
                                                             </p>
                                                             <div class="divider"></div>
                                                             <div
                                                                 class="d-flex justify-content-between align-items-center">
-                                                                <p class="valid-date">From: ${voucher.startDate}<br>To:
+                                                                <p class="valid-date">Từ: ${voucher.startDate}<br>Đến:
                                                                     ${voucher.endDate}</p>
-                                                                <span
-                                                                    class="public-badge badge-${statusClass}">${voucher.status}</span>
+                                                                <span class="public-badge badge-${statusClass}">
+                                                                    <c:choose>
+                                                                        <c:when test="${voucher.status eq 'Active'}">Còn
+                                                                            hạn</c:when>
+                                                                        <c:when test="${voucher.status eq 'Expired'}">
+                                                                            Hết hạn</c:when>
+                                                                        <c:when test="${voucher.status eq 'Upcoming'}">
+                                                                            Sắp diễn ra</c:when>
+                                                                        <c:otherwise>Không xác định</c:otherwise>
+                                                                    </c:choose>
+                                                                </span>
+
                                                             </div>
                                                             <!-- <div class="circle1"></div>
                                                             <div class="circle2"></div> -->
@@ -449,7 +464,7 @@
                                     <!-- modal-md nhỏ hơn modal-lg -->
                                     <div class="modal-content">
                                         <div class="modal-header bg-primary text-white">
-                                            <h5 class="modal-title">New Coupon</h5>
+                                            <h5 class="modal-title">Mã giảm giá mớ<i></i></h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
@@ -457,31 +472,31 @@
                                             <form:form modelAttribute="voucher" method="post"
                                                 action="${pageContext.request.contextPath}/vendor/event/add">
                                                 <div class="mb-3">
-                                                    <form:label path="code">Code</form:label>
+                                                    <form:label path="code">Mã</form:label>
                                                     <form:input path="code" cssClass="form-control" />
                                                 </div>
                                                 <div class="mb-3">
-                                                    <form:label path="discountPercent">Discount (%)</form:label>
-                                                    <form:input path="discountPercent" type="number" step="0.01"
+                                                    <form:label path="discountPercent">Giảm (%)</form:label>
+                                                    <form:input path="discountPercent" type="number" step="1"
                                                         cssClass="form-control" />
                                                 </div>
                                                 <div class="mb-3">
-                                                    <form:label path="startDate">Start Date</form:label>
+                                                    <form:label path="minPrice">Đơn hàng tối thiểu (VND)</form:label>
+                                                    <form:input path="minPrice" type="number" step="10000"
+                                                        cssClass="form-control" />
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <form:label path="startDate">Ngày bắt đầu</form:label>
                                                     <form:input path="startDate" type="datetime-local"
                                                         cssClass="form-control" />
                                                 </div>
                                                 <div class="mb-3">
-                                                    <form:label path="endDate">End Date</form:label>
+                                                    <form:label path="endDate">Ngày kết thúc</form:label>
                                                     <form:input path="endDate" type="datetime-local"
                                                         cssClass="form-control" />
                                                 </div>
-                                                <div class="mb-3">
-                                                    <form:label path="product">Product</form:label>
-                                                    <form:select path="product.id" cssClass="form-control">
-                                                        <form:options items="${products}" itemValue="id"
-                                                            itemLabel="name" />
-                                                    </form:select>
-                                                </div>
+
 
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -515,14 +530,6 @@
 
                                             <!-- Hàng 1: Sản phẩm - Mã - Giảm -->
                                             <div class="row g-3 mb-3">
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Sản phẩm</label>
-                                                    <select name="product.id" class="form-select">
-                                                        <c:forEach var="p" items="${products}">
-                                                            <option value="${p.id}">${p.name}</option>
-                                                        </c:forEach>
-                                                    </select>
-                                                </div>
 
                                                 <div class="col-md-4">
                                                     <label class="form-label">Mã Coupon</label>
@@ -531,9 +538,15 @@
                                                 </div>
 
                                                 <div class="col-md-4">
-                                                    <label class="form-label">Giảm (%)</label>
-                                                    <input type="number" step="0.01" name="discountPercent"
-                                                        class="form-control" placeholder="0.00" />
+                                                    <label class="form-label">Giảm</label>
+                                                    <input type="number" step="1" name="discountPercent"
+                                                        class="form-control" placeholder="%" />
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Đơn hàng tối thiểu</label>
+                                                    <input type="number" step="1000" name="minPrice"
+                                                        class="form-control" placeholder="VND" />
                                                 </div>
                                             </div>
 
@@ -575,7 +588,7 @@
                                                 aria-label="Đóng"></button>
                                         </div>
                                         <div class="modal-body">
-                                            Bạn có chắc chắn muốn xóa coupon này không?
+                                            Bạn có chắc chắn muốn xóa mã giảm này không?
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
@@ -644,68 +657,42 @@
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                document.addEventListener('click', function (e) {
-                                    const btn = e.target.closest('.edit-btn');
-                                    if (!btn) return;
-
-                                    const couponId = btn.dataset.id;
-                                    if (!couponId) {
-                                        console.error('Coupon ID không tìm thấy!');
-                                        return;
-                                    }
+                                const editModalEl = document.getElementById('editCouponModal');
+                                editModalEl.addEventListener('show.bs.modal', function (event) {
+                                    const button = event.relatedTarget; // nút đã bấm
+                                    const couponId = button?.getAttribute('data-id');
+                                    if (!couponId) return;
 
                                     fetch('${pageContext.request.contextPath}/vendor/event/get/' + couponId)
-
                                         .then(resp => {
-                                            if (!resp.ok) throw new Error('Network response was not ok');
+                                            if (!resp.ok) throw new Error('Không lấy được dữ liệu');
                                             return resp.json();
                                         })
                                         .then(data => {
-                                            console.log('Voucher data:', data);
-
-                                            const modal = document.getElementById('editCouponModal');
-                                            if (!modal) return;
-
-                                            // Gán giá trị cho các input
-                                            modal.querySelector('input[name="id"]').value = data.id || '';
-                                            modal.querySelector('input[name="code"]').value = data.code || '';
-                                            modal.querySelector('input[name="discountPercent"]').value = data.discountPercent != null ? data.discountPercent : '';
-                                            modal.querySelector('input[name="startDate"]').value = data.startDate ? data.startDate.substring(0, 16) : '';
-                                            modal.querySelector('input[name="endDate"]').value = data.endDate ? data.endDate.substring(0, 16) : '';
-                                            modal.querySelector('input[name="status"]').value = data.status || '';
-
-                                            const productSelect = modal.querySelector('select[name="product.id"]');
-                                            if (productSelect) {
-                                                productSelect.value = data.product ? data.product.id : '';
-                                            }
-
-                                            // Hiển thị modal
-                                            const bootstrapModal = new bootstrap.Modal(modal);
-                                            bootstrapModal.show();
+                                            editModalEl.querySelector('input[name="id"]').value = data.id ?? '';
+                                            editModalEl.querySelector('input[name="code"]').value = data.code ?? '';
+                                            editModalEl.querySelector('input[name="discountPercent"]').value = data.discountPercent ?? '';
+                                            editModalEl.querySelector('input[name="minPrice"]').value = data.minPrice ?? '';
+                                            editModalEl.querySelector('input[name="startDate"]').value = data.startDate?.substring(0, 16) ?? '';
+                                            editModalEl.querySelector('input[name="endDate"]').value = data.endDate?.substring(0, 16) ?? '';
+                                            editModalEl.querySelector('input[name="status"]').value = data.status ?? '';
                                         })
-                                        .catch(err => console.error('Fetch error:', err));
+                                        .catch(err => console.error('Lỗi fetch voucher:', err));
                                 });
                             });
-
                         </script>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                let couponIdToDelete = null; // lưu id coupon muốn xóa
+                                let couponIdToDelete = null;
                                 const confirmModalEl = document.getElementById('confirmDeleteModal');
-                                const confirmModal = new bootstrap.Modal(confirmModalEl);
                                 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-                                // Bắt sự kiện click nút delete
-                                document.addEventListener('click', function (e) {
-                                    const btn = e.target.closest('.del-btn');
-                                    if (!btn) return;
-
-                                    couponIdToDelete = btn.dataset.id; // lấy id coupon
-                                    confirmModal.show(); // hiện modal xác nhận
+                                confirmModalEl.addEventListener('show.bs.modal', function (event) {
+                                    const button = event.relatedTarget;
+                                    couponIdToDelete = button?.getAttribute('data-id');
                                 });
 
-                                // Khi bấm Xóa trong modal
                                 confirmDeleteBtn.addEventListener('click', function () {
                                     if (!couponIdToDelete) return;
 
@@ -714,7 +701,6 @@
                                     })
                                         .then(resp => {
                                             if (!resp.ok) throw new Error('Xóa thất bại');
-                                            // redirect về trang event sau khi xóa
                                             window.location.href = '${pageContext.request.contextPath}/vendor/event';
                                         })
                                         .catch(err => {
@@ -727,4 +713,5 @@
                                 });
                             });
                         </script>
+
                     </div>

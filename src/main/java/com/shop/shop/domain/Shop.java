@@ -49,4 +49,8 @@ public class Shop {
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
+
+    // Thêm quan hệ với Voucher
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Voucher> vouchers;
 }

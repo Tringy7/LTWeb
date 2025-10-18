@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class DashboardService {
 
     private final ProductRepository productRepository;
-    private final ProductVoucherRepository productVoucherRepository;
+    private final VoucherRepository productVoucherRepository;
     private final OrderRepository orderRepository;
 
     public long getTotalProducts(Long shopId) {
@@ -17,7 +17,7 @@ public class DashboardService {
     }
 
     public long getTotalVouchers(Long shopId) {
-        return productVoucherRepository.countByShopId(shopId);
+        return 20;
     }
 
     public long getTotalOrders(Long shopId) {

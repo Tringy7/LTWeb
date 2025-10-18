@@ -2,11 +2,11 @@ package com.shop.shop.repository;
 
 import com.shop.shop.domain.Order;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -39,4 +39,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                @Param("status") String status,
                @Param("startDate") LocalDateTime startDate,
                @Param("endDate") LocalDateTime endDate);
+
+     List<Order> findByShopId(Long shopId);
+
+     // @Modifying(clearAutomatically = true, flushAutomatically = true)
+     // @Query("UPDATE Order o SET o.status = :status WHERE o.id = :orderId")
+     // void updateStatus(@Param("orderId") Long orderId, @Param("status") String
+     // status);
+
+     List<Order> findByStatus(String status);
+     
+
+     // Lọc đơn hàng theo shop + trạng thái
+     List<Order> findByShopIdAndStatus(Long shopId, String status);
 }

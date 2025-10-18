@@ -66,13 +66,13 @@
                     }
 
                     .badge-danger {
-                        background-color: #e74a3b;
+                        background-color: #858796;
                         color: #fff;
                     }
 
                     .badge-warning {
-                        background-color: #f6c23e;
-                        color: #212529;
+                        background-color: #fff200;
+                        color: #000000;
                     }
 
                     .badge-info {
@@ -86,7 +86,7 @@
                     }
 
                     .badge-secondary {
-                        background-color: #858796;
+                        background-color: #f3303d;
                         color: #fff;
                     }
 
@@ -156,39 +156,87 @@
                     .btn-lift {
                         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                     }
+
+                    .edit-status {
+                        cursor: pointer;
+                        margin-left: 6px;
+                        color: #6c757d;
+                        font-size: 1rem;
+                        transition: color 0.2s ease, transform 0.2s ease;
+                    }
+
+                    .edit-status:hover {
+                        color: #0d6efd;
+                        transform: scale(1.2);
+                    }
+
+                    #statusFilter:focus {
+                        border-color: #4e73df;
+                        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+                    }
+
+                    #statusFilter:hover {
+                        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+                    }
                 </style>
 
                 <div class="main-panel">
                     <div class="content-wrapper">
 
-                        <!-- Card Action -->
-                        <div class="card card-action">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0"><i class="fas fa-gear me-2"></i> Thao tác</h4>
-                                <div>
-                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                        <!-- Header Danh sách đơn hàng -->
+                        <div class="card mb-3 border-0 shadow-sm overflow-hidden card-custom"
+                            style="border-radius: 15px;">
+                            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 fw-bold">
+                                    <i class="fas fa-receipt me-2"></i> Danh sách đơn hàng
+                                </h4>
+                                <span class="badge bg-light text-dark fs-6 shadow-sm">
+                                    <i class="fas fa-box me-1"></i> Tổng: ${fn:length(orders)} đơn hàng
+                                </span>
+                            </div>
+
+                            <!-- Thanh hành động -->
+                            <div class="card-body d-flex justify-content-between align-items-center flex-wrap py-3"
+                                style="background-color: #fff; border-top: 1px solid #eee;">
+                                <!-- Bộ lọc -->
+                                <form action="/vendor/order/filter" method="get"
+                                    class="d-flex align-items-center mb-2 mb-sm-0">
+                                    <input type="hidden" name="shop_id" value="${shop.id}">
+                                    <select name="status" id="statusFilter"
+                                        class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
+                                        style="min-width: 200px; height: 40px; font-size: 0.95rem; border-radius: 10px;
+                                               box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out;" onchange="this.form.submit()">
+                                        <option value="">-- Tất cả Trạng thái --</option>
+                                        <option value="Đơn hàng mới" ${status=='Đơn hàng mới' ? 'selected' : '' }>Đơn
+                                            hàng mới</option>
+                                        <option value="Đã xác nhận" ${status=='Đã xác nhận' ? 'selected' : '' }>Đã xác
+                                            nhận</option>
+                                        <option value="Đang giao" ${status=='Đang giao' ? 'selected' : '' }>Đang giao
+                                        </option>
+                                        <option value="Đã giao" ${status=='Đã giao' ? 'selected' : '' }>Đã giao</option>
+                                        <option value="Hủy" ${status=='Hủy' ? 'selected' : '' }>Hủy</option>
+                                        <option value="Trả hàng - Hoàn tiền" ${status=='Trả hàng - Hoàn tiền'
+                                            ? 'selected' : '' }>
+                                            Trả hàng - Hoàn tiền
+                                        </option>
+                                    </select>
+                                </form>
+
+                                <!-- Nút bên phải -->
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift"
                                         onclick="location.reload()">
                                         <i class="fas fa-rotate-right me-1"></i> Refresh
                                     </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#filterModal">
-                                        <i class="fas fa-filter me-1"></i> Filter
-                                    </button>
-                                    <button type="button" class="btn btn-outline-info btn-sm" onclick="confirmExport()">
+                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift" onclick="confirmExport()">
                                         <i class="fas fa-download me-1"></i> Export
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Card Orders -->
-                        <div class="card card-custom">
-                            <div class="card-header card-header-custom">
-                                <h4><i class="fas fa-receipt me-2"></i> Danh sách đơn hàng</h4>
-                                <span class="badge bg-light text-dark">
-                                    <i class="fas fa-box me-1"></i> Tổng: ${fn:length(orders)} đơn hàng
-                                </span>
-                            </div>
+                        <!-- Card chứa bảng -->
+                        <div class="card card-custom border-0 shadow-sm" style="border-radius: 15px;">
                             <div class="card-body bg-white">
                                 <div class="table-responsive">
                                     <form:form>
@@ -197,7 +245,6 @@
                                                 <tr>
                                                     <th>Mã đơn hàng</th>
                                                     <th>Người đặt</th>
-                                                    <th>Ngày tạo</th>
                                                     <th>Phương thức thanh toán</th>
                                                     <th>Tổng tiền</th>
                                                     <th>Trạng thái</th>
@@ -209,7 +256,6 @@
                                                     <tr>
                                                         <td>#${order.id}</td>
                                                         <td>${order.user.fullName}</td>
-                                                        <td>${order.createdAt}</td>
                                                         <td>${order.paymentMethod}</td>
                                                         <td>${order.totalPrice}</td>
                                                         <td>
@@ -232,15 +278,17 @@
                                                                 <c:when
                                                                     test="${order.status == 'Trả hàng - Hoàn tiền'}">
                                                                     <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">Trả
-                                                                        hàng -
-                                                                        Hoàn tiền</span>
+                                                                        style="background-color:#6f42c1;color:white;">
+                                                                        Trả hàng - Hoàn tiền
+                                                                    </span>
                                                                 </c:when>
-                                                                <c:otherwise>
-                                                                    <span
-                                                                        class="badge badge-light">${order.status}</span>
-                                                                </c:otherwise>
                                                             </c:choose>
+
+                                                            <i class="bi bi-pencil edit-status" data-bs-toggle="modal"
+                                                                data-bs-target="#updateStatusModal"
+                                                                data-order-id="${order.id}"
+                                                                data-status="${order.status}"
+                                                                title="Cập nhật trạng thái"></i>
                                                         </td>
                                                         <td>
                                                             <a href="${pageContext.request.contextPath}/vendor/order/detail/${order.id}"
@@ -248,7 +296,6 @@
                                                                 data-bs-toggle="tooltip" title="Xem chi tiết">
                                                                 <i class="fas fa-eye"></i>
                                                             </a>
-
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -258,8 +305,6 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
@@ -293,16 +338,6 @@
                                                 ? 'selected' : '' }>
                                                 Trả hàng - Hoàn tiền</option>
                                         </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="fromDate">Từ ngày</label>
-                                        <input type="date" class="form-control" name="fromDate" id="fromDate"
-                                            value="${fromDate}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="toDate">Đến ngày</label>
-                                        <input type="date" class="form-control" name="toDate" id="toDate"
-                                            value="${toDate}">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -363,6 +398,92 @@
                 </div>
 
 
+                <style>
+                    .status-select {
+                        font-size: 1.15rem;
+                        background: linear-gradient(135deg, #f8faff 0%, #eef3ff 100%);
+                        border-color: #b3c7ff;
+                        transition: all 0.3s ease;
+                        color: #212529;
+                    }
+
+                    .status-select:hover {
+                        border-color: #0d6efd;
+                        background: linear-gradient(135deg, #ffffff 0%, #e9f1ff 100%);
+                        box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+                    }
+
+                    .status-select:focus {
+                        outline: none;
+                        border-color: #0d6efd;
+                        box-shadow: 0 0 12px rgba(13, 110, 253, 0.5);
+                        background: #fff;
+                    }
+
+                    /* Tùy chỉnh option trong dropdown */
+                    select.status-select option {
+                        border-radius: 10px;
+                        padding: 10px;
+                        background-color: #fff;
+                        transition: background-color 0.2s ease;
+                    }
+
+                    select.status-select option:hover {
+                        background-color: #dce6ff;
+                    }
+                </style>
+                <!-- Modal cập nhật trạng thái -->
+                <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content shadow-lg border-0 rounded-4">
+                            <div class="modal-header bg-primary text-white rounded-top-4">
+                                <h5 class="modal-title fw-bold" id="updateStatusLabel">
+                                    <i class="bi bi-arrow-repeat me-2"></i> Cập nhật trạng thái đơn hàng
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Đóng"></button>
+                            </div>
+
+                            <div class="modal-body px-4 py-4">
+                                <form id="updateStatusForm">
+                                    <input type="hidden" id="orderIdUpdate" name="orderId">
+
+                                    <div class="mb-4">
+                                        <label for="statusUpdate" class="form-label fw-bold fs-5">
+                                            <i class="bi bi-list-check me-2"></i> Chọn trạng thái mới:
+                                        </label>
+                                        <select id="statusUpdate" name="status"
+                                            class="form-select form-select-lg border-2 rounded-pill shadow-sm p-3 status-select">
+                                            <option value="Đơn hàng mới"> Đơn hàng mới</option>
+                                            <option value="Đã xác nhận"> Đã xác nhận</option>
+                                            <option value="Đang giao"> Đang giao</option>
+                                            <option value="Đã giao"> Đã giao</option>
+                                            <option value="Hủy"> Hủy</option>
+                                            <option value="Trả hàng - Hoàn tiền"> Trả hàng - Hoàn tiền</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="modal-footer ">
+                                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">
+                                    Hủy
+                                </button>
+                                <button type="button" id="saveStatusBtn" class="btn btn-primary rounded-3 px-4">
+                                    Lưu thay đổi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
 
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
@@ -399,6 +520,8 @@
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <!-- Bootstrap 5 Bundle (có cả PopperJS & Modal) -->
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                <link rel="stylesheet"
+                    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
                 <script>
                     // <![CDATA[  <-- For SVG support
@@ -524,6 +647,54 @@
                             });
                         });
                     });
+                </script>
+
+                <script>
+                    $(document).ready(function () {
+                        // Khi nhấn biểu tượng bút chì
+                        $(document).on("click", ".edit-status", function () {
+                            const orderId = $(this).data("order-id");
+                            const currentStatus = $(this).data("status");
+
+                            // Gán giá trị orderId vào input ẩn
+                            $("#orderIdUpdate").val(orderId);
+
+                            // Gán trạng thái hiện tại vào dropdown
+                            $("#statusUpdate").val(currentStatus);
+
+                            // Hiển thị modal
+                            $("#updateStatusModal").modal("show");
+                        });
+
+                        // Khi nhấn “Lưu” trong modal
+                        $("#saveStatusBtn").click(function () {
+                            const orderId = $("#orderIdUpdate").val();
+                            const status = $("#statusUpdate").val();
+
+                            if (!orderId || !status) {
+                                alert("❌ Thiếu orderId hoặc status!");
+                                return;
+                            }
+
+                            $.ajax({
+                                url: "/vendor/order/update-status",
+                                method: "POST",
+                                data: { orderId: orderId, status: status },
+                                success: function (response) {
+                                    if (response.status === "success") {
+                                        alert("✅ " + response.message);
+                                        location.reload();
+                                    } else {
+                                        alert("⚠️ " + response.message);
+                                    }
+                                },
+                                error: function () {
+                                    alert("❌ Có lỗi xảy ra khi cập nhật trạng thái!");
+                                }
+                            });
+                        });
+                    });
+
                 </script>
 
 

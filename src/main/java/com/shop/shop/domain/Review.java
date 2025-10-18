@@ -35,9 +35,6 @@ public class Review {
     @JoinColumn(name = "userId")
     private User user;
 
-    @Column(length = 255)
-    private String reviewerName;
-
     @Column(length = 1000)
     private String message;
 

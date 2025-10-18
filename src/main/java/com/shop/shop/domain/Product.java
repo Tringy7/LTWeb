@@ -58,10 +58,10 @@ public class Product {
     @Column(length = 50)
     private String gender; // Nam, Nữ, Unisex, ...
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // Thêm liên kết với ProductDetail
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductDetail> productDetails;
 
-    // Thêm liên kết với ProductVoucher
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductVoucher> productVouchers;
+    private List<Review> reviews;
 }

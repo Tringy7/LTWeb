@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String phone;
 
-    @Column(length = 500)
+    @Column(length = 50)
     private String address;
 
     @Column(length = 255)
@@ -56,6 +57,18 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "roleId", nullable = false)
     private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cart cart;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserAddress receiver;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserVoucher> userVouchers;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -91,7 +104,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Voucher> productVouchers;
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.shop.shop.DTO.OrderDetailDTO;
 import com.shop.shop.domain.Order;
-import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.service.vendor.OrderDetailService;
 import com.shop.shop.service.vendor.OrderService;
 
@@ -27,6 +26,7 @@ public class VendorOrderController {
     @Autowired
     private OrderDetailService orderDetailService;
 
+    // Tạm thời giả lập shop đang đăng nhập
     private Long getCurrentShopId() {
         return 1L;
     }
@@ -40,7 +40,6 @@ public class VendorOrderController {
 
         Long shopId = getCurrentShopId();
 
-        // Chuyển LocalDate sang LocalDateTime để tương thích với repository
         LocalDateTime startDateTime = (fromDate != null) ? fromDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
@@ -48,8 +47,27 @@ public class VendorOrderController {
 
         model.addAttribute("orders", orders);
         model.addAttribute("status", status);
-        model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", toDate);
+        return "vendor/order/show";
+    }
+
+    // ✅ ĐÃ CHỈNH: Lọc theo status + shop_id
+    @GetMapping("/filter")
+    public String filterOrdersByStatus(@RequestParam(value = "status", required = false) String status,
+            Model model) {
+        Long shopId = getCurrentShopId();
+        List<Order> orders;
+
+        if (status == null || status.isEmpty()) {
+            // Lấy tất cả đơn hàng của shop hiện tại
+            orders = orderService.getOrdersByShopId(shopId);
+        } else {
+            // Lọc theo trạng thái + shop_id
+            orders = orderService.getOrdersByShopIdAndStatus(shopId, status);
+        }
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("status", status);
         return "vendor/order/show";
     }
 
@@ -62,24 +80,12 @@ public class VendorOrderController {
             return "redirect:/vendor/orders?error=notfound";
         }
 
-        List<OrderDetail> details = orderDetailService.getOrderDetailsByOrderIdAndShopId(orderId, shopId);
-        List<OrderDetailDTO> dtoList = new ArrayList<>();
-
-        for (OrderDetail d : details) {
-            OrderDetailDTO dto = new OrderDetailDTO();
-            dto.setProductId(d.getProduct().getId());
-            dto.setProductName(d.getProduct().getName());
-            dto.setShopName(d.getShop().getShopName());
-            dto.setQuantity(d.getQuantity());
-            dto.setPrice(d.getPrice());
-            dto.setImage(d.getProduct().getImage());
-            dtoList.add(dto);
-        }
+        List<OrderDetailDTO> dtoList = orderDetailService.getOrderDetailsByOrderIdAndShopId(orderId, shopId);
 
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", dtoList);
 
-        return "vendor/order/order-detail"; 
+        return "vendor/order/order-detail";
     }
 
     @GetMapping("/export")
@@ -97,7 +103,6 @@ public class VendorOrderController {
             LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
             List<Order> orders = orderService.filterOrdersByShop(shopId, status, startDateTime, endDateTime);
-
             String filePath = orderService.exportOrdersToPDF(orders);
 
             response.put("status", "success");
@@ -108,4 +113,38 @@ public class VendorOrderController {
         }
         return response;
     }
+
+    @PostMapping("/update-status")
+    @ResponseBody
+    public Map<String, Object> updateOrderStatus(
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("status") String status) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (orderId == null || status == null || status.trim().isEmpty()) {
+                response.put("status", "error");
+                response.put("message", "Thiếu thông tin orderId hoặc status!");
+                return response;
+            }
+
+            boolean updated = orderService.updateOrderStatus(orderId, status);
+
+            if (updated) {
+                response.put("status", "success");
+                response.put("message", "Cập nhật trạng thái thành công!");
+            } else {
+                response.put("status", "error");
+                response.put("message", "Không tìm thấy đơn hàng cần cập nhật!");
+            }
+
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Lỗi: " + e.getMessage());
+        }
+
+        return response;
+    }
+
 }

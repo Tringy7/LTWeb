@@ -2,6 +2,9 @@ package com.shop.shop.service.vendor;
 
 import com.shop.shop.domain.Order;
 import com.shop.shop.repository.OrderRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,19 @@ public class OrderService {
 
     public List<Order> filterOrdersByShop(Long shopId, String status, LocalDateTime start, LocalDateTime end) {
         return orderRepository.filterOrdersByShop(shopId, status, start, end);
+    }
+
+    public Order save(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public boolean updateStatus(Long orderId, String newStatus) {
+        Order order = getOrderById(orderId);
+        if (order == null)
+            return false;
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+        return true;
     }
 
     public String exportOrdersToPDF(List<Order> orders) {
@@ -103,6 +119,26 @@ public class OrderService {
     }
 
     public List<Order> getOrdersByShopId(Long shopId) {
-        return orderRepository.findAll();
+        return orderRepository.findByShopId(shopId);
     }
+
+    public boolean updateOrderStatus(Long orderId, String status) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setStatus(status);
+            orderRepository.save(order);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Order> getOrdersByStatus(String status) {
+        return orderRepository.findByStatus(status);
+    }
+
+    public List<Order> getOrdersByShopIdAndStatus(Long shopId, String status) {
+        return orderRepository.findByShopIdAndStatus(shopId, status);
+    }
+
 }

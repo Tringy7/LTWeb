@@ -1,5 +1,6 @@
 package com.shop.shop.service.vendor;
 
+import com.shop.shop.DTO.OrderDetailDTO;
 import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.repository.OrderDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,8 @@ public class OrderDetailService {
         return orderDetailRepository.findByOrder_Id(orderId);
     }
 
-    public List<OrderDetail> getOrderDetailsByOrderIdAndShopId(Long orderId, Long shopId) {
-        return orderDetailRepository.findByOrderIdAndShopId(orderId, shopId);
+    public List<OrderDetailDTO> getOrderDetailsByOrderIdAndShopId(Long orderId, Long shopId) {
+        return orderDetailRepository.findOrderDetailsDTOByOrderIdAndShopId(orderId, shopId);
     }
 
-    
 }
