@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,19 +25,19 @@ public class UserAddress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = true, unique = true)
     private User user;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String receiverName;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String receiverPhone;
 
-    @Column(nullable = false, length = 500)
+    @Column(length = 500)
     private String receiverAddress;
 
-    @Column(nullable = false)
-    private Boolean isDefault = false;
+    @Column(columnDefinition = "TEXT")
+    private String note;
 }

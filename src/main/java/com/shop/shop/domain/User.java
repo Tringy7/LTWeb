@@ -48,7 +48,7 @@ public class User implements UserDetails {
     @Column(length = 50)
     private String phone;
 
-    @Column(length = 500)
+    @Column(length = 50)
     private String address;
 
     @Column(length = 255)
@@ -66,6 +66,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserVoucher> userVouchers;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

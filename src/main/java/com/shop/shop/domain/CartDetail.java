@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CartDetail {
 
     @Id
@@ -32,9 +34,13 @@ public class CartDetail {
     @JoinColumn(name = "productId")
     private Product product;
 
-    private String size;
-
     private Long quantity = 1L;
 
+    private String size;
+
     private Double price;
+
+    @ManyToOne
+    @JoinColumn(name = "voucherId")
+    private Voucher voucher;
 }
