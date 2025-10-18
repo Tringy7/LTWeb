@@ -38,7 +38,9 @@ public class Voucher {
 
     private LocalDateTime endDate;
 
-    private Boolean status;
+    private String status;
+
+    private Double minPrice;
 
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)
