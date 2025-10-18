@@ -1,7 +1,8 @@
-package com.shop.shop.tmp;
+package com.shop.shop.dto;
 
 //Update to dto
 //dto -> tmp
+//tmp -> dto
 public class OrderDetailDTO {
     private Long productId;
     private String productName;

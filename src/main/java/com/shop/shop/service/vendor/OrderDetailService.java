@@ -1,8 +1,8 @@
 package com.shop.shop.service.vendor;
 
 import com.shop.shop.domain.OrderDetail;
+import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.repository.OrderDetailRepository;
-import com.shop.shop.tmp.OrderDetailDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

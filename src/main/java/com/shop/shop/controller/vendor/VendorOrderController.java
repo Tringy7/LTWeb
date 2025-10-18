@@ -12,9 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.shop.shop.domain.Order;
+import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.service.vendor.OrderDetailService;
 import com.shop.shop.service.vendor.OrderService;
-import com.shop.shop.tmp.OrderDetailDTO;
 
 @Controller
 @RequestMapping("/vendor/order")
