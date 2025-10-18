@@ -1,7 +1,8 @@
 package com.shop.shop.repository;
 
-import com.shop.shop.DTO.OrderDetailDTO;
 import com.shop.shop.domain.OrderDetail;
+import com.shop.shop.dto.OrderDetailDTO;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

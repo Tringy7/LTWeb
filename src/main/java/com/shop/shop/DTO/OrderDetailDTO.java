@@ -1,4 +1,4 @@
-package com.shop.shop.DTO;
+package com.shop.shop.dto;
 
 public class OrderDetailDTO {
     private Long productId;

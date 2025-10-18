@@ -11,8 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.shop.shop.DTO.OrderDetailDTO;
 import com.shop.shop.domain.Order;
+import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.service.vendor.OrderDetailService;
 import com.shop.shop.service.vendor.OrderService;
 
@@ -51,7 +51,6 @@ public class VendorOrderController {
         return "vendor/order/show";
     }
 
-    // ✅ ĐÃ CHỈNH: Lọc theo status + shop_id
     @GetMapping("/filter")
     public String filterOrdersByStatus(@RequestParam(value = "status", required = false) String status,
             Model model) {
@@ -59,10 +58,8 @@ public class VendorOrderController {
         List<Order> orders;
 
         if (status == null || status.isEmpty()) {
-            // Lấy tất cả đơn hàng của shop hiện tại
             orders = orderService.getOrdersByShopId(shopId);
         } else {
-            // Lọc theo trạng thái + shop_id
             orders = orderService.getOrdersByShopIdAndStatus(shopId, status);
         }
 
