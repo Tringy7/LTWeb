@@ -23,7 +23,7 @@ import com.shop.shop.repository.UserRepository;
 import com.shop.shop.service.admin.CommissionService;
 import com.shop.shop.service.admin.DashboardService;
 
-@Service
+@Service("adminDashboardService")
 public class DashboardServiceImpl implements DashboardService {
 
     private final UserRepository userRepository;

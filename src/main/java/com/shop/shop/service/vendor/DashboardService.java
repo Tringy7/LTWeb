@@ -1,10 +1,14 @@
 package com.shop.shop.service.vendor;
 
 import org.springframework.stereotype.Service;
-import com.shop.shop.repository.*;
+
+import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.ProductRepository;
+import com.shop.shop.repository.VoucherRepository;
+
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("vendorDashboardService")
 @RequiredArgsConstructor
 public class DashboardService {
 

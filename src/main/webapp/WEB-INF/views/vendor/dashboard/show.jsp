@@ -7,6 +7,23 @@
             </head>
 
             <style>
+                /* Welcome Banner Animation */
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .welcome-banner {
+                    animation: fadeInUp 0.6s ease-out;
+                }
+
                 .stat-row {
                     display: flex;
                     flex-wrap: wrap;
@@ -176,6 +193,49 @@
             <div class="main-panel">
                 <div class="content-wrapper">
 
+                    <!-- Welcome Banner -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card welcome-banner"
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); border-radius: 15px;">
+                                <div class="card-body py-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="flex-grow-1">
+                                            <h2 class="text-white mb-2" style="font-weight: 600;">
+                                                <i class="fas fa-store mr-2"></i>
+                                                <c:choose>
+                                                    <c:when
+                                                        test="${not empty acc.shop and not empty acc.shop.shopName}">
+                                                        ${acc.shop.shopName}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        Vendor Dashboard
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </h2>
+                                            <p class="text-white mb-0" style="opacity: 0.95; font-size: 1rem;">
+                                                <i class="fas fa-user-circle mr-2"></i>
+                                                Xin chào, <strong>${acc.fullName}</strong>!
+                                                <span class="ml-3">
+                                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                                    <fmt:formatDate value="<%= new java.util.Date() %>"
+                                                        pattern="EEEE, dd/MM/yyyy" />
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <div class="ml-3 d-none d-md-block">
+                                            <div
+                                                style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 12px;">
+                                                <i class="fas fa-chart-line text-white" style="font-size: 2.5rem;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
                     <div class="stat-row">
                         <div class="card stat-card">
                             <div class="card-body d-flex justify-content-between align-items-center">

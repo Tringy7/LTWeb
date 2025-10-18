@@ -28,7 +28,7 @@ import com.shop.shop.service.admin.CommissionService;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("adminCommissionService")
 @RequiredArgsConstructor
 public class CommissionServiceImpl implements CommissionService {
 

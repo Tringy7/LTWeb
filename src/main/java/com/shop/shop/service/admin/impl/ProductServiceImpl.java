@@ -16,7 +16,7 @@ import com.shop.shop.service.admin.ProductService;
  * Implementation of ProductService interface
  * Follows clean architecture: Business logic implementation
  */
-@Service
+@Service("adminProductService")
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;

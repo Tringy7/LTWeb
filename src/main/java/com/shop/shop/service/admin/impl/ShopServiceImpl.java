@@ -14,7 +14,7 @@ import com.shop.shop.service.admin.ShopService;
  * Implementation of ShopService interface
  * Follows clean architecture: Business logic implementation
  */
-@Service
+@Service("adminShopService")
 public class ShopServiceImpl implements ShopService {
 
     private final ShopRepository shopRepository;

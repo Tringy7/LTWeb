@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.shop.shop.domain.Product;
 import com.shop.shop.repository.ProductRepository;
 
-@Service
+@Service("vendorProductService")
 public class ProductService {
     private final ProductRepository productRepository;
 

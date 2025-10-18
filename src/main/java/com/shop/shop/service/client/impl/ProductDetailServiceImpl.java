@@ -8,7 +8,7 @@ import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.repository.ProductDetailRepository;
 import com.shop.shop.service.client.ProductDetailService;
 
-@Service
+@Service("clientProductDetailService")
 public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Autowired

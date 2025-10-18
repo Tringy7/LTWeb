@@ -1,15 +1,22 @@
 package com.shop.shop.service.vendor;
 
-import com.shop.shop.domain.*;
-import com.shop.shop.repository.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.shop.shop.domain.Shop;
+import com.shop.shop.domain.User;
+import com.shop.shop.domain.UserVoucher;
+import com.shop.shop.domain.Voucher;
+import com.shop.shop.repository.ShopRepository;
+import com.shop.shop.repository.UserRepository;
+import com.shop.shop.repository.UserVoucherRepository;
+import com.shop.shop.repository.VoucherRepository;
 
-@Service
+@Service("vendorVoucherService")
 public class VoucherService {
 
     @Autowired

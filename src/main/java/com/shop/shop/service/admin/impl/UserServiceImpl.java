@@ -9,7 +9,7 @@ import com.shop.shop.domain.User;
 import com.shop.shop.repository.UserRepository;
 import com.shop.shop.service.admin.UserService;
 
-@Service
+@Service("adminUserService")
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

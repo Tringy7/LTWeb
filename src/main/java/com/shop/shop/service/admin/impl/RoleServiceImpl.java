@@ -9,7 +9,7 @@ import com.shop.shop.domain.Role;
 import com.shop.shop.repository.RoleRepository;
 import com.shop.shop.service.admin.RoleService;
 
-@Service
+@Service("adminRoleService")
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;

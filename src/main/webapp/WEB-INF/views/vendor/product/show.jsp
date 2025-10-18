@@ -4,21 +4,13 @@
             <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
                 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-                    <!DOCTYPE html>
-                    <html lang="vi">
-
                     <head>
-                        <meta charset="UTF-8">
-                        <title>Quản lý sản phẩm</title>
                         <link rel="stylesheet"
                             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-                        <link rel="stylesheet"
-                            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
                         <style>
                             /* Giảm padding trên của container chính */
                             .content-wrapper {
                                 padding-top: 5px;
-                                /* Giả sử giá trị mặc định lớn hơn, hãy giảm nó */
                             }
 
                             /* === Card bo tròn, bóng mượt === */
@@ -133,8 +125,8 @@
                         </style>
                     </head>
 
-                    <body class="bg-light">
-                        <div class="container py-3">
+                    <div class="main-panel">
+                        <div class="content-wrapper">
 
                             <!-- Card Action -->
                             <div class="card card-custom mb-3">
@@ -242,44 +234,41 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Modal Xóa -->
-                        <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content rounded-4 shadow-lg">
-                                    <div class="modal-header bg-danger text-white">
-                                        <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Xác nhận Xóa Sản
-                                            phẩm
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white"
-                                            data-bs-dismiss="modal"></button>
+                            <!-- Modal Xóa -->
+                            <div class="modal fade" id="deleteProductModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content rounded-4 shadow-lg">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Xác nhận Xóa Sản
+                                                phẩm
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form:form method="post"
+                                            action="${pageContext.request.contextPath}/vendor/product/delete"
+                                            modelAttribute="product">
+                                            <form:hidden path="id" />
+                                            <div class="modal-body text-center py-4">
+                                                <i class="fas fa-question-circle text-warning fs-1 mb-3"></i>
+                                                <p class="mb-3 fs-5">Bạn có chắc chắn muốn xóa sản phẩm <strong
+                                                        id="deleteProductName" class="text-danger"></strong> không?</p>
+                                                <p class="text-danger fw-bold">Dữ liệu sẽ bị xóa vĩnh viễn!</p>
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary fw-bold"
+                                                    data-bs-dismiss="modal">Hủy</button>
+                                                <button type="submit" class="btn btn-danger fw-bold">Xóa Vĩnh
+                                                    Viễn</button>
+                                            </div>
+                                        </form:form>
                                     </div>
-                                    <form:form method="post"
-                                        action="${pageContext.request.contextPath}/vendor/product/delete"
-                                        modelAttribute="product">
-                                        <form:hidden path="id" />
-                                        <div class="modal-body text-center py-4">
-                                            <i class="fas fa-question-circle text-warning fs-1 mb-3"></i>
-                                            <p class="mb-3 fs-5">Bạn có chắc chắn muốn xóa sản phẩm <strong
-                                                    id="deleteProductName" class="text-danger"></strong> không?</p>
-                                            <p class="text-danger fw-bold">Dữ liệu sẽ bị xóa vĩnh viễn!</p>
-                                        </div>
-                                        <div class="modal-footer justify-content-center">
-                                            <button type="button" class="btn btn-secondary fw-bold"
-                                                data-bs-dismiss="modal">Hủy</button>
-                                            <button type="submit" class="btn btn-danger fw-bold">Xóa Vĩnh
-                                                Viễn</button>
-                                        </div>
-                                    </form:form>
                                 </div>
                             </div>
-                        </div>
 
-                        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-                        <script
-                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-                        <!-- <script>
+                            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+                            <!-- <script>
                             $(document).ready(function () {
                                 // Tooltips
                                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -295,35 +284,35 @@
                             });
                         </script> -->
 
-                        <script>
+                            <script>
 
-                            $(document).ready(function () {
-                                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                                tooltipTriggerList.map(function (tooltipTriggerEl) {
-                                    return new bootstrap.Tooltip(tooltipTriggerEl, {
-                                        delay: { "show": 100, "hide": 50 }, // hiện nhanh
-                                        boundary: 'window',
-                                        fallbackPlacements: ['top', 'bottom'], // đảm bảo tooltip không bị cắt
+                                $(document).ready(function () {
+                                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                        return new bootstrap.Tooltip(tooltipTriggerEl, {
+                                            delay: { "show": 100, "hide": 50 }, // hiện nhanh
+                                            boundary: 'window',
+                                            fallbackPlacements: ['top', 'bottom'], // đảm bảo tooltip không bị cắt
+                                        })
                                     })
-                                })
 
-                                // Khắc phục: Lắng nghe sự kiện "show.bs.modal"
-                                $('#deleteProductModal').on('show.bs.modal', function (event) {
-                                    // Lấy nút đã kích hoạt modal
-                                    var button = $(event.relatedTarget);
+                                    // Khắc phục: Lắng nghe sự kiện "show.bs.modal"
+                                    $('#deleteProductModal').on('show.bs.modal', function (event) {
+                                        // Lấy nút đã kích hoạt modal
+                                        var button = $(event.relatedTarget);
 
-                                    // Lấy dữ liệu từ các thuộc tính data- của nút
-                                    var productId = button.data('id');
-                                    var productName = button.data('name');
+                                        // Lấy dữ liệu từ các thuộc tính data- của nút
+                                        var productId = button.data('id');
+                                        var productName = button.data('name');
 
-                                    // Cập nhật nội dung modal và form ẩn
-                                    var modal = $(this);
-                                    modal.find('input[name="id"]').val(productId); // Cập nhật form:hidden
-                                    modal.find('#deleteProductName').text(productName); // Cập nhật tên SP trong modal
+                                        // Cập nhật nội dung modal và form ẩn
+                                        var modal = $(this);
+                                        modal.find('input[name="id"]').val(productId); // Cập nhật form:hidden
+                                        modal.find('#deleteProductName').text(productName); // Cập nhật tên SP trong modal
+                                    });
                                 });
-                            });
-                        </script>
-
-                    </body>
-
-                    </html>
+                            </script>
+                        </div>
+                        <!-- content-wrapper ends -->
+                    </div>
+                    <!-- main-panel ends -->

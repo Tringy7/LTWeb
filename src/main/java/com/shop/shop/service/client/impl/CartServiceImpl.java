@@ -28,7 +28,7 @@ import com.shop.shop.service.client.ProductService;
 
 import jakarta.transaction.Transactional;
 
-@Service
+@Service("clientCartService")
 public class CartServiceImpl implements CartService {
 
     @Autowired

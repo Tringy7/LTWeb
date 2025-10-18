@@ -9,7 +9,7 @@ import com.shop.shop.service.client.ReviewService;
 
 import jakarta.transaction.Transactional;
 
-@Service
+@Service("clientReviewService")
 public class ReviewServiceImpl implements ReviewService {
 
     @Autowired

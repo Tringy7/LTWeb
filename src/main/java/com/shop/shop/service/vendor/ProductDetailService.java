@@ -1,13 +1,14 @@
 package com.shop.shop.service.vendor;
 
-import org.springframework.stereotype.Service;
-import com.shop.shop.domain.ProductDetail;
-import com.shop.shop.repository.ProductDetailRepository;
-
 import java.util.List;
 import java.util.Optional;
 
-@Service
+import org.springframework.stereotype.Service;
+
+import com.shop.shop.domain.ProductDetail;
+import com.shop.shop.repository.ProductDetailRepository;
+
+@Service("vendorProductDetailService")
 public class ProductDetailService {
     private final ProductDetailRepository productDetailRepository;
 

@@ -17,7 +17,7 @@ import com.shop.shop.dto.FilterDTO;
 import com.shop.shop.repository.ProductRepository;
 import com.shop.shop.service.client.ProductService;
 
-@Service
+@Service("clientProductService")
 public class ProductServiceImpl implements ProductService {
 
     @Autowired

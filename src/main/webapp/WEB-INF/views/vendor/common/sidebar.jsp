@@ -7,12 +7,28 @@
                     <li class="nav-item">
                         <div class="d-flex sidebar-profile">
                             <div class="sidebar-profile-image">
-                                <img src="images/faces/face29.jpg" alt="image" />
+                                <c:choose>
+                                    <c:when test="${not empty acc.image}">
+                                        <img src="/admin/images/user/${acc.image}" alt="image" />
+                                    </c:when>
+                                </c:choose>
                                 <span class="sidebar-status-indicator"></span>
                             </div>
                             <div class="sidebar-profile-name">
-                                <p class="sidebar-name">Anh Vũ</p>
-                                <p class="sidebar-designation">Welcome To HomePage</p>
+                                <p class="sidebar-name">
+                                    <c:choose>
+                                        <c:when test="${not empty acc}">
+                                            ${acc.fullName}
+                                        </c:when>
+                                    </c:choose>
+                                </p>
+                                <p class="sidebar-designation">
+                                    <c:choose>
+                                        <c:when test="${not empty acc and not empty acc.role}">
+                                            ${acc.role.name}
+                                        </c:when>
+                                    </c:choose>
+                                </p>
                             </div>
                         </div>
                         <p class="sidebar-menu-title">Overviews</p>

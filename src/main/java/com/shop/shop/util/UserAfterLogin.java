@@ -38,4 +38,34 @@ public class UserAfterLogin {
             SecurityContextHolder.getContext().setAuthentication(newAuth);
         }
     }
+
+    protected User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal();
+        }
+
+        return null;
+    }
+
+    protected String getCurrentUsername() {
+        User user = getCurrentUser();
+        return user != null ? user.getUsername() : null;
+    }
+
+    protected String getCurrentUserFullName() {
+        User user = getCurrentUser();
+        return user != null ? user.getFullName() : null;
+    }
+
+    protected String getCurrentUserRole() {
+        User user = getCurrentUser();
+        return user != null && user.getRole() != null ? user.getRole().getName() : null;
+    }
+
+    protected boolean isAuthenticated() {
+        return getCurrentUser() != null;
+    }
 }

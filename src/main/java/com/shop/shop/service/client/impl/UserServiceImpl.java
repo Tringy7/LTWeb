@@ -25,7 +25,7 @@ import com.shop.shop.service.client.UserService;
 
 import jakarta.servlet.ServletContext;
 
-@Service
+@Service("clientUserService")
 public class UserServiceImpl implements UserService {
 
     @Autowired

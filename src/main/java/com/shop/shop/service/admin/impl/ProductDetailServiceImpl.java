@@ -11,11 +11,10 @@ import com.shop.shop.repository.ProductDetailRepository;
 import com.shop.shop.service.admin.ProductDetailService;
 
 /**
- * Implementation of ProductDetailService interface
- * Follows clean architecture: Business logic implementation using Spring Data
- * JPA
+ * Implementation of ProductDetailService interface Follows clean architecture:
+ * Business logic implementation using Spring Data JPA
  */
-@Service
+@Service("adminProductDetailService")
 @Transactional
 public class ProductDetailServiceImpl implements ProductDetailService {
 
