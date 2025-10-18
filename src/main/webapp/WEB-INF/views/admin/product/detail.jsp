@@ -58,7 +58,7 @@
                         <div class="product-image-container">
                             <c:choose>
                                 <c:when test="${not empty product.image}">
-                                    <img src="/images/products/${product.image}" alt="${product.name}" 
+                                    <img src="/admin/images/product/${product.image}" alt="${product.name}" 
                                          class="img-fluid product-detail-image">
                                 </c:when>
                                 <c:otherwise>

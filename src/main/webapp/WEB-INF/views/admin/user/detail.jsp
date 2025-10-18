@@ -85,7 +85,7 @@
         <div class="user-detail-header">
             <c:choose>
                 <c:when test="${not empty user.image}">
-                    <img src="/images/users/${user.image}" alt="Avatar" class="user-avatar-large">
+                    <img src="/admin/images/users/${user.image}" alt="Avatar" class="user-avatar-large">
                 </c:when>
                 <c:otherwise>
                     <div class="user-avatar-large d-inline-flex align-items-center justify-content-center mx-auto" 

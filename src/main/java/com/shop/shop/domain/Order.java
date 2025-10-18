@@ -43,4 +43,6 @@ public class Order {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetails;
 }

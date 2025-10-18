@@ -126,7 +126,7 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty product.image}">
-                                                    <img src="/images/products/${product.image}" alt="Product Image" 
+                                                    <img src="/admin/images/product/${product.image}" alt="Product Image" 
                                                          class="product-image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                                                 </c:when>
                                                 <c:otherwise>

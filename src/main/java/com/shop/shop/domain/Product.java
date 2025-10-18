@@ -64,5 +64,5 @@ public class Product {
 
     // Thêm liên kết với ProductVoucher
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductVoucher> productVouchers;
+    private List<Review> reviews;
 }

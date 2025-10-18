@@ -139,7 +139,7 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty user.image}">
-                                                    <img src="/images/users/${user.image}" alt="Avatar" class="user-avatar">
+                                                    <img src="/admin/images/users/${user.image}" alt="Avatar" class="user-avatar">
                                                 </c:when>
                                                 <c:otherwise>
                                                     <div class="user-avatar d-flex align-items-center justify-content-center" 
@@ -257,5 +257,5 @@
 <script src="/admin/js/template.js"></script>
 <script src="/admin/js/todolist.js"></script>
 
-<!-- Include Only Essential JavaScript for Pure Spring Boot MVC -->
+
 <script src="/admin/js/user/user-actions.js"></script>

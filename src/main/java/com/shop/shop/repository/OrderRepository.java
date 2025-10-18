@@ -3,6 +3,8 @@ package com.shop.shop.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -27,4 +29,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Find delivered orders in date range - Spring Data JPA auto-implementation
     List<Order> findByStatusAndCreatedAtBetween(String status, LocalDateTime fromDate, LocalDateTime toDate);
+
+    // Count orders by date range
+    Long countByCreatedAtBetween(LocalDateTime fromDate, LocalDateTime toDate);
+
+    // Count orders by status
+    Long countByStatus(String status);
+
+    // Find all orders with pagination ordered by creation date
+    Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

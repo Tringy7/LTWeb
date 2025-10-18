@@ -13,12 +13,6 @@ import com.shop.shop.dto.ProductUpdateDTO;
 @Component
 public class ProductMapper {
 
-    /**
-     * Convert Product entity to ProductResponseDTO
-     * 
-     * @param product The Product entity to convert
-     * @return ProductResponseDTO for safe data exposure
-     */
     public ProductResponseDTO toProductResponseDTO(Product product) {
         if (product == null) {
             return null;
