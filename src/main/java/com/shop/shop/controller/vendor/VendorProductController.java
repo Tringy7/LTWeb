@@ -1,15 +1,21 @@
 package com.shop.shop.controller.vendor;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.Product;
@@ -83,42 +89,24 @@ public class VendorProductController {
 
     @PostMapping("/vendor/product/add")
     public String addProduct(@ModelAttribute Product product,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-            Model model) throws IOException {
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
+
         Shop shop = new Shop();
         shop.setId(SHOP_ID);
         product.setShop(shop);
 
-        String errorMessage = null;
-
-        if (product.getName() == null || product.getName().trim().isEmpty()) {
-            errorMessage = "Tên sản phẩm không được để trống.";
-        } else if (product.getPrice() == null || product.getPrice() <= 0) {
-            errorMessage = "Giá sản phẩm phải lớn hơn 0.";
-        } else if (productService.existsByNameAndShopId(product.getName(), SHOP_ID)) {
-            errorMessage = "Sản phẩm này đã tồn tại trong cửa hàng.";
-        }
-
-        // Nếu có lỗi → trả về lại form và hiển thị thông báo
-        if (errorMessage != null) {
-            model.addAttribute("error", errorMessage);
-            model.addAttribute("product", product);
-            return "vendor/product/add-product";
-        }
-
         if (imageFile != null && !imageFile.isEmpty()) {
-            String uploadDir = "src/main/resources/static/images/products";
-            String fileName = UUID.randomUUID() + "_" + imageFile.getOriginalFilename();
-            File uploadPath = new File(uploadDir);
-            if (!uploadPath.exists()) {
-                uploadPath.mkdirs();
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path uploadPath = Paths.get("src/main/webapp/resources/admin/images/product");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
             }
-            File dest = new File(uploadPath, fileName);
-            imageFile.transferTo(dest);
+            imageFile.transferTo(uploadPath.resolve(fileName));
             product.setImage(fileName);
         }
+
         productService.save(product);
-        return "redirect:/vendor/product/show";
+        return "redirect:/vendor/product";
     }
 
     @GetMapping("/vendor/product/edit/{id}")
