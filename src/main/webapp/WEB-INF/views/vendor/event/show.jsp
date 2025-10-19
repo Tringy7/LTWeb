@@ -599,114 +599,116 @@
                         </div>
                         <!-- content-wrapper ends -->
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', () => {
-                                const filterGroup = document.getElementById('filter-group');
-                                const allCoupons = document.querySelectorAll('.coupon-card'); // lấy thẳng coupon
-                                const filterButtons = filterGroup.querySelectorAll('button');
-
-                                // Hàm lọc coupon
-                                const filterCoupons = (filter) => {
-                                    allCoupons.forEach(coupon => {
-                                        const status = coupon.getAttribute('data-status').toLowerCase(); // chuyển về lowercase
-                                        if (filter === 'all' || status === filter.toLowerCase()) {
-                                            coupon.parentElement.style.display = "block"; // hiện col chứa coupon
-                                        } else {
-                                            coupon.parentElement.style.display = "none"; // ẩn col chứa coupon
-                                        }
-                                    });
-                                };
-
-                                // Xử lý click nút filter
-                                filterGroup.addEventListener('click', (event) => {
-                                    let target = event.target;
-
-                                    // Nếu click vào icon hoặc text bên trong button, lấy button cha
-                                    if (target.tagName !== 'BUTTON') {
-                                        target = target.closest('button');
-                                    }
-
-                                    if (target) {
-                                        const filterValue = target.getAttribute('data-filter');
-
-                                        // Reset class cho tất cả nút
-                                        filterButtons.forEach(btn => {
-                                            btn.classList.remove('active', 'btn-primary');
-                                            btn.classList.add('btn-outline-primary');
-                                        });
-
-                                        // Set class nút được chọn
-                                        target.classList.add('active', 'btn-primary');
-                                        target.classList.remove('btn-outline-primary');
-
-                                        // Thực hiện lọc
-                                        filterCoupons(filterValue);
-                                    }
-                                });
-
-                                // Hiển thị tất cả coupon ban đầu
-                                filterCoupons('all');
-                            });
-                        </script>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const editModalEl = document.getElementById('editCouponModal');
-                                editModalEl.addEventListener('show.bs.modal', function (event) {
-                                    const button = event.relatedTarget; // nút đã bấm
-                                    const couponId = button?.getAttribute('data-id');
-                                    if (!couponId) return;
-
-                                    fetch('${pageContext.request.contextPath}/vendor/event/get/' + couponId)
-                                        .then(resp => {
-                                            if (!resp.ok) throw new Error('Không lấy được dữ liệu');
-                                            return resp.json();
-                                        })
-                                        .then(data => {
-                                            editModalEl.querySelector('input[name="id"]').value = data.id ?? '';
-                                            editModalEl.querySelector('input[name="code"]').value = data.code ?? '';
-                                            editModalEl.querySelector('input[name="discountPercent"]').value = data.discountPercent ?? '';
-                                            editModalEl.querySelector('input[name="minPrice"]').value = data.minPrice ?? '';
-                                            editModalEl.querySelector('input[name="startDate"]').value = data.startDate?.substring(0, 16) ?? '';
-                                            editModalEl.querySelector('input[name="endDate"]').value = data.endDate?.substring(0, 16) ?? '';
-                                            editModalEl.querySelector('input[name="status"]').value = data.status ?? '';
-                                        })
-                                        .catch(err => console.error('Lỗi fetch voucher:', err));
-                                });
-                            });
-                        </script>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                let couponIdToDelete = null;
-                                const confirmModalEl = document.getElementById('confirmDeleteModal');
-                                const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-                                confirmModalEl.addEventListener('show.bs.modal', function (event) {
-                                    const button = event.relatedTarget;
-                                    couponIdToDelete = button?.getAttribute('data-id');
-                                });
-
-                                confirmDeleteBtn.addEventListener('click', function () {
-                                    if (!couponIdToDelete) return;
-
-                                    fetch('${pageContext.request.contextPath}/vendor/event/delete/' + couponIdToDelete, {
-                                        method: 'DELETE'
-                                    })
-                                        .then(resp => {
-                                            if (!resp.ok) throw new Error('Xóa thất bại');
-                                            window.location.href = '${pageContext.request.contextPath}/vendor/event';
-                                        })
-                                        .catch(err => {
-                                            console.error(err);
-                                            alert('Xóa thất bại, thử lại!');
-                                        })
-                                        .finally(() => {
-                                            couponIdToDelete = null;
-                                        });
-                                });
-                            });
-                        </script>
-
                     </div>
                     <!-- main-panel ends -->
+
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const filterGroup = document.getElementById('filter-group');
+                            const allCoupons = document.querySelectorAll('.coupon-card'); // lấy thẳng coupon
+                            const filterButtons = filterGroup.querySelectorAll('button');
+
+                            // Hàm lọc coupon
+                            const filterCoupons = (filter) => {
+                                allCoupons.forEach(coupon => {
+                                    const status = coupon.getAttribute('data-status').toLowerCase(); // chuyển về lowercase
+                                    if (filter === 'all' || status === filter.toLowerCase()) {
+                                        coupon.parentElement.style.display = "block"; // hiện col chứa coupon
+                                    } else {
+                                        coupon.parentElement.style.display = "none"; // ẩn col chứa coupon
+                                    }
+                                });
+                            };
+
+                            // Xử lý click nút filter
+                            filterGroup.addEventListener('click', (event) => {
+                                let target = event.target;
+
+                                // Nếu click vào icon hoặc text bên trong button, lấy button cha
+                                if (target.tagName !== 'BUTTON') {
+                                    target = target.closest('button');
+                                }
+
+                                if (target) {
+                                    const filterValue = target.getAttribute('data-filter');
+
+                                    // Reset class cho tất cả nút
+                                    filterButtons.forEach(btn => {
+                                        btn.classList.remove('active', 'btn-primary');
+                                        btn.classList.add('btn-outline-primary');
+                                    });
+
+                                    // Set class nút được chọn
+                                    target.classList.add('active', 'btn-primary');
+                                    target.classList.remove('btn-outline-primary');
+
+                                    // Thực hiện lọc
+                                    filterCoupons(filterValue);
+                                }
+                            });
+
+                            // Hiển thị tất cả coupon ban đầu
+                            filterCoupons('all');
+                        });
+                    </script>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const editModalEl = document.getElementById('editCouponModal');
+                            editModalEl.addEventListener('show.bs.modal', function (event) {
+                                const button = event.relatedTarget; // nút đã bấm
+                                const couponId = button?.getAttribute('data-id');
+                                if (!couponId) return;
+
+                                fetch('${pageContext.request.contextPath}/vendor/event/get/' + couponId)
+                                    .then(resp => {
+                                        if (!resp.ok) throw new Error('Không lấy được dữ liệu');
+                                        return resp.json();
+                                    })
+                                    .then(data => {
+                                        editModalEl.querySelector('input[name="id"]').value = data.id ?? '';
+                                        editModalEl.querySelector('input[name="code"]').value = data.code ?? '';
+                                        editModalEl.querySelector('input[name="discountPercent"]').value = data.discountPercent ?? '';
+                                        editModalEl.querySelector('input[name="minPrice"]').value = data.minPrice ?? '';
+                                        editModalEl.querySelector('input[name="startDate"]').value = data.startDate?.substring(0, 16) ?? '';
+                                        editModalEl.querySelector('input[name="endDate"]').value = data.endDate?.substring(0, 16) ?? '';
+                                        editModalEl.querySelector('input[name="status"]').value = data.status ?? '';
+                                    })
+                                    .catch(err => console.error('Lỗi fetch voucher:', err));
+                            });
+                        });
+                    </script>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            let couponIdToDelete = null;
+                            const confirmModalEl = document.getElementById('confirmDeleteModal');
+                            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+                            confirmModalEl.addEventListener('show.bs.modal', function (event) {
+                                const button = event.relatedTarget;
+                                couponIdToDelete = button?.getAttribute('data-id');
+                            });
+
+                            confirmDeleteBtn.addEventListener('click', function () {
+                                if (!couponIdToDelete) return;
+
+                                fetch('${pageContext.request.contextPath}/vendor/event/delete/' + couponIdToDelete, {
+                                    method: 'DELETE'
+                                })
+                                    .then(resp => {
+                                        if (!resp.ok) throw new Error('Xóa thất bại');
+                                        window.location.href = '${pageContext.request.contextPath}/vendor/event';
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                        alert('Xóa thất bại, thử lại!');
+                                    })
+                                    .finally(() => {
+                                        couponIdToDelete = null;
+                                    });
+                            });
+                        });
+                    </script>
