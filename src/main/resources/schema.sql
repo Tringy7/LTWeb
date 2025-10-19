@@ -184,7 +184,6 @@ CREATE TABLE `voucher` (
   `code` varchar(50) DEFAULT NULL,
   `discount_percent` double DEFAULT NULL,
   `end_date` datetime(6) DEFAULT NULL,
-  `min_price` double DEFAULT NULL,
   `start_date` datetime(6) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   `shop_id` bigint NOT NULL,
