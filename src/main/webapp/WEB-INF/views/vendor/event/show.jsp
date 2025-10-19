@@ -538,12 +538,6 @@
                                                     <input type="number" step="1" name="discountPercent"
                                                         class="form-control" placeholder="%" />
                                                 </div>
-
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Đơn hàng tối thiểu</label>
-                                                    <input type="number" step="1000" name="minPrice"
-                                                        class="form-control" placeholder="VND" />
-                                                </div>
                                             </div>
 
                                             <!-- Hàng 2: Ngày bắt đầu - Ngày kết thúc -->

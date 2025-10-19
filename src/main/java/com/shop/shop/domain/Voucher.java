@@ -40,8 +40,6 @@ public class Voucher {
 
     private String status;
 
-    private Double minPrice;
-
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)
     private Shop shop;
