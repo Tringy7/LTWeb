@@ -272,7 +272,7 @@
                                                             <tr>
                                                                 <td class="text-muted fw-bold">#${product.id}</td>
                                                                 <td>
-                                                                    <img src="/resources/admin/images/product/${product.image}"
+                                                                    <img src="/admin/images/product/${product.image}"
                                                                         alt="${product.name}" class="product-img">
                                                                 </td>
                                                                 <td class="text-start">${product.name}</td>

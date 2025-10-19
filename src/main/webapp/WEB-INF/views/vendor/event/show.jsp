@@ -476,11 +476,6 @@
                                                     <form:input path="discountPercent" type="number" step="1"
                                                         cssClass="form-control" />
                                                 </div>
-                                                <div class="mb-3">
-                                                    <form:label path="minPrice">Đơn hàng tối thiểu (VND)</form:label>
-                                                    <form:input path="minPrice" type="number" step="10000"
-                                                        cssClass="form-control" />
-                                                </div>
 
                                                 <div class="mb-3">
                                                     <form:label path="startDate">Ngày bắt đầu</form:label>
@@ -665,7 +660,6 @@
                                         editModalEl.querySelector('input[name="id"]').value = data.id ?? '';
                                         editModalEl.querySelector('input[name="code"]').value = data.code ?? '';
                                         editModalEl.querySelector('input[name="discountPercent"]').value = data.discountPercent ?? '';
-                                        editModalEl.querySelector('input[name="minPrice"]').value = data.minPrice ?? '';
                                         editModalEl.querySelector('input[name="startDate"]').value = data.startDate?.substring(0, 16) ?? '';
                                         editModalEl.querySelector('input[name="endDate"]').value = data.endDate?.substring(0, 16) ?? '';
                                         editModalEl.querySelector('input[name="status"]').value = data.status ?? '';
