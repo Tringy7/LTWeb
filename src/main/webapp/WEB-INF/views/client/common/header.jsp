@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-    
+
         <div class="container-fluid px-5 py-4 d-none d-lg-block">
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo bên trái -->
@@ -57,9 +57,9 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Setting</a>
                                     <div class="dropdown-menu m-0">
-                                        <a href="/account" class="dropdown-item">My Account</a>
+                                        <a href="/account" class="dropdown-item">My account</a>
                                         <a href="/voucher" class="dropdown-item">My voucher</a>
-                                        <a href="/order" class="dropdown-item">History</a>
+                                        <a href="/order" class="dropdown-item">My order</a>
                                         <a href="/login" class="dropdown-item">Log in</a>
                                         <a href="/logout" class="dropdown-item">Log out</a>
                                     </div>
