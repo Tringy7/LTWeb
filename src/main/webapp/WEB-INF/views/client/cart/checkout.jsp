@@ -260,55 +260,39 @@
                                                     VND
                                                 </p>
                                             </div>
-                                            <div
-                                                class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
-                                                <div class="col-12">
-                                                    <div class="form-check text-start my-2">
-                                                        <input type="radio" class="form-check-input bg-primary border-0"
-                                                            checked id="Transfer-1" name="paymentMethod"
-                                                            value="Direct Bank Transfer">
-                                                        <label class="form-check-label" for="Transfer-1">Direct Bank
-                                                            Transfer</label>
-                                                    </div>
-                                                    <p class="text-start text-dark">Make your payment directly into our
-                                                        bank
-                                                        account. Please
-                                                        use your Order ID as the payment reference. Your order will not
-                                                        be
-                                                        shipped until the
-                                                        funds have cleared in our account.</p>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="row g-4 text-center align-items-center justify-content-center border-bottom py-2">
-                                                <div class="col-12">
-                                                    <div class="form-check text-start my-2">
-                                                        <input type="radio" class="form-check-input bg-primary border-0"
-                                                            id="Payments-1" name="paymentMethod" value="Check Payments">
-                                                        <label class="form-check-label" for="Payments-1">Check
-                                                            Payments</label>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
                                                 data-wow-delay="0.1s">
                                                 <div class="col-12">
                                                     <div class="form-check text-start my-2">
                                                         <input type="radio" class="form-check-input bg-primary border-0"
-                                                            id="Delivery-1" name="paymentMethod"
+                                                            checked id="Delivery-1" name="paymentMethod"
                                                             value="Cash On Delivery">
                                                         <label class="form-check-label" for="Delivery-1">Cash On
                                                             Delivery</label>
                                                     </div>
+                                                    <p>
+                                                        Thanh toán khi nhận hàng
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
-                                                data-wow-delay="0.2s">
+                                            <div
+                                                class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
                                                 <div class="col-12">
                                                     <div class="form-check text-start my-2">
                                                         <input type="radio" class="form-check-input bg-primary border-0"
-                                                            id="Paypal-1" name="paymentMethod" value="Paypal">
-                                                        <label class="form-check-label" for="Paypal-1">Paypal</label>
+                                                            id="Transfer-1" name="paymentMethod"
+                                                            value="Direct Bank Transfer">
+                                                        <label class="form-check-label" for="Transfer-1">Direct Bank
+                                                            Transfer</label>
+                                                    </div>
+                                                    <p>Thanh toán qua mã QR</p>
+                                                    <!-- QR Code Image -->
+                                                    <div id="qrCodeContainer" class="text-center mt-3">
+                                                        <img src="${pageContext.request.contextPath}/resources/client/img/QR.jpg"
+                                                            alt="QR Code for `Bank Transfer" class="img-fluid"
+                                                            style="max-width: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px;">
+                                                        <p class="text-muted mt-2 small">Scan QR code to complete your
+                                                            bank transfer</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -373,6 +357,28 @@
                                             event.preventDefault();
                                         }
                                     });
+
+                                    // QR Code visibility toggle based on payment method
+                                    const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+                                    const qrCodeContainer = document.getElementById('qrCodeContainer');
+
+                                    // Function to toggle QR code visibility
+                                    function toggleQRCode() {
+                                        const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
+                                        if (selectedPayment && selectedPayment.value === 'Direct Bank Transfer') {
+                                            qrCodeContainer.style.display = 'block';
+                                        } else {
+                                            qrCodeContainer.style.display = 'none';
+                                        }
+                                    }
+
+                                    // Add event listeners to all payment method radio buttons
+                                    paymentRadios.forEach(radio => {
+                                        radio.addEventListener('change', toggleQRCode);
+                                    });
+
+                                    // Initial check on page load
+                                    toggleQRCode();
                                 });
                             </script>
                     </body>

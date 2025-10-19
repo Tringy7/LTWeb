@@ -87,6 +87,11 @@
                             <h4 class="mb-0">Thêm sản phẩm mới</h4>
                         </div>
 
+                        <c:if test="${not empty error}">
+                            <div style="color:red; font-weight:bold;">
+                                ${error}
+                            </div>
+                        </c:if>
                         <form:form action="/vendor/product/add" method="post" modelAttribute="product"
                             enctype="multipart/form-data">
                             <div class="card-body p-4">

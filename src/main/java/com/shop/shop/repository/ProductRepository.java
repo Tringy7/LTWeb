@@ -88,5 +88,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Find all products with pagination ordered by ID
     Page<Product> findAllByOrderByIdDesc(Pageable pageable);
-
 }

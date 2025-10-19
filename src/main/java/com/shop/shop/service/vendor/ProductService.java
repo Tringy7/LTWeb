@@ -10,6 +10,7 @@ import com.shop.shop.repository.ProductRepository;
 
 @Service("vendorProductService")
 public class ProductService {
+
     private final ProductRepository productRepository;
 
     public ProductService(ProductRepository productRepository) {
@@ -56,4 +57,7 @@ public class ProductService {
         return productRepository.findByShopIdAndNameAndCategory(shopId, keyword, category);
     }
 
+    public boolean existsByNameAndShopId(String name, Long shopId) {
+        return productRepository.existsByNameAndShopId(name, shopId);
+    }
 }
