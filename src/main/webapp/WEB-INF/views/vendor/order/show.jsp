@@ -207,7 +207,7 @@
                                         style="min-width: 200px; height: 40px; font-size: 0.95rem; border-radius: 10px;
                                                box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out;" onchange="this.form.submit()">
                                         <option value="">-- Tất cả Trạng thái --</option>
-                                        <option value="Đơn hàng mới" ${status=='Đơn hàng mới' ? 'selected' : '' }>Đơn
+                                        <option value="Đơn hàng mới" ${status=='PENDING' ? 'selected' : '' }>Đơn
                                             hàng mới</option>
                                         <option value="Đã xác nhận" ${status=='Đã xác nhận' ? 'selected' : '' }>Đã xác
                                             nhận</option>

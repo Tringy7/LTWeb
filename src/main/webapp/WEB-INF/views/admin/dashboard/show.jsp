@@ -327,7 +327,7 @@
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         <c:if test="${not empty product.image}">
-                                                            <img src="/images/products/${product.image}" 
+                                                            <img src="/admin/images/product/${product.image}" 
                                                                  alt="${product.name}" class="product-thumb mr-2">
                                                         </c:if>
                                                         <div>
