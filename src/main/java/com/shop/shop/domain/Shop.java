@@ -35,7 +35,7 @@ public class Shop {
     @JoinColumn(name = "userId", nullable = false, unique = true)
     private User user;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String shopName;
 
     @Column(length = 500)
@@ -46,6 +46,10 @@ public class Shop {
 
     @Column
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Quan hệ với thông tin bảo mật
+    @OneToOne(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private ShopSecurityInfo securityInfo;
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;

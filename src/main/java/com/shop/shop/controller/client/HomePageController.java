@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.shop.domain.Order;
+import com.shop.shop.domain.Shop;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.service.client.ProductService;
@@ -95,5 +97,39 @@ public class HomePageController {
     @GetMapping("/about")
     public String showAbout() {
         return "client/homepage/about";
+    }
+
+    @GetMapping("/registraion-sales")
+    public String showVendorRegistration(Model model) {
+        User user = userAfterLogin.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Shop shop = userService.getShop(user);
+
+        model.addAttribute("shop", shop);
+        return "client/homepage/registraionSale";
+    }
+
+    @PostMapping("/registraion-sales")
+    public String handleVendorRegistration(@ModelAttribute("shop") Shop shop, RedirectAttributes redirectAttributes,
+            Model model) {
+
+        User user = userAfterLogin.getUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Xử lý đăng ký vendor
+        try {
+            userService.handleVendorRegistration(shop, user);
+            redirectAttributes.addFlashAttribute("successMessage", "Đăng ký bán hàng thành công! Chúng tôi sẽ xem xét và phản hồi sớm.");
+            return "redirect:/registraion-sales";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Đăng ký không thành công");
+            model.addAttribute("shop", shop);
+            return "client/homepage/registraionSale";
+        }
     }
 }

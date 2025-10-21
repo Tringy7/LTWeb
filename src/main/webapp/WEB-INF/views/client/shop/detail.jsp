@@ -172,6 +172,12 @@
                                                             class="fa fa-shopping-bag me-2 text-white"></i> Add to
                                                         cart</button>
                                                 </form>
+
+                                                <!-- Chat with seller button -->
+                                                <button type="button" onclick="openChatModal()"
+                                                    class="btn btn-outline-primary border border-primary rounded-pill px-4 py-2 mb-4">
+                                                    <i class="fa fa-comments me-2"></i> Chat với người bán
+                                                </button>
                                             </div>
 
 
@@ -478,6 +484,140 @@
 
                         </script>
 
+
+                        <!-- Chat Modal -->
+                        <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable" style="max-width: 400px;">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="chatModalLabel">
+                                            <i class="fa fa-store me-2"></i>${shop.shopName}
+                                        </h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" id="chatMessages"
+                                        style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+                                        <!-- Chat messages will be displayed here -->
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fa fa-comments fa-3x mb-3"></i>
+                                            <p>Bắt đầu cuộc trò chuyện với người bán</p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="chatInput"
+                                                placeholder="Nhập tin nhắn..." onkeypress="handleChatKeyPress(event)">
+                                            <button class="btn btn-primary" type="button" onclick="sendMessage()">
+                                                <i class="fa fa-paper-plane"></i> Gửi
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            let chatModal;
+                            let chatMessages = [];
+
+                            function openChatModal() {
+                                // Check if user is logged in
+                                <c:if test="${empty pageContext.request.userPrincipal}">
+                                    alert('Vui lòng đăng nhập để chat với người bán!');
+                                    window.location.href = '/login';
+                                    return;
+                                </c:if>
+
+                                chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+                                chatModal.show();
+                                loadChatHistory();
+                            }
+
+                            function loadChatHistory() {
+                                // In a real implementation, this would load chat history from backend
+                                const messagesContainer = document.getElementById('chatMessages');
+
+                                if (chatMessages.length === 0) {
+                                    messagesContainer.innerHTML = `
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fa fa-comments fa-3x mb-3"></i>
+                                            <p>Bắt đầu cuộc trò chuyện với người bán</p>
+                                        </div>
+                                    `;
+                                } else {
+                                    let html = '';
+                                    chatMessages.forEach(msg => {
+                                        html += createMessageHTML(msg);
+                                    });
+                                    messagesContainer.innerHTML = html;
+                                    scrollToBottom();
+                                }
+                            }
+
+                            function createMessageHTML(message) {
+                                const isUser = message.sender === 'user';
+                                return `
+                                    <div class="mb-3 ${isUser ? 'text-end' : 'text-start'}">
+                                        <div class="d-inline-block" style="max-width: 70%;">
+                                            <div class="p-2 rounded ${isUser ? 'bg-primary text-white' : 'bg-white'}" 
+                                                 style="word-wrap: break-word;">
+                                                ${message.text}
+                                            </div>
+                                            <small class="text-muted d-block mt-1">${message.time}</small>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            function sendMessage() {
+                                const input = document.getElementById('chatInput');
+                                const messageText = input.value.trim();
+
+                                if (messageText === '') return;
+
+                                const now = new Date();
+                                const timeString = now.getHours().toString().padStart(2, '0') + ':' +
+                                    now.getMinutes().toString().padStart(2, '0');
+
+                                const message = {
+                                    sender: 'user',
+                                    text: messageText,
+                                    time: timeString
+                                };
+
+                                chatMessages.push(message);
+
+                                // In a real implementation, send message to backend here
+                                // For now, just update UI
+                                loadChatHistory();
+                                input.value = '';
+
+                                // Simulate shop response (for demo)
+                                setTimeout(() => {
+                                    const shopMessage = {
+                                        sender: 'shop',
+                                        text: 'Cảm ơn bạn đã liên hệ! Shop sẽ phản hồi sớm nhất có thể.',
+                                        time: new Date().getHours().toString().padStart(2, '0') + ':' +
+                                            new Date().getMinutes().toString().padStart(2, '0')
+                                    };
+                                    chatMessages.push(shopMessage);
+                                    loadChatHistory();
+                                }, 1000);
+                            }
+
+                            function handleChatKeyPress(event) {
+                                if (event.key === 'Enter') {
+                                    sendMessage();
+                                }
+                            }
+
+                            function scrollToBottom() {
+                                const messagesContainer = document.getElementById('chatMessages');
+                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            }
+                        </script>
 
                         <div id="lightboxOverlay" tabindex="-1" class="lightboxOverlay" style="display: none;"></div>
                         <div id="lightbox" tabindex="-1" class="lightbox" style="display: none;">

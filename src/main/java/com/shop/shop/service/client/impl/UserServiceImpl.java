@@ -14,10 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shop.shop.domain.Shop;
+import com.shop.shop.domain.ShopSecurityInfo;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
 import com.shop.shop.domain.UserVoucher;
 import com.shop.shop.domain.Voucher;
+import com.shop.shop.repository.ShopRepository;
+import com.shop.shop.repository.ShopSecurityInfoRepository;
 import com.shop.shop.repository.UserAddressRepository;
 import com.shop.shop.repository.UserRepository;
 import com.shop.shop.repository.UserVoucherRepository;
@@ -40,6 +44,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserVoucherRepository userVoucherRepository;
+
+    @Autowired
+    private ShopRepository shopRepository;
+
+    @Autowired
+    private ShopSecurityInfoRepository shopSecurityInfoRepository;
 
     @Override
     public UserAddress handlUserAddress(User user) {
@@ -150,5 +160,50 @@ public class UserServiceImpl implements UserService {
             receiver.setUser(user);
             userAddressRepository.save(receiver);
         }
+    }
+
+    @Override
+    @Transactional
+    public Shop getShop(User user) {
+        Shop shop = shopRepository.findByUser(user);
+        if (shop == null) {
+            shop = new Shop();
+            shop.setUser(user);
+            // Lưu shop trước để có ID
+            shopRepository.save(shop);
+
+            // Sau đó tạo ShopSecurityInfo
+            ShopSecurityInfo securityInfo = new ShopSecurityInfo();
+            securityInfo.setShop(shop);
+            securityInfo.setVerificationStatus("NOT REGISTERED");
+            shopSecurityInfoRepository.save(securityInfo);
+
+            // Set lại securityInfo cho shop
+            shop.setSecurityInfo(securityInfo);
+        }
+        return shop;
+    }
+
+    @Override
+    @Transactional
+    public void handleVendorRegistration(Shop shop, User user) {
+        // Kiểm tra xem user đã có shop chưa
+        Shop existingShop = shopRepository.findByUser(user);
+        ShopSecurityInfo securityInfo = shopSecurityInfoRepository.findByShop(existingShop);
+
+        // Cập nhật shop hiện có
+        existingShop.setShopName(shop.getShopName());
+        existingShop.setDescription(shop.getDescription());
+
+        securityInfo.setBusinessType(shop.getSecurityInfo().getBusinessType());
+        securityInfo.setTaxCode(shop.getSecurityInfo().getTaxCode());
+        securityInfo.setBankName(shop.getSecurityInfo().getBankName());
+        securityInfo.setBankAccount(shop.getSecurityInfo().getBankAccount());
+        securityInfo.setBankAccountName(shop.getSecurityInfo().getBankAccountName());
+        securityInfo.setBankBranch(shop.getSecurityInfo().getBankBranch());
+        securityInfo.setVerificationStatus("PENDING");
+        // Lưu shop và securityInfo
+        shopRepository.save(existingShop);
+        shopSecurityInfoRepository.save(securityInfo);
     }
 }

@@ -57,11 +57,20 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Setting</a>
                                     <div class="dropdown-menu m-0">
-                                        <a href="/account" class="dropdown-item">My account</a>
-                                        <a href="/voucher" class="dropdown-item">My voucher</a>
-                                        <a href="/order" class="dropdown-item">My order</a>
-                                        <a href="/login" class="dropdown-item">Log in</a>
-                                        <a href="/logout" class="dropdown-item">Log out</a>
+                                        <c:choose>
+                                            <c:when test="${not empty acc}">
+                                                <!-- Hiển thị khi đã đăng nhập -->
+                                                <a href="/account" class="dropdown-item">My account</a>
+                                                <a href="/voucher" class="dropdown-item">My voucher</a>
+                                                <a href="/order" class="dropdown-item">My order</a>
+                                                <a href="/registraion-sales" class="dropdown-item">Sales registration</a>
+                                                <a href="/logout" class="dropdown-item">Log out</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <!-- Hiển thị khi chưa đăng nhập -->
+                                                <a href="/login" class="dropdown-item">Log in</a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                                 <a href="/about" class="nav-item nav-link me-2">About</a>
