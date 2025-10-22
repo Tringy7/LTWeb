@@ -1,6 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+        <!-- WebSocket Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
         <!-- Messenger Full Screen Layout -->
         <div id="messengerContainer" class="messenger-container">
             <!-- Left Sidebar - Contact List -->
@@ -23,18 +27,22 @@
                     <c:choose>
                         <c:when test="${not empty users}">
                             <c:forEach var="user" items="${users}">
-                                <div class="contact-item"
-                                    onclick="selectContact(this, '${user.email}', '${user.shop.shopName}')">
+                                <div class="contact-item" data-shop-id="${user.shop.id}" data-user-id="${user.id}"
+                                    onclick="selectContact(this, ${user.id}, ${user.shop.id}, '${user.shop.shopName}', '${user.image}')">
                                     <div class="contact-avatar">
                                         <img src="/admin/images/user/${user.image}" alt="Avatar">
-
-                                        <span class="status-dot"></span>
                                     </div>
                                     <div class="contact-info">
                                         <h6 class="contact-name">${user.shop.shopName}</h6>
                                         <p class="contact-message">Nhấn để bắt đầu trò chuyện</p>
                                     </div>
-                                    <div class="contact-time"></div>
+                                    <div class="contact-actions">
+                                        <button class="delete-contact-btn"
+                                            onclick="event.stopPropagation(); deleteContact(${user.id}, ${user.shop.id})"
+                                            title="Xóa cuộc trò chuyện">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </c:forEach>
                         </c:when>
@@ -56,11 +64,9 @@
                     <div class="d-flex align-items-center">
                         <div class="chat-avatar">
                             <img src="/admin/images/user/user1.jpg" alt="Avatar" id="chatAvatar">
-                            <span class="status-dot online"></span>
                         </div>
                         <div class="chat-user-info">
                             <h5 class="mb-0" id="chatUserName"></h5>
-                            <small class="text-muted" id="chatUserStatus">Đang hoạt động</small>
                         </div>
                     </div>
                 </div>
@@ -274,6 +280,43 @@
                 margin-top: 8px;
             }
 
+            .contact-actions {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+
+            .contact-item:hover .contact-actions {
+                opacity: 1;
+            }
+
+            .delete-contact-btn {
+                background: transparent;
+                border: none;
+                color: #65676b;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                font-size: 14px;
+            }
+
+            .delete-contact-btn:hover {
+                background: #ffebe9;
+                color: #e41e3f;
+                transform: scale(1.1);
+            }
+
+            .delete-contact-btn:active {
+                transform: scale(0.95);
+            }
+
             /* Right Side - Chat Area */
             .messenger-chat-area {
                 flex: 1;
@@ -284,7 +327,7 @@
 
             /* Chat Header */
             .chat-header {
-                padding: 12px 20px;
+                padding: 10.5px 20px;
                 border-bottom: 1px solid #e4e6eb;
                 display: flex;
                 justify-content: space-between;
@@ -322,10 +365,13 @@
             .chat-messages {
                 flex: 1;
                 overflow-y: auto;
+                overflow-x: hidden;
                 padding: 20px;
                 background: white;
                 display: flex;
                 flex-direction: column;
+                max-height: calc(100vh - 200px);
+                min-height: 400px;
             }
 
             .chat-messages::-webkit-scrollbar {
@@ -358,7 +404,7 @@
             .message-group {
                 margin-bottom: 12px;
                 display: flex;
-                align-items: flex-end;
+                align-items: flex-start;
                 gap: 8px;
             }
 
@@ -370,6 +416,7 @@
                 width: 28px;
                 height: 28px;
                 flex-shrink: 0;
+                margin-top: 6px;
             }
 
             .message-avatar img {
@@ -557,73 +604,176 @@
 
         <script>
             let chatMessages = [];
-            const currentUserId = '${pageContext.request.userPrincipal.name}';
+            const currentUserId = ${ currentUser.id };
+            const currentUserEmail = '${currentUser.email}';
             let activeShopOwnerId = null;
-            let websocket = null;
+            let activeShopId = null;
+            let stompClient = null;
 
-            // Initialize WebSocket
+            // Initialize WebSocket using SockJS and Stomp
             function initWebSocket() {
                 if (!currentUserId) return;
 
-                const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                const wsUrl = protocol + '//' + window.location.host + '/chat?user=' + encodeURIComponent(currentUserId);
+                const socket = new SockJS('/chat');
+                stompClient = Stomp.over(socket);
 
-                websocket = new WebSocket(wsUrl);
+                stompClient.connect({}, function (frame) {
+                    console.log('✅ WebSocket connected:', frame);
 
-                websocket.onopen = function (event) {
-                    console.log('Messenger connected');
-                };
+                    // Subscribe to personal message queue
+                    stompClient.subscribe('/queue/messages/' + currentUserId, function (message) {
+                        try {
+                            const messageDTO = JSON.parse(message.body);
+                            console.log('📩 Received message:', messageDTO);
 
-                websocket.onmessage = function (event) {
-                    try {
-                        const messageData = JSON.parse(event.data);
+                            // Check if message is relevant to current conversation
+                            const isRelevant = activeShopOwnerId &&
+                                (messageDTO.sender.id === activeShopOwnerId ||
+                                    messageDTO.receiver.id === activeShopOwnerId);
 
-                        // Only show message if it's part of the active conversation
-                        const isRelevant = activeShopOwnerId &&
-                            (messageData.sender.email === activeShopOwnerId || messageData.receiver.email === activeShopOwnerId);
-
-                        if (isRelevant) {
-                            const messagesContainer = document.getElementById('chatMessages');
-                            const avatarSrc = document.getElementById('chatAvatar').src;
-
-                            // Remove welcome message if exists
-                            const welcomeMsg = messagesContainer.querySelector('#welcomeScreen');
-                            if (welcomeMsg) {
-                                messagesContainer.innerHTML = '';
+                            if (isRelevant) {
+                                displayMessage(messageDTO);
                             }
 
-                            messagesContainer.insertAdjacentHTML('beforeend', createMessageHTMLFromDTO(messageData, avatarSrc));
-                            scrollToBottom();
+                            // Update last message in contact list
+                            updateContactLastMessage(messageDTO);
+                        } catch (error) {
+                            console.error('❌ Error processing message:', error);
                         }
-                    } catch (error) {
-                        console.error('❌ Error parsing message:', error);
-                    }
-                };
+                    });
 
-                websocket.onerror = function (error) {
-                    console.error('❌ WebSocket error:', error);
-                };
-
-                websocket.onclose = function (event) {
-                    console.log('🔌 WebSocket disconnected');
-                    setTimeout(initWebSocket, 3000);
-                };
+                    // Subscribe to error queue
+                    stompClient.subscribe('/queue/errors/' + currentUserId, function (error) {
+                        console.error('❌ Server error:', error.body);
+                        alert('Lỗi: ' + error.body);
+                    });
+                }, function (error) {
+                    console.error('❌ WebSocket connection error:', error);
+                    setTimeout(initWebSocket, 3000); // Reconnect after 3s
+                });
             }
 
+            // Display a message in chat
+            function displayMessage(messageDTO) {
+                console.log('💬 Displaying message:', messageDTO);
+                const messagesContainer = document.getElementById('chatMessages');
+
+                // Remove welcome message if exists
+                const welcomeMsg = messagesContainer.querySelector('#welcomeScreen');
+                if (welcomeMsg) {
+                    console.log('🗑️ Removing welcome screen');
+                    messagesContainer.innerHTML = '';
+                }
+
+                const chatAvatarSrc = document.getElementById('chatAvatar').src;
+                const messageHTML = createMessageHTMLFromDTO(messageDTO, chatAvatarSrc);
+                console.log('📝 Generated HTML:', messageHTML.substring(0, 100) + '...');
+
+                if (messageHTML) {
+                    messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+                    scrollToBottom();
+                }
+            }
+
+            // Update last message in contact item
+            function updateContactLastMessage(messageDTO) {
+                // Find contact item by user id
+                const contacts = document.querySelectorAll('.contact-item');
+                contacts.forEach(contact => {
+                    // You can add data attributes to identify contacts
+                    const contactMessage = contact.querySelector('.contact-message');
+                    if (contactMessage) {
+                        // Update with last message preview
+                        const preview = messageDTO.content.substring(0, 30) +
+                            (messageDTO.content.length > 30 ? '...' : '');
+                        contactMessage.textContent = preview || 'No content';
+                    }
+                });
+            }
+
+            // Initialize on page load
             if (currentUserId) {
                 initWebSocket();
             }
 
+            // Delete contact/conversation
+            async function deleteContact(userId, shopId) {
+                if (!confirm('Bạn có chắc chắn muốn xóa cuộc trò chuyện này?')) {
+                    return;
+                }
+
+                try {
+                    console.log('🗑️ Deleting conversation - userId:', userId, 'shopId:', shopId);
+
+                    // Call API to delete conversation
+                    const response = await fetch('/api/chat/delete/shop/' + shopId, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        console.log('✅ Conversation deleted successfully');
+
+                        // Remove contact from UI
+                        const contactItem = document.querySelector(`.contact-item[data-shop-id="${shopId}"]`);
+                        if (contactItem) {
+                            contactItem.remove();
+                        }
+
+                        // If this was the active conversation, clear chat area
+                        if (activeShopId === shopId) {
+                            document.getElementById('chatHeader').style.display = 'none';
+                            document.getElementById('chatInputArea').style.display = 'none';
+                            document.getElementById('chatMessages').innerHTML = `
+                                <div class="text-center py-5" id="welcomeScreen">
+                                    <div class="welcome-icon mx-auto mb-3">
+                                        <i class="fa fa-comments" style="font-size: 80px; color: #0084ff;"></i>
+                                    </div>
+                                    <p class="text-muted">Chọn một cuộc trò chuyện bên trái để bắt đầu nhắn tin</p>
+                                </div>
+                            `;
+                            activeShopId = null;
+                            activeShopOwnerId = null;
+                        }
+
+                        // Check if no contacts left
+                        const remainingContacts = document.querySelectorAll('.contact-item').length;
+                        if (remainingContacts === 0) {
+                            document.getElementById('contactList').innerHTML = `
+                                <div class="text-center py-5">
+                                    <i class="fa fa-comments" style="font-size: 48px; color: #bcc0c4;"></i>
+                                    <p class="text-muted mt-3">Chưa có cuộc trò chuyện nào</p>
+                                    <small class="text-muted">Bắt đầu nhắn tin với người bán từ trang sản phẩm</small>
+                                </div>
+                            `;
+                        }
+
+                        // Show success message
+                        alert('Đã xóa cuộc trò chuyện thành công!');
+                    } else {
+                        const errorText = await response.text();
+                        console.error('❌ Error deleting conversation:', errorText);
+                        alert('Lỗi khi xóa cuộc trò chuyện: ' + errorText);
+                    }
+                } catch (error) {
+                    console.error('❌ Error deleting conversation:', error);
+                    alert('Có lỗi xảy ra khi xóa cuộc trò chuyện!');
+                }
+            }
+
             // Select contact from sidebar
-            function selectContact(element, shopOwnerId, shopName) {
+            function selectContact(element, userId, shopId, shopName, userImage) {
                 // Update active state
                 document.querySelectorAll('.contact-item').forEach(item => {
                     item.classList.remove('active');
                 });
                 element.classList.add('active');
 
-                // Update active shop owner
-                activeShopOwnerId = shopOwnerId;
+                // Update active IDs
+                activeShopOwnerId = userId;
+                activeShopId = shopId;
 
                 // Show chat header and input area
                 document.getElementById('chatHeader').style.display = 'flex';
@@ -631,56 +781,58 @@
 
                 // Update chat header with shop name
                 document.getElementById('chatUserName').textContent = shopName;
-
-                // Get avatar from contact item
-                const avatarImg = element.querySelector('.contact-avatar img');
-                if (avatarImg) {
-                    document.getElementById('chatAvatar').src = avatarImg.src;
-                }
+                document.getElementById('chatAvatar').src = '/admin/images/user/' + userImage;
 
                 // Load chat history for this contact
                 loadChatHistory();
             }
 
             async function loadChatHistory(silent = false) {
-                if (!activeShopOwnerId) return;
+                if (!activeShopId) return;
 
                 const messagesContainer = document.getElementById('chatMessages');
 
                 try {
-                    const response = await fetch(`/api/messages/${currentUserId}/${activeShopOwnerId}`);
+                    console.log('🔍 Loading chat history for shopId:', activeShopId);
+                    const response = await fetch('/api/chat/history/' + activeShopId);
+                    console.log('📡 Response status:', response.status);
 
                     if (response.ok) {
                         const messages = await response.json();
+                        console.log('📨 Received messages:', messages);
                         const chatAvatarSrc = document.getElementById('chatAvatar').src;
                         const chatUserName = document.getElementById('chatUserName').textContent;
 
                         if (messages.length === 0) {
                             messagesContainer.innerHTML = `
-                                <div class="text-center py-5" id="welcomeScreen">
-                                    <div class="welcome-avatar mx-auto mb-3">
-                                        <img src="${chatAvatarSrc}" alt="Avatar">
-                                    </div>
-                                    <h5>${chatUserName}</h5>
-                                    <p class="text-muted">Bạn và ${chatUserName} đã kết nối trên Messenger</p>
-                                    <small class="text-muted">Bắt đầu cuộc trò chuyện ngay!</small>
-                                </div>
-                            `;
+                        <div class="text-center py-5" id="welcomeScreen">
+                            <div class="welcome-avatar mx-auto mb-3">
+                                <img src="\${chatAvatarSrc}" alt="Avatar">
+                            </div>
+                            <h5>\${chatUserName}</h5>
+                            <p class="text-muted">Bạn và \${chatUserName} đã kết nối trên Messenger</p>
+                            <small class="text-muted">Bắt đầu cuộc trò chuyện ngay!</small>
+                        </div>
+                    `;
                         } else {
                             let html = '';
                             messages.forEach(msgDTO => {
-                                html += createMessageHTMLFromDTO(msgDTO, chatAvatarSrc);
+                                const msgHtml = createMessageHTMLFromDTO(msgDTO, chatAvatarSrc);
+                                if (msgHtml) {
+                                    html += msgHtml;
+                                }
                             });
                             messagesContainer.innerHTML = html;
                             scrollToBottom(true); // Scroll instantly on load
                         }
                     } else {
-                        const error = await response.json();
-                        messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi tải tin nhắn: ${error.error}</div>`;
-                        console.error('Error response:', error);
+                        const errorText = await response.text();
+                        console.error('❌ Error response:', errorText);
+                        messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi tải tin nhắn</div>`;
                     }
                 } catch (error) {
-                    console.error('Error loading chat:', error);
+                    console.error('❌ Error loading chat:', error);
+                    messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi kết nối: \${error.message}</div>`;
                 }
             }
 
@@ -692,35 +844,40 @@
             }
 
             function createMessageHTMLFromDTO(messageDTO, avatarSrc) {
-                const isSent = messageDTO.sender.email === currentUserId;
+                const isSent = messageDTO.sender.id === currentUserId;
                 const messageClass = isSent ? 'sent' : 'received';
 
+                // Check if content exists first
+                const content = messageDTO.content || '';
+                if (!content.trim()) {
+                    console.warn('⚠️ Skipping empty content message:', messageDTO);
+                    return '';
+                }
+
                 // Escape HTML to prevent XSS
-                const escapedText = (messageDTO.content || '')
+                const escapedText = content
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
                     .replace(/"/g, '&quot;')
                     .replace(/'/g, '&#039;');
 
-                const avatarHTML = !isSent ? `<div class="message-avatar"><img src="${avatarSrc}" alt="Avatar"></div>` : '';
+                const avatarHTML = !isSent ? '<div class="message-avatar"><img src="' + avatarSrc + '" alt="Avatar"></div>' : '';
+                const formattedTime = formatTime(messageDTO.timestamp);
 
-                return `
-                    <div class="message-group ${messageClass}" data-message-id="${messageDTO.id}">
-                        ${avatarHTML}
-                        <div class="message-content">
-                            <div class="message-bubble">
-                                ${escapedText}
-                            </div>
-                            <div class="message-time">${message.time}</div>
-                            <div class="message-time">${messageDTO.timestamp}</div>
-                        </div>
-                    </div>
-                `;
+                return '<div class="message-group ' + messageClass + '" data-message-id="' + messageDTO.id + '">' +
+                    avatarHTML +
+                    '<div class="message-content">' +
+                    '<div class="message-bubble">' +
+                    escapedText +
+                    '</div>' +
+                    '<div class="message-time">' + formattedTime + '</div>' +
+                    '</div>' +
+                    '</div>';
             }
 
             async function sendMessage() {
-                if (!activeShopOwnerId) {
+                if (!activeShopId || !activeShopOwnerId) {
                     alert('Vui lòng chọn một người để nhắn tin!');
                     return;
                 }
@@ -730,19 +887,37 @@
 
                 if (messageText === '') return;
 
-                if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                if (!stompClient || !stompClient.connected) {
                     alert('Kết nối đang được thiết lập. Vui lòng thử lại!');
                     return;
                 }
 
                 try {
-                    const message = {
-                        sender: currentUserId,
-                        receiver: activeShopOwnerId,
-                        content: messageText
+                    const messageDTO = {
+                        sender: {
+                            id: currentUserId,
+                            email: currentUserEmail,
+                            fullName: '${currentUser.fullName}',
+                            avatar: '${currentUser.image}'
+                        },
+                        receiver: {
+                            id: activeShopOwnerId
+                        },
+                        content: messageText,
+                        timestamp: new Date().toISOString()
                     };
 
-                    websocket.send(JSON.stringify(message));
+                    console.log('📤 Sending message:', messageDTO);
+                    console.log('📍 Destination: /app/chat/send/' + activeShopId);
+
+                    // Send to shop owner via /app/chat/send/{shopId}
+                    stompClient.send(
+                        '/app/chat/send/' + activeShopId,
+                        {},
+                        JSON.stringify(messageDTO)
+                    );
+
+                    console.log('✅ Message sent successfully');
                     input.value = '';
 
                     // Add animation to send button
@@ -753,7 +928,7 @@
                     }, 200);
 
                 } catch (error) {
-                    console.error('Error sending message:', error);
+                    console.error('❌ Error sending message:', error);
                     alert('Có lỗi xảy ra khi gửi tin nhắn!');
                 }
             }
@@ -792,6 +967,31 @@
                             }
                         });
                     });
+                }
+
+                // Auto-select shop if shopId is in URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const shopIdParam = urlParams.get('shopId');
+
+                if (shopIdParam) {
+                    console.log('🎯 Auto-selecting shop with ID:', shopIdParam);
+
+                    // Find the contact item with matching shop ID using data attribute
+                    const targetContact = document.querySelector(`.contact-item[data-shop-id="${shopIdParam}"]`);
+
+                    if (targetContact) {
+                        console.log('✅ Found matching shop contact, auto-clicking...');
+                        // Trigger click on this contact after a small delay
+                        setTimeout(() => {
+                            targetContact.click();
+                            // Remove shopId from URL to prevent auto-click on refresh
+                            const newUrl = window.location.pathname;
+                            window.history.replaceState({}, '', newUrl);
+                        }, 500);
+                    } else {
+                        console.warn('⚠️ No contact found for shop ID:', shopIdParam);
+                        console.log('Available contacts:', document.querySelectorAll('.contact-item').length);
+                    }
                 }
             });
         </script>

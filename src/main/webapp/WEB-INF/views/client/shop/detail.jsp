@@ -159,7 +159,7 @@
 
                                             <div class="border rounded p-4 mb-4 bg-light">
                                                 <div class="d-flex align-items-center">
-                                                    <img src="/admin/images/user/user1.jpg"
+                                                    <img src="/admin/images/user/${shop.user.image}"
                                                         class="img-fluid rounded-circle"
                                                         style="width: 80px; height: 80px; object-fit: cover;"
                                                         alt="Shop Avatar">
@@ -167,7 +167,7 @@
                                                     <div class="ms-3 flex-grow-1">
                                                         <h5 class="mb-2 fw-bold">${shop.shopName}</h5>
                                                         <p class="text-muted mb-3">${shop.description}</p>
-                                                        <a href="/chat" class="btn btn-primary btn-sm">
+                                                        <a href="/chat/start/${shop.id}" class="btn btn-primary btn-sm">
                                                             <i class="fa fa-comments me-2"></i> Nhắn tin với người bán
                                                         </a>
 
