@@ -204,22 +204,21 @@
                                     <input type="hidden" name="shop_id" value="${shop.id}">
                                     <select name="status" id="statusFilter"
                                         class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
-                                        style="min-width: 200px; height: 40px; font-size: 0.95rem; border-radius: 10px;
-                                               box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out;" onchange="this.form.submit()">
+                                        onchange="this.form.submit()">
                                         <option value="">-- Tất cả Trạng thái --</option>
-                                        <option value="Đơn hàng mới" ${status=='PENDING' ? 'selected' : '' }>Đơn
-                                            hàng mới</option>
-                                        <option value="Đã xác nhận" ${status=='Đã xác nhận' ? 'selected' : '' }>Đã xác
-                                            nhận</option>
-                                        <option value="Đang giao" ${status=='Đang giao' ? 'selected' : '' }>Đang giao
+                                        <option value="PENDING" ${status=='PENDING' ? 'selected' : '' }>Đơn hàng mới
                                         </option>
-                                        <option value="Đã giao" ${status=='Đã giao' ? 'selected' : '' }>Đã giao</option>
-                                        <option value="Hủy" ${status=='Hủy' ? 'selected' : '' }>Hủy</option>
-                                        <option value="Trả hàng - Hoàn tiền" ${status=='Trả hàng - Hoàn tiền'
-                                            ? 'selected' : '' }>
-                                            Trả hàng - Hoàn tiền
+                                        <option value="CONFIRMED" ${status=='CONFIRMED' ? 'selected' : '' }>Đã xác nhận
                                         </option>
+                                        <option value="SHIPPING" ${status=='SHIPPING' ? 'selected' : '' }>Đang giao
+                                        </option>
+                                        <option value="DELIVERED" ${status=='DELIVERED' ? 'selected' : '' }>Đã giao
+                                        </option>
+                                        <option value="CANCELLED" ${status=='CANCELLED' ? 'selected' : '' }>Hủy</option>
+                                        <option value="RETURNED" ${status=='RETURNED' ? 'selected' : '' }>Trả hàng -
+                                            Hoàn tiền</option>
                                     </select>
+
                                 </form>
 
                                 <!-- Nút bên phải -->
@@ -228,7 +227,8 @@
                                         onclick="location.reload()">
                                         <i class="fas fa-rotate-right me-1"></i> Refresh
                                     </button>
-                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift" onclick="confirmExport()">
+                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift"
+                                        onclick="confirmExport()">
                                         <i class="fas fa-download me-1"></i> Export
                                     </button>
                                 </div>
@@ -259,30 +259,33 @@
                                                         <td>${order.paymentMethod}</td>
                                                         <td>${order.totalPrice}</td>
                                                         <td>
+                                                            <c:set var="statusUpper"
+                                                                value="${fn:toUpperCase(order.status)}" />
+
                                                             <c:choose>
-                                                                <c:when test="${order.status == 'Đơn hàng mới'}">
+                                                                <c:when test="${statusUpper == 'PENDING'}">
                                                                     <span class="badge badge-danger">Đơn hàng mới</span>
                                                                 </c:when>
-                                                                <c:when test="${order.status == 'Đã xác nhận'}">
+                                                                <c:when test="${statusUpper == 'CONFIRMED'}">
                                                                     <span class="badge badge-warning">Đã xác nhận</span>
                                                                 </c:when>
-                                                                <c:when test="${order.status == 'Đang giao'}">
+                                                                <c:when test="${statusUpper == 'SHIPPING'}">
                                                                     <span class="badge badge-info">Đang giao</span>
                                                                 </c:when>
-                                                                <c:when test="${order.status == 'Đã giao'}">
+                                                                <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <span class="badge badge-success">Đã giao</span>
                                                                 </c:when>
-                                                                <c:when test="${order.status == 'Hủy'}">
+                                                                <c:when test="${statusUpper == 'CANCELLED'}">
                                                                     <span class="badge badge-secondary">Hủy</span>
                                                                 </c:when>
-                                                                <c:when
-                                                                    test="${order.status == 'Trả hàng - Hoàn tiền'}">
+                                                                <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">
-                                                                        Trả hàng - Hoàn tiền
-                                                                    </span>
+                                                                        style="background-color:#6f42c1;color:white;">Trả
+                                                                        hàng - Hoàn tiền</span>
                                                                 </c:when>
                                                             </c:choose>
+
+
 
                                                             <i class="bi bi-pencil edit-status" data-bs-toggle="modal"
                                                                 data-bs-target="#updateStatusModal"
@@ -323,20 +326,19 @@
                                     <div class="mb-3">
                                         <label for="status">Trạng thái đơn hàng</label>
                                         <select class="form-control" name="status" id="status">
-                                            <option value="">-- Tất cả --</option>
-                                            <option value="Đơn hàng mới" ${status=='Đơn hàng mới' ? 'selected' : '' }>
-                                                Đơn hàng mới
+                                            <option value="">-- Tất cả Trạng thái --</option>
+                                            <option value="PENDING" ${status=='PENDING' ? 'selected' : '' }>Đơn hàng mới
                                             </option>
-                                            <option value="Đã xác nhận" ${status=='Đã xác nhận' ? 'selected' : '' }>Đã
-                                                xác nhận</option>
-                                            <option value="Đang giao" ${status=='Đang giao' ? 'selected' : '' }>Đang
-                                                giao</option>
-                                            <option value="Đã giao" ${status=='Đã giao' ? 'selected' : '' }>Đã giao
+                                            <option value="CONFIRMED" ${status=='CONFIRMED' ? 'selected' : '' }>Đã xác
+                                                nhận</option>
+                                            <option value="SHIPPING" ${status=='SHIPPING' ? 'selected' : '' }>Đang giao
                                             </option>
-                                            <option value="Hủy" ${status=='Hủy' ? 'selected' : '' }>Hủy</option>
-                                            <option value="Trả hàng - Hoàn tiền" ${status=='Trả hàng - Hoàn tiền'
-                                                ? 'selected' : '' }>
-                                                Trả hàng - Hoàn tiền</option>
+                                            <option value="Đã giao" ${status=='DELIVERED' ? 'selected' : '' }>Đã giao
+                                            </option>
+                                            <option value="CANCELLED" ${status=='CANCELLED' ? 'selected' : '' }>Hủy
+                                            </option>
+                                            <option value="RETURNED" ${status=='RETURNED' ? 'selected' : '' }>Trả hàng -
+                                                Hoàn tiền</option>
                                         </select>
                                     </div>
                                 </div>
@@ -455,13 +457,15 @@
                                         </label>
                                         <select id="statusUpdate" name="status"
                                             class="form-select form-select-lg border-2 rounded-pill shadow-sm p-3 status-select">
-                                            <option value="Đơn hàng mới"> Đơn hàng mới</option>
-                                            <option value="Đã xác nhận"> Đã xác nhận</option>
-                                            <option value="Đang giao"> Đang giao</option>
-                                            <option value="Đã giao"> Đã giao</option>
-                                            <option value="Hủy"> Hủy</option>
-                                            <option value="Trả hàng - Hoàn tiền"> Trả hàng - Hoàn tiền</option>
+                                            <option value="PENDING">Đơn hàng mới</option>
+                                            <option value="CONFIRMED">Đã xác nhận</option>
+                                            <option value="SHIPPING">Đang giao</option>
+                                            <option value="DELIVERED">Đã giao</option>
+                                            <option value="CANCELLED">Hủy</option>
+                                            <option value="RETURNED">Trả hàng - Hoàn tiền</option>
                                         </select>
+
+
                                     </div>
                                 </form>
                             </div>

@@ -52,15 +52,17 @@ public class VendorOrderController {
     }
 
     @GetMapping("/filter")
-    public String filterOrdersByStatus(@RequestParam(value = "status", required = false) String status,
+    public String filterOrdersByStatus(
+            @RequestParam(value = "status", required = false) String status,
             Model model) {
+
         Long shopId = getCurrentShopId();
         List<Order> orders;
 
         if (status == null || status.isEmpty()) {
             orders = orderService.getOrdersByShopId(shopId);
         } else {
-            orders = orderService.getOrdersByShopIdAndStatus(shopId, status);
+            orders = orderService.getOrdersByShopIdAndStatus(shopId, status.toUpperCase());
         }
 
         model.addAttribute("orders", orders);

@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,7 +45,7 @@ public class Order {
 
     @Column(length = 50)
     private String paymentMethod;
-
+    
     @Column(length = 50)
     private String status;
 
@@ -58,5 +60,13 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
+
+    @PrePersist
+    @PreUpdate
+    public void formatStatus() {
+        if (status != null) {
+            status = status.toUpperCase();
+        }
+    }
 
 }

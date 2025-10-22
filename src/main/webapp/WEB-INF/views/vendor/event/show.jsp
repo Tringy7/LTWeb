@@ -700,3 +700,76 @@
                             });
                         });
                     </script>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const addCouponForm = document.querySelector('#newCouponModal form');
+                            const inputs = addCouponForm.querySelectorAll("input");
+
+                            addCouponForm.addEventListener("submit", function (e) {
+                                let isValid = true;
+
+                                inputs.forEach(input => {
+                                    const formGroup = input.closest(".mb-3");
+                                    let errorEl = formGroup.querySelector(".invalid-feedback");
+
+                                    // Nếu chưa có vùng hiển thị lỗi thì tạo mới
+                                    if (!errorEl) {
+                                        errorEl = document.createElement("div");
+                                        errorEl.className = "invalid-feedback";
+                                        formGroup.appendChild(errorEl);
+                                    }
+
+                                    // Reset trạng thái mỗi lần submit
+                                    input.classList.remove("is-invalid");
+                                    errorEl.textContent = "";
+
+                                    // Kiểm tra từng input cụ thể
+                                    if (input.name === "code" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng nhập mã giảm giá.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    if (input.name === "discountPercent") {
+                                        const val = parseInt(input.value);
+                                        if (isNaN(val) || val <= 0) {
+                                            errorEl.textContent = "Phần trăm giảm phải lớn hơn 0.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        } else if (val > 100) {
+                                            errorEl.textContent = "Phần trăm giảm không được vượt quá 100%.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        }
+                                    }
+
+                                    if (input.name === "startDate" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng chọn ngày bắt đầu.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    if (input.name === "endDate" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng chọn ngày kết thúc.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    // Kiểm tra nếu ngày kết thúc trước ngày bắt đầu
+                                    if (input.name === "endDate" && input.value.trim() !== "" &&
+                                        addCouponForm.querySelector('input[name="startDate"]').value.trim() !== "") {
+                                        const start = new Date(addCouponForm.querySelector('input[name="startDate"]').value);
+                                        const end = new Date(input.value);
+                                        if (end < start) {
+                                            errorEl.textContent = "Ngày kết thúc phải sau ngày bắt đầu.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        }
+                                    }
+                                });
+
+                                if (!isValid) e.preventDefault();
+                            });
+                        });
+                    </script>

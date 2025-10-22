@@ -56,11 +56,14 @@ public class VendorProductController {
             products = productService.getProductsByShopId(SHOP_ID);
         }
 
+        products = products.stream()
+                .filter(p -> "Active".equalsIgnoreCase(p.getStatus()))
+                .toList();
+
         products.forEach(p -> p.getProductDetails().size());
         model.addAttribute("products", products);
         model.addAttribute("product", new Product());
 
-        // Lấy danh sách category hiện có
         List<String> categories = productService.getCategoriesByShopId(SHOP_ID);
         model.addAttribute("categories", categories);
 
@@ -75,6 +78,9 @@ public class VendorProductController {
         }
 
         Product product = optProduct.get();
+        if (!"Active".equalsIgnoreCase(product.getStatus())) {
+            return "redirect:/vendor/product?error=status";
+        }
         List<ProductDetail> details = productDetailService.getByProductId(id);
         model.addAttribute("product", product);
         model.addAttribute("details", details);
@@ -117,6 +123,9 @@ public class VendorProductController {
         }
 
         Product product = optProduct.get();
+        if (!"Active".equalsIgnoreCase(product.getStatus())) {
+            return "redirect:/vendor/product?error=status";
+        }
         List<ProductDetail> details = productDetailService.getDetailsByProductId(product.getId());
 
         model.addAttribute("product", product);
@@ -138,6 +147,9 @@ public class VendorProductController {
         }
 
         Product existing = optProduct.get();
+        if (!"Active".equalsIgnoreCase(product.getStatus())) {
+            return "redirect:/vendor/product?error=status";
+        }
         product.setShop(existing.getShop());
 
         // === Cập nhật hình ảnh ===
@@ -198,6 +210,13 @@ public class VendorProductController {
         if (product.getId() != null) {
             Optional<Product> optProduct = productService.getProductByIdAndShopId(product.getId(), SHOP_ID);
             if (optProduct.isPresent()) {
+                Product existing = optProduct.get();
+
+                // kiểm tra trạng thái
+                if (!"Active".equalsIgnoreCase(existing.getStatus())) {
+                    return "redirect:/vendor/product?error=status";
+                }
+
                 productService.deleteProductById(product.getId());
             }
         }
