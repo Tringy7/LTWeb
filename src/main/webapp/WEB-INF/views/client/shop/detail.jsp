@@ -40,23 +40,6 @@
                         </div>
                         <!-- Spinner End -->
 
-                        <!-- Toast Notification -->
-                        <div class="position-fixed end-0 p-3" style="z-index: 1055; top: 200px;">
-                            <div id="cartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <i id="toastIcon" class="fas fa-check-circle text-success me-2"></i>
-                                    <strong class="me-auto">Thông báo</strong>
-                                    <small>Vừa xong</small>
-                                    <button type="button" class="btn-close" data-bs-dismiss="toast"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="toast-body" id="toastMessage">
-                                    ${cartMessage}
-                                </div>
-                            </div>
-                        </div>
-
-
                         <!-- Single Page Header start -->
                         <div class="container-fluid page-header py-5">
                             <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s"
@@ -172,14 +155,25 @@
                                                             class="fa fa-shopping-bag me-2 text-white"></i> Add to
                                                         cart</button>
                                                 </form>
-
-                                                <!-- Chat with seller button -->
-                                                <button type="button" onclick="openChatModal()"
-                                                    class="btn btn-outline-primary border border-primary rounded-pill px-4 py-2 mb-4">
-                                                    <i class="fa fa-comments me-2"></i> Chat với người bán
-                                                </button>
                                             </div>
 
+                                            <div class="border rounded p-4 mb-4 bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="/admin/images/user/user1.jpg"
+                                                        class="img-fluid rounded-circle"
+                                                        style="width: 80px; height: 80px; object-fit: cover;"
+                                                        alt="Shop Avatar">
+
+                                                    <div class="ms-3 flex-grow-1">
+                                                        <h5 class="mb-2 fw-bold">${shop.shopName}</h5>
+                                                        <p class="text-muted mb-3">${shop.description}</p>
+                                                        <a href="/chat" class="btn btn-primary btn-sm">
+                                                            <i class="fa fa-comments me-2"></i> Nhắn tin với người bán
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             <div class="col-lg-12">
                                                 <nav>
@@ -199,9 +193,6 @@
                                                 <div class="tab-content mb-5">
                                                     <div class="tab-pane active" id="nav-about" role="tabpanel"
                                                         aria-labelledby="nav-about-tab">
-                                                        <p><strong class="text-primary">${shop.shopName}: </strong>
-                                                            ${shop.description}
-                                                        </p>
                                                         <strong class="text-primary">Bảng size tham khảo</strong>
                                                         <table class="table table-bordered mt-2 small">
                                                             <thead>
@@ -349,297 +340,137 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Size Error Modal -->
-                            <div class="modal fade" id="sizeErrorModal" tabindex="-1"
-                                aria-labelledby="sizeErrorModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-sm modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header border-0">
-                                            <h5 class="modal-title" id="sizeErrorModalLabel">Thông báo</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body text-center">
-                                            Vui lòng chọn size sản phẩm!
+                                <!-- Size Error Modal -->
+                                <div class="modal fade" id="sizeErrorModal" tabindex="-1"
+                                    aria-labelledby="sizeErrorModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header border-0">
+                                                <h5 class="modal-title" id="sizeErrorModalLabel">Thông báo</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                Vui lòng chọn size sản phẩm!
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
+                            <!-- Single Products End -->
 
-                        </div>
-                        <!-- Single Products End -->
-
-                        <!-- JavaScript Libraries -->
-                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-                        <script
-                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-                        <script src="lib/wow/wow.min.js"></script>
-                        <script src="lib/easing/easing.min.js"></script>
-                        <script src="lib/waypoints/waypoints.min.js"></script>
-                        <script src="lib/counterup/counterup.min.js"></script>
-                        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-                        <script src="lib/lightbox/js/lightbox.min.js"></script>
+                            <!-- JavaScript Libraries -->
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+                            <script
+                                src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+                            <script src="lib/wow/wow.min.js"></script>
+                            <script src="lib/easing/easing.min.js"></script>
+                            <script src="lib/waypoints/waypoints.min.js"></script>
+                            <script src="lib/counterup/counterup.min.js"></script>
+                            <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+                            <script src="lib/lightbox/js/lightbox.min.js"></script>
 
 
-                        <!-- Template Javascript -->
-                        <script src="js/main.js"></script>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                // Size selection
-                                const sizeButtons = document.querySelectorAll(".btn-size");
-                                const selectedSizeInput = document.getElementById("selected-size");
+                            <!-- Template Javascript -->
+                            <script src="js/main.js"></script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    // Size selection
+                                    const sizeButtons = document.querySelectorAll(".btn-size");
+                                    const selectedSizeInput = document.getElementById("selected-size");
 
-                                sizeButtons.forEach((btn) => {
-                                    btn.addEventListener("click", () => {
-                                        sizeButtons.forEach((b) => b.classList.remove("active"));
-                                        btn.classList.add("active");
-                                        selectedSizeInput.value = btn.dataset.size;
+                                    sizeButtons.forEach((btn) => {
+                                        btn.addEventListener("click", () => {
+                                            sizeButtons.forEach((b) => b.classList.remove("active"));
+                                            btn.classList.add("active");
+                                            selectedSizeInput.value = btn.dataset.size;
+                                        });
                                     });
-                                });
 
-                                // Quantity control
-                                const btnMinus = document.querySelector('.btn-minus');
-                                const btnPlus = document.querySelector('.btn-plus');
-                                const quantityInput = document.querySelector('.quantity input');
+                                    // Quantity control
+                                    const btnMinus = document.querySelector('.btn-minus');
+                                    const btnPlus = document.querySelector('.btn-plus');
+                                    const quantityInput = document.querySelector('.quantity input');
 
-                                btnMinus.addEventListener('click', function () {
-                                    let currentValue = parseInt(quantityInput.value);
-                                    if (currentValue > 1) {
-                                        quantityInput.value = currentValue - 1;
-                                    }
-                                });
-
-                                btnPlus.addEventListener('click', function () {
-                                    let currentValue = parseInt(quantityInput.value);
-                                    // You might want to add a check against available stock here
-                                    quantityInput.value = currentValue + 1;
-                                });
-
-                                // Form submission validation
-                                const addToCartForm = document.getElementById('addToCartForm');
-                                const sizeErrorModal = new bootstrap.Modal(document.getElementById('sizeErrorModal'));
-
-                                addToCartForm.addEventListener('submit', function (event) {
-                                    if (selectedSizeInput.value === "") {
-                                        // Prevent form submission
-                                        event.preventDefault();
-                                        // Show error modal
-                                        sizeErrorModal.show();
-                                    }
-                                });
-
-                                // Rating stars logic
-                                const starsContainer = document.getElementById('rating-stars');
-                                if (!starsContainer) return;
-
-                                const stars = Array.from(starsContainer.querySelectorAll('.fa-star'));
-                                const ratingInput = document.getElementById('rating-value');
-                                let currentRating = 0;
-
-                                const updateStars = (rating) => {
-                                    stars.forEach(star => {
-                                        const starRating = parseInt(star.dataset.rating);
-                                        if (starRating <= rating) {
-                                            star.classList.remove('text-muted');
-                                            star.classList.add('text-warning');
-                                        } else {
-                                            star.classList.remove('text-warning');
-                                            star.classList.add('text-muted');
+                                    btnMinus.addEventListener('click', function () {
+                                        let currentValue = parseInt(quantityInput.value);
+                                        if (currentValue > 1) {
+                                            quantityInput.value = currentValue - 1;
                                         }
                                     });
-                                };
 
-                                starsContainer.addEventListener('mouseout', () => {
-                                    updateStars(currentRating);
-                                });
-
-                                stars.forEach(star => {
-                                    star.addEventListener('mouseover', () => updateStars(parseInt(star.dataset.rating)));
-                                    star.addEventListener('click', () => {
-                                        currentRating = parseInt(star.dataset.rating);
-                                        ratingInput.value = currentRating;
+                                    btnPlus.addEventListener('click', function () {
+                                        let currentValue = parseInt(quantityInput.value);
+                                        // You might want to add a check against available stock here
+                                        quantityInput.value = currentValue + 1;
                                     });
-                                });
-                            });
 
-                            // Toast logic
-                            const cartStatus = "${cartStatus}";
-                            if (cartStatus) {
-                                const cartToast = new bootstrap.Toast(document.getElementById('cartToast'));
-                                const toastIcon = document.getElementById('toastIcon');
-                                const toastMessage = document.getElementById('toastMessage');
+                                    // Form submission validation
+                                    const addToCartForm = document.getElementById('addToCartForm');
+                                    const sizeErrorModal = new bootstrap.Modal(document.getElementById('sizeErrorModal'));
 
-                                if (cartStatus === 'success') {
-                                    toastIcon.className = 'fas fa-check-circle text-success me-2';
-                                    toastMessage.textContent = "${cartMessage}";
-                                } else if (cartStatus === 'failure') {
-                                    toastIcon.className = 'fas fa-times-circle text-danger me-2';
-                                    toastMessage.textContent = "${cartMessage}";
-                                }
-
-                                cartToast.show();
-                            }
-
-                        </script>
-
-
-                        <!-- Chat Modal -->
-                        <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel"
-                            aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable" style="max-width: 400px;">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="chatModalLabel">
-                                            <i class="fa fa-store me-2"></i>${shop.shopName}
-                                        </h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body" id="chatMessages"
-                                        style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
-                                        <!-- Chat messages will be displayed here -->
-                                        <div class="text-center text-muted py-4">
-                                            <i class="fa fa-comments fa-3x mb-3"></i>
-                                            <p>Bắt đầu cuộc trò chuyện với người bán</p>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="chatInput"
-                                                placeholder="Nhập tin nhắn..." onkeypress="handleChatKeyPress(event)">
-                                            <button class="btn btn-primary" type="button" onclick="sendMessage()">
-                                                <i class="fa fa-paper-plane"></i> Gửi
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            let chatModal;
-                            let chatMessages = [];
-
-                            function openChatModal() {
-                                // Check if user is logged in
-                                <c:if test="${empty pageContext.request.userPrincipal}">
-                                    alert('Vui lòng đăng nhập để chat với người bán!');
-                                    window.location.href = '/login';
-                                    return;
-                                </c:if>
-
-                                chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
-                                chatModal.show();
-                                loadChatHistory();
-                            }
-
-                            function loadChatHistory() {
-                                // In a real implementation, this would load chat history from backend
-                                const messagesContainer = document.getElementById('chatMessages');
-
-                                if (chatMessages.length === 0) {
-                                    messagesContainer.innerHTML = `
-                                        <div class="text-center text-muted py-4">
-                                            <i class="fa fa-comments fa-3x mb-3"></i>
-                                            <p>Bắt đầu cuộc trò chuyện với người bán</p>
-                                        </div>
-                                    `;
-                                } else {
-                                    let html = '';
-                                    chatMessages.forEach(msg => {
-                                        html += createMessageHTML(msg);
+                                    addToCartForm.addEventListener('submit', function (event) {
+                                        if (selectedSizeInput.value === "") {
+                                            // Prevent form submission
+                                            event.preventDefault();
+                                            // Show error modal
+                                            sizeErrorModal.show();
+                                        }
                                     });
-                                    messagesContainer.innerHTML = html;
-                                    scrollToBottom();
-                                }
-                            }
 
-                            function createMessageHTML(message) {
-                                const isUser = message.sender === 'user';
-                                return `
-                                    <div class="mb-3 ${isUser ? 'text-end' : 'text-start'}">
-                                        <div class="d-inline-block" style="max-width: 70%;">
-                                            <div class="p-2 rounded ${isUser ? 'bg-primary text-white' : 'bg-white'}" 
-                                                 style="word-wrap: break-word;">
-                                                ${message.text}
-                                            </div>
-                                            <small class="text-muted d-block mt-1">${message.time}</small>
-                                        </div>
-                                    </div>
-                                `;
-                            }
+                                    // Rating stars logic
+                                    const starsContainer = document.getElementById('rating-stars');
+                                    if (!starsContainer) return;
 
-                            function sendMessage() {
-                                const input = document.getElementById('chatInput');
-                                const messageText = input.value.trim();
+                                    const stars = Array.from(starsContainer.querySelectorAll('.fa-star'));
+                                    const ratingInput = document.getElementById('rating-value');
+                                    let currentRating = 0;
 
-                                if (messageText === '') return;
-
-                                const now = new Date();
-                                const timeString = now.getHours().toString().padStart(2, '0') + ':' +
-                                    now.getMinutes().toString().padStart(2, '0');
-
-                                const message = {
-                                    sender: 'user',
-                                    text: messageText,
-                                    time: timeString
-                                };
-
-                                chatMessages.push(message);
-
-                                // In a real implementation, send message to backend here
-                                // For now, just update UI
-                                loadChatHistory();
-                                input.value = '';
-
-                                // Simulate shop response (for demo)
-                                setTimeout(() => {
-                                    const shopMessage = {
-                                        sender: 'shop',
-                                        text: 'Cảm ơn bạn đã liên hệ! Shop sẽ phản hồi sớm nhất có thể.',
-                                        time: new Date().getHours().toString().padStart(2, '0') + ':' +
-                                            new Date().getMinutes().toString().padStart(2, '0')
+                                    const updateStars = (rating) => {
+                                        stars.forEach(star => {
+                                            const starRating = parseInt(star.dataset.rating);
+                                            if (starRating <= rating) {
+                                                star.classList.remove('text-muted');
+                                                star.classList.add('text-warning');
+                                            } else {
+                                                star.classList.remove('text-warning');
+                                                star.classList.add('text-muted');
+                                            }
+                                        });
                                     };
-                                    chatMessages.push(shopMessage);
-                                    loadChatHistory();
-                                }, 1000);
-                            }
 
-                            function handleChatKeyPress(event) {
-                                if (event.key === 'Enter') {
-                                    sendMessage();
+                                    starsContainer.addEventListener('mouseout', () => {
+                                        updateStars(currentRating);
+                                    });
+
+                                    stars.forEach(star => {
+                                        star.addEventListener('mouseover', () => updateStars(parseInt(star.dataset.rating)));
+                                        star.addEventListener('click', () => {
+                                            currentRating = parseInt(star.dataset.rating);
+                                            ratingInput.value = currentRating;
+                                        });
+                                    });
+                                });
+
+                                // Toast logic
+                                const cartStatus = "${cartStatus}";
+                                if (cartStatus) {
+                                    const cartToast = new bootstrap.Toast(document.getElementById('cartToast'));
+                                    const toastIcon = document.getElementById('toastIcon');
+                                    const toastMessage = document.getElementById('toastMessage');
+
+                                    if (cartStatus === 'success') {
+                                        toastIcon.className = 'fas fa-check-circle text-success me-2';
+                                        toastMessage.textContent = "${cartMessage}";
+                                    } else if (cartStatus === 'failure') {
+                                        toastIcon.className = 'fas fa-times-circle text-danger me-2';
+                                        toastMessage.textContent = "${cartMessage}";
+                                    }
+
+                                    cartToast.show();
                                 }
-                            }
 
-                            function scrollToBottom() {
-                                const messagesContainer = document.getElementById('chatMessages');
-                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                            }
-                        </script>
-
-                        <div id="lightboxOverlay" tabindex="-1" class="lightboxOverlay" style="display: none;"></div>
-                        <div id="lightbox" tabindex="-1" class="lightbox" style="display: none;">
-                            <div class="lb-outerContainer">
-                                <div class="lb-container"><img class="lb-image"
-                                        src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-                                        alt="">
-                                    <div class="lb-nav"><a class="lb-prev" role="button" tabindex="0"
-                                            aria-label="Previous image" href=""></a><a class="lb-next" role="button"
-                                            tabindex="0" aria-label="Next image" href=""></a>
-                                    </div>
-                                    <div class="lb-loader"><a class="lb-cancel" role="button" tabindex="0"></a></div>
-                                </div>
-                            </div>
-                            <div class="lb-dataContainer">
-                                <div class="lb-data">
-                                    <div class="lb-details"><span class="lb-caption"></span><span
-                                            class="lb-number"></span>
-                                    </div>
-                                    <div class="lb-closeContainer"><a class="lb-close" role="button" tabindex="0"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </script>
                     </body>

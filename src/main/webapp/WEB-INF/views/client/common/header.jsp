@@ -63,7 +63,9 @@
                                                 <a href="/account" class="dropdown-item">My account</a>
                                                 <a href="/voucher" class="dropdown-item">My voucher</a>
                                                 <a href="/order" class="dropdown-item">My order</a>
-                                                <a href="/registraion-sales" class="dropdown-item">Sales registration</a>
+                                                <a href="/chat" class="dropdown-item">Chat</a>
+                                                <a href="/registraion-sales" class="dropdown-item">Sales
+                                                    registration</a>
                                                 <a href="/logout" class="dropdown-item">Log out</a>
                                             </c:when>
                                             <c:otherwise>

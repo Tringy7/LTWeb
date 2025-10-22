@@ -23,6 +23,7 @@ import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.Review;
 import com.shop.shop.domain.User;
 import com.shop.shop.dto.ProductDTO;
+import com.shop.shop.repository.MessageRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductService;
 import com.shop.shop.service.client.ReviewService;
@@ -42,6 +43,9 @@ public class ShopController {
 
     @Autowired
     private CartService cartService;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @GetMapping("/shop")
     public String show(Model model,
