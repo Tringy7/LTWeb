@@ -160,10 +160,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                       >
                     </td>
                     <td>
-                      <fmt:formatDate
-                        value="${shop.createdAt}"
-                        pattern="dd/MM/yyyy HH:mm"
-                      />
+                      <c:set var="dateTime" value="${shop.createdAt}" />
+                      <c:if test="${not empty dateTime}">
+                        ${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}
+                        ${dateTime.hour}:${dateTime.minute < 10 ? '0' : ''
+                        }${dateTime.minute}
+                      </c:if>
                     </td>
                     <td class="text-center">
                       <div class="action-buttons">
@@ -174,6 +176,28 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                         >
                           <i class="typcn typcn-shopping-bag"></i> Sản phẩm
                         </a>
+                        
+                        <!-- Shop Status Controls -->
+                        <c:choose>
+                          <c:when test="${shop.status == 'Active'}">
+                            <form action="/admin/shop/${shop.id}/status" method="POST" style="display: inline;" 
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn tạm ngưng cửa hàng này?')">
+                              <input type="hidden" name="status" value="Inactive">
+                              <button type="submit" class="btn btn-sm btn-outline-warning" title="Tạm ngưng">
+                                <i class="typcn typcn-media-pause"></i>
+                              </button>
+                            </form>
+                          </c:when>
+                          <c:otherwise>
+                            <form action="/admin/shop/${shop.id}/status" method="POST" style="display: inline;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn kích hoạt lại cửa hàng này?')">
+                              <input type="hidden" name="status" value="Active">
+                              <button type="submit" class="btn btn-sm btn-outline-success" title="Kích hoạt">
+                                <i class="typcn typcn-media-play"></i>
+                              </button>
+                            </form>
+                          </c:otherwise>
+                        </c:choose>
                       </div>
                     </td>
                   </tr>

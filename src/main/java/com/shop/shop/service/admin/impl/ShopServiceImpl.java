@@ -81,4 +81,14 @@ public class ShopServiceImpl implements ShopService {
         // This can be extended later if Product entity has status field
         return productRepository.countByShopId(shopId);
     }
+
+    @Override
+    public void changeShopStatus(Long shopId, String status) {
+        Optional<Shop> shopOpt = shopRepository.findById(shopId);
+        if (shopOpt.isPresent()) {
+            Shop shop = shopOpt.get();
+            shop.setStatus(status);
+            shopRepository.save(shop);
+        }
+    }
 }

@@ -40,6 +40,12 @@ public class ProductMapper {
         dto.setTotalSold(0L);
         dto.setHasVoucher(false);
 
+        // Set admin control fields
+        dto.setStatus(product.getStatus());
+        dto.setViolationType(product.getViolationType());
+        dto.setAdminNotes(product.getAdminNotes());
+        dto.setLastModifiedByAdmin(product.getLastModifiedByAdmin());
+
         return dto;
     }
 

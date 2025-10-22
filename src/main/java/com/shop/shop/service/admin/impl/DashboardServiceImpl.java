@@ -90,38 +90,69 @@ public class DashboardServiceImpl implements DashboardService {
                 System.err.println("Error getting last month shop count: " + e.getMessage());
             }
 
-            // Revenue calculation
+            // Revenue and commission calculation using stored commission data
             BigDecimal revenueThisMonth = BigDecimal.ZERO;
             BigDecimal revenueLastMonth = BigDecimal.ZERO;
+            BigDecimal commissionThisMonth = BigDecimal.ZERO;
+            BigDecimal commissionLastMonth = BigDecimal.ZERO;
 
             try {
-                List<Order> deliveredOrdersThisMonth = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED",
-                        startOfMonth, now);
-                revenueThisMonth = deliveredOrdersThisMonth.stream()
-                        .map(order -> {
-                            try {
-                                return BigDecimal.valueOf(order.getTotalPrice());
-                            } catch (Exception e) {
-                                System.err.println("Error converting order price: " + e.getMessage());
-                                return BigDecimal.ZERO;
-                            }
-                        })
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (commissionService != null) {
+                    // Get commission data for this month (which includes total revenue)
+                    CommissionSummaryDTO thisMonthCommission = commissionService.getCommissionSummary(
+                            startOfMonth.toLocalDate(), now.toLocalDate());
 
-                List<Order> deliveredOrdersLastMonth = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED",
-                        startOfLastMonth, endOfLastMonth);
-                revenueLastMonth = deliveredOrdersLastMonth.stream()
-                        .map(order -> {
-                            try {
-                                return BigDecimal.valueOf(order.getTotalPrice());
-                            } catch (Exception e) {
-                                System.err.println("Error converting order price: " + e.getMessage());
-                                return BigDecimal.ZERO;
-                            }
-                        })
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    if (thisMonthCommission != null) {
+                        revenueThisMonth = thisMonthCommission.getTotalRevenue() != null
+                                ? thisMonthCommission.getTotalRevenue()
+                                : BigDecimal.ZERO;
+                        commissionThisMonth = thisMonthCommission.getTotalCommissionAmount() != null
+                                ? thisMonthCommission.getTotalCommissionAmount()
+                                : BigDecimal.ZERO;
+                    }
+
+                    // Get commission data for last month
+                    CommissionSummaryDTO lastMonthCommission = commissionService.getCommissionSummary(
+                            startOfLastMonth.toLocalDate(), endOfLastMonth.toLocalDate());
+
+                    if (lastMonthCommission != null) {
+                        revenueLastMonth = lastMonthCommission.getTotalRevenue() != null
+                                ? lastMonthCommission.getTotalRevenue()
+                                : BigDecimal.ZERO;
+                        commissionLastMonth = lastMonthCommission.getTotalCommissionAmount() != null
+                                ? lastMonthCommission.getTotalCommissionAmount()
+                                : BigDecimal.ZERO;
+                    }
+                } else {
+                    // Fallback to order-based calculation if commission service is not available
+                    List<Order> deliveredOrdersThisMonth = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED",
+                            startOfMonth, now);
+                    revenueThisMonth = deliveredOrdersThisMonth.stream()
+                            .map(order -> {
+                                try {
+                                    return BigDecimal.valueOf(order.getTotalPrice());
+                                } catch (Exception e) {
+                                    System.err.println("Error converting order price: " + e.getMessage());
+                                    return BigDecimal.ZERO;
+                                }
+                            })
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    List<Order> deliveredOrdersLastMonth = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED",
+                            startOfLastMonth, endOfLastMonth);
+                    revenueLastMonth = deliveredOrdersLastMonth.stream()
+                            .map(order -> {
+                                try {
+                                    return BigDecimal.valueOf(order.getTotalPrice());
+                                } catch (Exception e) {
+                                    System.err.println("Error converting order price: " + e.getMessage());
+                                    return BigDecimal.ZERO;
+                                }
+                            })
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                }
             } catch (Exception e) {
-                System.err.println("Error calculating revenue: " + e.getMessage());
+                System.err.println("Error getting commission/revenue data: " + e.getMessage());
             }
 
             // Calculate growth percentages
@@ -129,6 +160,7 @@ public class DashboardServiceImpl implements DashboardService {
             Double shopGrowthPercent = calculateGrowthPercent(shopsThisMonth, shopsLastMonth);
             Double productGrowthPercent = calculateGrowthPercent(productsThisMonth, productsLastMonth);
             Double revenueGrowthPercent = calculateGrowthPercent(revenueThisMonth, revenueLastMonth);
+            Double commissionGrowthPercent = calculateGrowthPercent(commissionThisMonth, commissionLastMonth);
 
             return DashboardStatsDTO.builder()
                     .totalUsers(totalUsers)
@@ -144,6 +176,9 @@ public class DashboardServiceImpl implements DashboardService {
                     .newShopsThisMonth(shopsThisMonth)
                     .ordersThisMonth(ordersThisMonth)
                     .revenueThisMonth(revenueThisMonth)
+                    .totalCommissionThisMonth(commissionThisMonth)
+                    .totalCommissionLastMonth(commissionLastMonth)
+                    .commissionGrowthPercent(commissionGrowthPercent)
                     .build();
 
         } catch (Exception e) {
@@ -165,6 +200,9 @@ public class DashboardServiceImpl implements DashboardService {
                     .newShopsThisMonth(0L)
                     .ordersThisMonth(0L)
                     .revenueThisMonth(BigDecimal.ZERO)
+                    .totalCommissionThisMonth(BigDecimal.ZERO)
+                    .totalCommissionLastMonth(BigDecimal.ZERO)
+                    .commissionGrowthPercent(0.0)
                     .build();
         }
     }
@@ -295,39 +333,66 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Double getRevenueGrowthPercent() {
         try {
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0)
-                    .withSecond(0);
-            LocalDateTime startOfLastMonth = startOfMonth.minusMonths(1);
-            LocalDateTime endOfLastMonth = startOfMonth.minusSeconds(1);
+            if (commissionService != null) {
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0)
+                        .withSecond(0);
+                LocalDateTime startOfLastMonth = startOfMonth.minusMonths(1);
+                LocalDateTime endOfLastMonth = startOfMonth.minusSeconds(1);
 
-            List<Order> thisMonthOrders = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED", startOfMonth,
-                    now);
-            BigDecimal revenueThisMonth = thisMonthOrders.stream()
-                    .map(order -> {
-                        try {
-                            return BigDecimal.valueOf(order.getTotalPrice());
-                        } catch (Exception e) {
-                            System.err.println("Error converting order price in growth calc: " + e.getMessage());
-                            return BigDecimal.ZERO;
-                        }
-                    })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                // Get revenue from commission data
+                CommissionSummaryDTO thisMonthCommission = commissionService.getCommissionSummary(
+                        startOfMonth.toLocalDate(), now.toLocalDate());
+                BigDecimal revenueThisMonth = thisMonthCommission != null
+                        && thisMonthCommission.getTotalRevenue() != null
+                                ? thisMonthCommission.getTotalRevenue()
+                                : BigDecimal.ZERO;
 
-            List<Order> lastMonthOrders = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED", startOfLastMonth,
-                    endOfLastMonth);
-            BigDecimal revenueLastMonth = lastMonthOrders.stream()
-                    .map(order -> {
-                        try {
-                            return BigDecimal.valueOf(order.getTotalPrice());
-                        } catch (Exception e) {
-                            System.err.println("Error converting order price in growth calc: " + e.getMessage());
-                            return BigDecimal.ZERO;
-                        }
-                    })
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                CommissionSummaryDTO lastMonthCommission = commissionService.getCommissionSummary(
+                        startOfLastMonth.toLocalDate(), endOfLastMonth.toLocalDate());
+                BigDecimal revenueLastMonth = lastMonthCommission != null
+                        && lastMonthCommission.getTotalRevenue() != null
+                                ? lastMonthCommission.getTotalRevenue()
+                                : BigDecimal.ZERO;
 
-            return calculateGrowthPercent(revenueThisMonth, revenueLastMonth);
+                return calculateGrowthPercent(revenueThisMonth, revenueLastMonth);
+            } else {
+                // Fallback to order-based calculation
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).withHour(0).withMinute(0)
+                        .withSecond(0);
+                LocalDateTime startOfLastMonth = startOfMonth.minusMonths(1);
+                LocalDateTime endOfLastMonth = startOfMonth.minusSeconds(1);
+
+                List<Order> thisMonthOrders = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED", startOfMonth,
+                        now);
+                BigDecimal revenueThisMonth = thisMonthOrders.stream()
+                        .map(order -> {
+                            try {
+                                return BigDecimal.valueOf(order.getTotalPrice());
+                            } catch (Exception e) {
+                                System.err.println("Error converting order price in growth calc: " + e.getMessage());
+                                return BigDecimal.ZERO;
+                            }
+                        })
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                List<Order> lastMonthOrders = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED",
+                        startOfLastMonth,
+                        endOfLastMonth);
+                BigDecimal revenueLastMonth = lastMonthOrders.stream()
+                        .map(order -> {
+                            try {
+                                return BigDecimal.valueOf(order.getTotalPrice());
+                            } catch (Exception e) {
+                                System.err.println("Error converting order price in growth calc: " + e.getMessage());
+                                return BigDecimal.ZERO;
+                            }
+                        })
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                return calculateGrowthPercent(revenueThisMonth, revenueLastMonth);
+            }
         } catch (Exception e) {
             System.err.println("Error calculating revenue growth: " + e.getMessage());
             return 0.0;

@@ -38,7 +38,7 @@ public class Voucher {
 
     private LocalDateTime endDate;
 
-    private Boolean status;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "shop_id", nullable = false)

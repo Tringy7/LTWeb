@@ -45,7 +45,7 @@ public class Order {
     private String paymentMethod;
 
     @Column(length = 50)
-    private String status = "New";
+    private String status;
 
     private Double totalPrice;
 

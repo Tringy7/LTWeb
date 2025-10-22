@@ -64,6 +64,19 @@ public class CommissionServiceImpl implements CommissionService {
                                                 order -> order.getShop().getId(),
                                                 Collectors.groupingBy(order -> YearMonth.from(order.getCreatedAt()))));
 
+                // System.out.println("Orders grouped by shop and month:");
+                // for (Map.Entry<Long, Map<YearMonth, List<Order>>> shopEntry :
+                // ordersByShopAndMonth.entrySet()) {
+                // Long shopId = shopEntry.getKey();
+                // System.out.println(" Shop " + shopId + ":");
+                // for (Map.Entry<YearMonth, List<Order>> monthEntry :
+                // shopEntry.getValue().entrySet()) {
+                // YearMonth yearMonth = monthEntry.getKey();
+                // List<Order> orders = monthEntry.getValue();
+                // System.out.println(" " + yearMonth + ": " + orders.size() + " orders");
+                // }
+                // }
+
                 List<CommissionResponseDTO> results = new ArrayList<>();
 
                 // For each shop and each month, calculate commission if not already exists
@@ -75,23 +88,37 @@ public class CommissionServiceImpl implements CommissionService {
                                 YearMonth yearMonth = monthEntry.getKey();
                                 List<Order> ordersInMonth = monthEntry.getValue();
 
+                                // System.out.println("Processing shop " + shopId + " for month " + yearMonth +
+                                // " with "
+                                // + ordersInMonth.size() + " orders");
+
                                 Optional<CommissionResponseDTO> commission = calculateMonthlyCommissionForShop(
                                                 shopId, yearMonth, ordersInMonth);
-                                if (commission.isPresent()) {
-                                        results.add(commission.get());
-                                }
+                                // if (commission.isPresent()) {
+                                // System.out.println(" Commission calculated successfully");
+                                // results.add(commission.get());
+                                // } else {
+                                // System.out.println(
+                                // " Commission calculation skipped (already exists or error)");
+                                // }
                         }
                 }
 
+                // System.out.println("Total commissions calculated: " + results.size());
+                // System.out.println("=== End Commission Calculation Debug ===");
                 return results;
         }
 
         private Optional<CommissionResponseDTO> calculateMonthlyCommissionForShop(Long shopId, YearMonth yearMonth,
                         List<Order> ordersInMonth) {
                 try {
+                        // System.out.println(" Calculating commission for shop " + shopId + " month " +
+                        // yearMonth);
+
                         // Get shop information
                         Optional<Shop> shopOpt = shopRepository.findById(shopId);
                         if (shopOpt.isEmpty()) {
+                                System.out.println("    Shop not found: " + shopId);
                                 return Optional.empty();
                         }
                         Shop shop = shopOpt.get();
@@ -100,10 +127,13 @@ public class CommissionServiceImpl implements CommissionService {
                         LocalDate periodStart = yearMonth.atDay(1);
                         LocalDate periodEnd = yearMonth.atEndOfMonth();
 
+                        System.out.println("    Period: " + periodStart + " to " + periodEnd);
+
                         // Check if commission already exists for this shop and month
                         boolean exists = commissionRepository.existsByShopIdAndPeriodStartAndPeriodEnd(shopId,
                                         periodStart,
                                         periodEnd);
+                        // System.out.println(" Commission already exists: " + exists);
                         if (exists) {
                                 return Optional.empty(); // Skip if already calculated for this month
                         }
@@ -115,13 +145,19 @@ public class CommissionServiceImpl implements CommissionService {
                                         .filter(amount -> amount != null)
                                         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+                        // System.out.println(" Total revenue calculated: " + totalRevenue);
+                        // System.out.println(" Number of orders: " + ordersInMonth.size());
+
                         if (totalRevenue.compareTo(BigDecimal.ZERO) <= 0) {
+                                System.out.println("    No revenue to calculate commission");
                                 return Optional.empty(); // No revenue to calculate commission
                         }
 
                         // Calculate commission amount (totalRevenue * percent / 100)
                         BigDecimal commissionAmount = totalRevenue.multiply(DEFAULT_COMMISSION_RATE)
                                         .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+
+                        System.out.println("    Commission amount: " + commissionAmount);
 
                         // Create and save commission record for this specific month
                         Commission commission = Commission.builder()
@@ -136,6 +172,7 @@ public class CommissionServiceImpl implements CommissionService {
                                         .build();
 
                         Commission savedCommission = commissionRepository.save(commission);
+                        // System.out.println(" Commission saved with ID: " + savedCommission.getId());
 
                         // Convert to DTO using mapper
                         CommissionResponseDTO dto = commissionMapper.toResponseDTO(savedCommission);

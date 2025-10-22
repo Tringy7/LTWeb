@@ -40,4 +40,7 @@ public interface ShopService {
 
     // Count active products for shop
     long countActiveProductsByShopId(Long shopId);
+
+    // Admin methods
+    void changeShopStatus(Long shopId, String status);
 }

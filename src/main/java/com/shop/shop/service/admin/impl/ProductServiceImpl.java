@@ -133,4 +133,43 @@ public class ProductServiceImpl implements ProductService {
             dto.setHasVoucher(false); // Default for now
         }
     }
+
+    @Override
+    public void hideProductForViolation(Long productId, String violationType, String adminNotes) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            product.setStatus("HIDDEN");
+            product.setViolationType(violationType);
+            product.setAdminNotes(adminNotes);
+            product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
+            productRepository.save(product);
+        }
+    }
+
+    @Override
+    public void lockProductForViolation(Long productId, String violationType, String adminNotes) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            product.setStatus("LOCKED");
+            product.setViolationType(violationType);
+            product.setAdminNotes(adminNotes);
+            product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
+            productRepository.save(product);
+        }
+    }
+
+    @Override
+    public void activateProduct(Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            product.setStatus("ACTIVE");
+            product.setViolationType(null);
+            product.setAdminNotes(null);
+            product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
+            productRepository.save(product);
+        }
+    }
 }

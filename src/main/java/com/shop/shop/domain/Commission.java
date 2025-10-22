@@ -54,7 +54,7 @@ public class Commission {
     @Column(name = "status", length = 50)
     private String status = "pending";
 
-    @Column(name = "created_at")
+    @Column(name = "created_at")    
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Helper methods to match the service layer expectations

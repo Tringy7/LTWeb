@@ -41,10 +41,12 @@
                     </h4>
                     <p class="text-muted mb-0">
                         <i class="typcn typcn-user mr-1"></i> Chủ cửa hàng: ${shop.ownerName} (${shop.ownerEmail})
-                        <span class="ml-3">
-                            <i class="typcn typcn-calendar mr-1"></i> 
-                            Tạo lúc: <fmt:formatDate value="${shop.createdAt}" pattern="dd/MM/yyyy"/>
-                        </span>
+                         <c:set var="dateTime" value="${shop.createdAt}" />
+                                <c:if test="${not empty dateTime}">
+                                    ${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}
+                                    <c:set var="minuteValue" value="${dateTime.minute}" />
+                                    ${dateTime.hour}:${minuteValue lt 10 ? '0' : ''}${minuteValue}
+                                </c:if>
                     </p>
                 </div>
                 <div class="col-md-4 text-md-right">
@@ -116,6 +118,7 @@
                                     <th>Màu sắc</th>
                                     <th>Giá (VNĐ)</th>
                                     <th>Giới tính</th>
+                                    <th>Trạng thái</th>
                                     <th class="text-center">Hành động</th>
                                 </tr>
                             </thead>
@@ -190,6 +193,25 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${product.status == 'ACTIVE'}">
+                                                    <span class="badge badge-success">Hoạt động</span>
+                                                </c:when>
+                                                <c:when test="${product.status == 'HIDDEN'}">
+                                                    <span class="badge badge-warning">Đã ẩn</span>
+                                                </c:when>
+                                                <c:when test="${product.status == 'LOCKED'}">
+                                                    <span class="badge badge-danger">Bị khóa</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge badge-secondary">Không xác định</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                            <c:if test="${not empty product.violationType}">
+                                                <br><small class="text-muted">Vi phạm: ${product.violationType}</small>
+                                            </c:if>
+                                        </td>
                                         <td class="text-center">
                                             <div class="action-buttons">
                                                 <!-- View Product -->
@@ -197,18 +219,35 @@
                                                     <i class="typcn typcn-eye"></i>
                                                 </a>
                                                 
-                                                <!-- Edit Product -->
-                                                <a href="/admin/product/${product.id}/edit" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
-                                                    <i class="typcn typcn-edit"></i>
-                                                </a>
-                                                
-                                                <!-- Delete Product -->
-                                                <form action="/admin/product/${product.id}/delete" method="POST" style="display: inline;" 
-                                                      onsubmit="return confirmDelete('${product.name}')">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                                        <i class="typcn typcn-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Admin Moderation Actions -->
+                                                <c:choose>
+                                                    <c:when test="${product.status == 'ACTIVE'}">
+                                                         <!-- Hide Product -->
+                                            <button type="button" class="btn btn-warning mr-2" data-id="${product.id}"
+                                                data-action="hide" data-name="${product.name}"
+                                                onclick="showViolationModal(this)">
+                                                <i class="typcn typcn-eye-outline mr-1"></i> Ẩn sản phẩm
+                                            </button>
+
+
+                                            <!-- Lock Product -->
+                                            <button type="button" class="btn btn-danger mr-2" data-id="${product.id}"
+                                                data-action="lock" data-name="${product.name}"
+                                                onclick="showViolationModal(this)">
+                                                <i class="typcn typcn-lock-closed mr-1"></i> Khóa sản phẩm
+                                            </button>
+
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <!-- Activate Product Button -->
+                                                        <form action="/admin/product/${product.id}/activate" method="POST" style="display: inline;"
+                                                              onsubmit="return confirm('Bạn có chắc chắn muốn kích hoạt lại sản phẩm này?')">
+                                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Kích hoạt lại">
+                                                                <i class="typcn typcn-tick"></i>
+                                                            </button>
+                                                        </form>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </td>
                                     </tr>
@@ -254,4 +293,70 @@
     function confirmDelete(productName) {
         return confirm('Bạn có chắc chắn muốn xóa sản phẩm "' + productName + '"?\nHành động này không thể hoàn tác.');
     }
+    
+    function showViolationModal(button) {
+        
+        const productId = button.getAttribute('data-id');
+        const action = button.getAttribute('data-action');
+        const productName = button.getAttribute('data-name');
+        
+        const modal = document.getElementById('violationModal');
+        const form = document.getElementById('violationForm');
+        const title = document.getElementById('modalTitle');
+        const productNameSpan = document.getElementById('modalProductName');
+        
+        if (action === 'hide') {
+            title.textContent = 'Ẩn sản phẩm vi phạm';
+            form.action = '/admin/product/' + productId + '/hide';
+        } else if (action === 'lock') {
+            title.textContent = 'Khóa sản phẩm vi phạm';
+            form.action = '/admin/product/' + productId + '/lock';
+        }
+         
+        productNameSpan.textContent = productName;
+        $('#violationModal').modal('show');
+    }
+    
 </script>
+
+<!-- Violation Modal -->
+<div class="modal fade" id="violationModal" tabindex="-1" role="dialog" aria-labelledby="violationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Xử lý vi phạm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="violationForm" method="POST">
+                <div class="modal-body">
+                    <p>Sản phẩm: <strong id="modalProductName"></strong></p>
+                    
+                    <div class="form-group">
+                        <label for="violationType">Loại vi phạm</label>
+                        <select class="form-control" name="violationType" required>
+                            <option value="">Chọn loại vi phạm</option>
+                            <option value="COPYRIGHT">Vi phạm bản quyền</option>
+                            <option value="PROHIBITED">Hàng hóa cấm</option>
+                            <option value="MISLEADING">Thông tin sai lệch</option>
+                            <option value="FAKE">Hàng giả</option>
+                            <option value="INAPPROPRIATE">Nội dung không phù hợp</option>
+                            <option value="OTHER">Khác</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminNotes">Ghi chú của admin</label>
+                        <textarea class="form-control" name="adminNotes" rows="3" 
+                                  placeholder="Mô tả chi tiết về vi phạm và lý do xử lý..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
