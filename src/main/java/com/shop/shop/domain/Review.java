@@ -38,6 +38,8 @@ public class Review {
     @Column(length = 1000)
     private String message;
 
+    private Boolean favorite = false;
+
     private Integer rating;
 
     private LocalDateTime createdAt = LocalDateTime.now();

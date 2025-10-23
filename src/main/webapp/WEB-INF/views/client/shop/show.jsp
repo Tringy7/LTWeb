@@ -2,6 +2,29 @@
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+            <style>
+                .heart-icon {
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background-color: white;
+                }
+
+                .heart-icon:hover {
+                    transform: scale(1.15);
+                }
+
+                .heart-icon i {
+                    color: #999;
+                    transition: color 0.3s ease;
+                }
+
+                .heart-icon.active {
+                    background-color: orange;
+                    color: white;
+                    border: none;
+                }
+            </style>
+
             <body>
 
                 <!-- Spinner Start -->
@@ -207,6 +230,8 @@
                                                 </option>
                                                 <option value="desc" ${sort=='desc' ? 'selected' : '' }>High to low
                                                 </option>
+                                                <option value="favorite" ${sort=='favorite' ? 'selected' : '' }>Favorite
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -258,14 +283,26 @@
                                                         </div>
                                                         <div
                                                             class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
-                                                            <div>
+                                                            <div
+                                                                class="d-flex justify-content-center align-items-center gap-2">
                                                                 <input type="hidden" name="productId"
                                                                     value="${product.id}" />
                                                                 <a href="/shop/product/${product.id}" type="submit"
-                                                                    class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4">
+                                                                    class="btn btn-primary border-secondary rounded-pill py-2 px-4">
                                                                     <i class="fas fa-shopping-cart me-2"></i> Add To
                                                                     Cart
                                                                 </a>
+                                                                <div class="heart-toggle-wrapper">
+                                                                    <button
+                                                                        class="heart-icon heart-unfilled rounded-circle btn-sm-square border ${favoriteMap[product.id] ? 'd-none' : ''}">
+                                                                        <i class="fas fa-heart"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        class="heart-icon heart-filled rounded-circle btn-sm-square border ${favoriteMap[product.id] ? '' : 'd-none'}"
+                                                                        style="background-color: orange; color: white; border: none;">
+                                                                        <i class="fas fa-heart"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -385,4 +422,44 @@
 
                 <!-- Template Javascript -->
                 <script src="/client/js/main.js"></script>
+
+                <script>
+                    document.querySelectorAll('.heart-toggle-wrapper').forEach(function (wrapper) {
+                        const unfilledHeart = wrapper.querySelector('.heart-unfilled');
+                        const filledHeart = wrapper.querySelector('.heart-filled');
+                        const productId = wrapper.closest('.product-item-add').querySelector('input[name="productId"]').value;
+
+                        function toggleHeartUI() {
+                            unfilledHeart.classList.toggle('d-none');
+                            filledHeart.classList.toggle('d-none');
+                        }
+
+                        function handleFavoriteClick() {
+                            // Gọi API
+                            fetch('/shop/product/' + productId + '/favorite', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        toggleHeartUI();
+                                        // Hiển thị thông báo (optional)
+                                        console.log(data.message);
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                                });
+                        }
+
+                        unfilledHeart.addEventListener('click', handleFavoriteClick);
+                        filledHeart.addEventListener('click', handleFavoriteClick);
+                    });
+                </script>
             </body>

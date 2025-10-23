@@ -51,25 +51,88 @@ public class ShopController {
     public String show(Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "default") String sort) {
-        int pageSize = 8;
+        int pageSize = 9;
         Pageable pageable;
+        Page<Product> productPage;
 
         // Xử lý sắp xếp
-        if ("asc".equals(sort)) {
+        if ("favorite".equals(sort)) {
+            // Lấy user hiện tại
+            User currentUser = userAfterLogin.getUser();
+            if (currentUser == null) {
+                // Nếu chưa đăng nhập, chuyển về sort default
+                pageable = PageRequest.of(page, pageSize);
+                productPage = productService.getProductPage(pageable);
+            } else {
+                // Lấy tất cả sản phẩm và sắp xếp theo favorite
+                pageable = PageRequest.of(0, Integer.MAX_VALUE); // Lấy tất cả
+                Page<Product> allProducts = productService.getProductPage(pageable);
+
+                // Tạo map favorite và lọc chỉ những sản phẩm favorite
+                java.util.Map<Long, Boolean> favoriteMapTemp = new java.util.HashMap<>();
+                java.util.List<Product> favoriteProducts = new java.util.ArrayList<>();
+
+                for (Product product : allProducts.getContent()) {
+                    boolean isFav = reviewService.isFavorite(currentUser, product);
+                    if (isFav) {
+                        favoriteProducts.add(product);
+                        favoriteMapTemp.put(product.getId(), true);
+                    }
+                }
+
+                // Sử dụng danh sách sản phẩm favorite
+                java.util.List<Product> sortedProducts = favoriteProducts;
+
+                // Phân trang thủ công
+                int start = page * pageSize;
+                int end = Math.min(start + pageSize, sortedProducts.size());
+                java.util.List<Product> pagedProducts = start < sortedProducts.size()
+                        ? sortedProducts.subList(start, end)
+                        : new java.util.ArrayList<>();
+
+                int totalPages = (int) Math.ceil((double) sortedProducts.size() / pageSize);
+
+                // Kiểm tra trạng thái favorite
+                java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
+                for (Product product : pagedProducts) {
+                    favoriteMap.put(product.getId(), favoriteMapTemp.getOrDefault(product.getId(), false));
+                }
+
+                model.addAttribute("productList", pagedProducts);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("totalPages", totalPages);
+                model.addAttribute("sort", sort);
+                model.addAttribute("filterList", productService.getBraList());
+                model.addAttribute("favoriteMap", favoriteMap);
+
+                return "client/shop/show";
+            }
+        } else if ("asc".equals(sort)) {
             pageable = PageRequest.of(page, pageSize, Sort.by("price").ascending());
+            productPage = productService.getProductPage(pageable);
         } else if ("desc".equals(sort)) {
             pageable = PageRequest.of(page, pageSize, Sort.by("price").descending());
+            productPage = productService.getProductPage(pageable);
         } else {
             pageable = PageRequest.of(page, pageSize);
+            productPage = productService.getProductPage(pageable);
         }
 
-        Page<Product> productPage = productService.getProductPage(pageable);
+        // Kiểm tra trạng thái favorite cho từng sản phẩm
+        User currentUser = userAfterLogin.getUser();
+        java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
+        if (currentUser != null) {
+            for (Product product : productPage.getContent()) {
+                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+            }
+        }
 
         model.addAttribute("productList", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("sort", sort);
         model.addAttribute("filterList", productService.getBraList());
+        model.addAttribute("favoriteMap", favoriteMap);
 
         return "client/shop/show";
     }
@@ -141,7 +204,17 @@ public class ShopController {
             model.addAttribute("searchName", "");
         }
 
+        // Kiểm tra trạng thái favorite
+        User currentUser = userAfterLogin.getUser();
+        java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
+        if (currentUser != null) {
+            for (Product product : products) {
+                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+            }
+        }
+
         model.addAttribute("productList", products);
+        model.addAttribute("favoriteMap", favoriteMap);
         return "client/shop/show";
     }
 
@@ -156,6 +229,15 @@ public class ShopController {
 
         List<Product> filteredProducts = productService.filterProducts(maxPrice, selectedBrands, selectedSizes, selectedColors, selectedGenders);
 
+        // Kiểm tra trạng thái favorite
+        User currentUser = userAfterLogin.getUser();
+        java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
+        if (currentUser != null) {
+            for (Product product : filteredProducts) {
+                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+            }
+        }
+
         model.addAttribute("productList", filteredProducts);
         model.addAttribute("filterList", productService.getBraList());
         model.addAttribute("selectedBrands", selectedBrands);
@@ -163,6 +245,7 @@ public class ShopController {
         model.addAttribute("selectedColors", selectedColors);
         model.addAttribute("selectedGenders", selectedGenders);
         model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("favoriteMap", favoriteMap);
 
         return "client/shop/show";
     }
@@ -172,5 +255,38 @@ public class ShopController {
         review.setId(null);
         reviewService.saveReview(review);
         return "redirect:/shop/product/{id}";
+    }
+
+    @PostMapping("/shop/product/{id}/favorite")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.Map<String, Object> toggleFavorite(@PathVariable("id") Long productId) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+
+        try {
+            User currentUser = userAfterLogin.getUser();
+            if (currentUser == null) {
+                response.put("success", false);
+                response.put("message", "Vui lòng đăng nhập để thêm sản phẩm yêu thích");
+                return response;
+            }
+
+            Product product = productService.getProductById(productId);
+            if (product == null) {
+                response.put("success", false);
+                response.put("message", "Không tìm thấy sản phẩm");
+                return response;
+            }
+
+            boolean isFavorite = reviewService.toggleFavorite(currentUser, product);
+            response.put("success", true);
+            response.put("isFavorite", isFavorite);
+            response.put("message", isFavorite ? "Đã thêm vào yêu thích" : "Đã xóa khỏi yêu thích");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
+        }
+
+        return response;
     }
 }
