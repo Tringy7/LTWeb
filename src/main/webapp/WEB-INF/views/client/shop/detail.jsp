@@ -27,6 +27,51 @@
                             /* giống trong hình */
                             color: #000;
                         }
+
+                        /* Toast notification animation */
+                        .toast-container {
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            z-index: 1050;
+                        }
+
+                        .toast {
+                            min-width: 300px;
+                            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                        }
+
+                        @keyframes slideInRight {
+                            from {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+
+                        @keyframes slideOutRight {
+                            from {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+
+                            to {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                        }
+
+                        .toast.showing {
+                            animation: slideInRight 0.3s ease-out;
+                        }
+
+                        .toast.hide {
+                            animation: slideOutRight 0.3s ease-out;
+                        }
                     </style>
 
                     <body>
@@ -358,6 +403,23 @@
                                     </div>
                                 </div>
 
+                                <!-- Toast Notification -->
+                                <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+                                    <div id="cartToast" class="toast hide" role="alert" aria-live="assertive"
+                                        aria-atomic="true">
+                                        <div class="toast-header">
+                                            <i id="toastIcon" class="me-2"></i>
+                                            <strong class="me-auto">Thông báo</strong>
+                                            <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="toast-body" style="height: 0; overflow: hidden; padding: 0;"
+                                            id="toastBody">
+                                            <span id="toastMessage"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                             <!-- Single Products End -->
 
@@ -457,7 +519,12 @@
                                 // Toast logic
                                 const cartStatus = "${cartStatus}";
                                 if (cartStatus) {
-                                    const cartToast = new bootstrap.Toast(document.getElementById('cartToast'));
+                                    const cartToastElement = document.getElementById('cartToast');
+                                    const toastBody = document.getElementById('toastBody');
+                                    const cartToast = new bootstrap.Toast(cartToastElement, {
+                                        autohide: true,
+                                        delay: 3000
+                                    });
                                     const toastIcon = document.getElementById('toastIcon');
                                     const toastMessage = document.getElementById('toastMessage');
 
@@ -468,6 +535,11 @@
                                         toastIcon.className = 'fas fa-times-circle text-danger me-2';
                                         toastMessage.textContent = "${cartMessage}";
                                     }
+
+                                    // Reset body style when showing
+                                    toastBody.style.height = '';
+                                    toastBody.style.overflow = '';
+                                    toastBody.style.padding = '';
 
                                     cartToast.show();
                                 }

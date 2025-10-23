@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserAddress handlUserAddress(User user) {
-        UserAddress userAddress = user.getReceiver();
+        UserAddress userAddress = userAddressRepository.findByUser(user);
         if (userAddress == null) {
             userAddress = new UserAddress();
             userAddress.setUser(user);

@@ -1,6 +1,32 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
+        <style>
+            .dropdown-item.highlight-login {
+                background-color: #e8f5e9 !important;
+                color: #2e7d32 !important;
+                font-weight: 600;
+                border-left: 3px solid #4caf50;
+            }
+
+            .dropdown-item.highlight-login:hover {
+                background-color: #c8e6c9 !important;
+                color: #1b5e20 !important;
+            }
+
+            .dropdown-item.highlight-logout {
+                background-color: #ffebee !important;
+                color: #c62828 !important;
+                font-weight: 600;
+                border-left: 3px solid #f44336;
+            }
+
+            .dropdown-item.highlight-logout:hover {
+                background-color: #ffcdd2 !important;
+                color: #b71c1c !important;
+            }
+        </style>
+
         <div class="container-fluid px-5 py-4 d-none d-lg-block">
             <div class="d-flex justify-content-between align-items-center">
                 <!-- Logo bên trái -->
@@ -54,28 +80,32 @@
                             <div class="navbar-nav ms-auto py-0">
                                 <a href="/" class="nav-item nav-link">Home</a>
                                 <a href="/shop" class="nav-item nav-link">Shop</a>
+                                <a href="/about" class="nav-item nav-link me-2">About</a>
                                 <div class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Setting</a>
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Account</a>
                                     <div class="dropdown-menu m-0">
                                         <c:choose>
                                             <c:when test="${not empty acc}">
                                                 <!-- Hiển thị khi đã đăng nhập -->
-                                                <a href="/account" class="dropdown-item">My account</a>
-                                                <a href="/voucher" class="dropdown-item">My voucher</a>
-                                                <a href="/order" class="dropdown-item">My order</a>
+                                                <a href="/account" class="dropdown-item">My Profile</a>
+                                                <a href="/order" class="dropdown-item">My Orders</a>
+                                                <a href="/voucher" class="dropdown-item">My Vouchers</a>
                                                 <a href="/chat" class="dropdown-item">Chat</a>
-                                                <a href="/registraion-sales" class="dropdown-item">Sales
-                                                    registration</a>
-                                                <a href="/logout" class="dropdown-item">Log out</a>
+                                                <a href="/registraion-sales" class="dropdown-item">Register as
+                                                    Seller</a>
+                                                <a href="/logout" class="dropdown-item highlight-logout">
+                                                    <i class="fas fa-sign-out-alt me-2"></i>Log out
+                                                </a>
                                             </c:when>
                                             <c:otherwise>
                                                 <!-- Hiển thị khi chưa đăng nhập -->
-                                                <a href="/login" class="dropdown-item">Log in</a>
+                                                <a href="/login" class="dropdown-item highlight-login">
+                                                    <i class="fas fa-sign-in-alt me-2"></i>Log in
+                                                </a>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
                                 </div>
-                                <a href="/about" class="nav-item nav-link me-2">About</a>
                             </div>
                         </div>
                     </nav>

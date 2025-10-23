@@ -29,61 +29,102 @@
                 <div class="container-fluid bg-light overflow-hidden py-5">
                     <div class="container py-5">
                         <div class="row justify-content-center">
-                            <!-- Account Details Form -->
-                            <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
-                                <h2 class="mb-4">Thông tin tài khoản</h2>
+                            <div class="col-lg-8 col-xl-6">
+                                <c:if test="${not empty successMessage}">
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        ${successMessage}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                </c:if>
+
                                 <form:form action="/account/update-info" method="post" modelAttribute="user"
-                                    enctype="multipart/form-data">
+                                    enctype="multipart/form-data" class="wow fadeInUp" data-wow-delay="0.1s">
                                     <form:hidden path="id" />
-                                    <div class="row g-4">
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <img id="avatar-preview"
-                                                    src="<c:url value='/admin/images/user/${not empty user.image ? user.image : "
-                                                    default-avatar.png"}' />"
-                                                class="img-fluid rounded-circle"
-                                                style="width: 150px; height: 150px; object-fit: cover;" alt="Avatar">
-                                                <label for="avatar" class="btn btn-primary btn-sm mt-3">Thay đổi
-                                                    ảnh</label>
-                                                <input type="file" id="avatar" name="avatarFile" class="d-none"
-                                                    accept="image/*" onchange="previewImage(event)">
-                                            </div>
+
+                                    <!-- Avatar -->
+                                    <div class="text-center mb-4">
+                                        <img id="avatar-preview"
+                                            src="<c:url value='/admin/images/user/${not empty user.image ? user.image : "
+                                            default-avatar.png"}' />"
+                                        class="img-fluid rounded-circle mb-3"
+                                        style="width: 150px; height: 150px; object-fit: cover;" alt="Avatar">
+                                        <div>
+                                            <label for="avatar" class="btn btn-primary btn-sm">
+                                                <i class="fa fa-camera me-2"></i>Thay đổi ảnh
+                                            </label>
+                                            <input type="file" id="avatar" name="avatarFile" class="d-none"
+                                                accept="image/*" onchange="previewImage(event)">
                                         </div>
-                                        <div class="col-md-8">
-                                            <div class="form-item">
-                                                <label class="form-label my-3">Họ và tên</label>
-                                                <form:input path="fullName" type="text" class="form-control" />
-                                            </div>
-                                            <div class="form-item">
-                                                <label class="form-label my-3">Email</label>
-                                                <form:input path="email" type="email" class="form-control"
-                                                    readonly="true" />
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-item">
-                                                <label class="form-label my-3">Số điện thoại</label>
-                                                <form:input path="phone" type="tel" class="form-control"
-                                                    placeholder="Nhập số điện thoại của bạn" />
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="form-item">
-                                                <label class="form-label my-3">Địa chỉ</label>
-                                                <form:input path="address" type="text" class="form-control"
-                                                    placeholder="Nhập địa chỉ của bạn" />
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <button type="submit"
-                                                class="btn btn-primary border-secondary py-3 px-4 text-uppercase">Lưu
-                                                thay đổi</button>
-                                        </div>
+                                    </div>
+
+                                    <!-- Thông tin tài khoản -->
+                                    <h4 class="mb-4 text-primary">
+                                        <i class="fa fa-user me-2"></i>Thông tin tài khoản
+                                    </h4>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Họ và tên</label>
+                                        <form:input path="fullName" type="text" class="form-control"
+                                            placeholder="Nhập họ và tên" />
+                                    </div>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Email</label>
+                                        <form:input path="email" type="email" class="form-control" readonly="true" />
+                                    </div>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <form:input path="phone" type="tel" class="form-control"
+                                            placeholder="Nhập số điện thoại của bạn" />
+                                    </div>
+
+                                    <div class="form-item mb-4">
+                                        <label class="form-label">Địa chỉ</label>
+                                        <form:input path="address" type="text" class="form-control"
+                                            placeholder="Nhập địa chỉ của bạn" />
+                                    </div>
+
+                                    <!-- Địa chỉ nhận hàng -->
+                                    <h4 class="mb-4 text-primary">
+                                        <i class="fa fa-map-marker me-2"></i>Địa chỉ nhận hàng
+                                    </h4>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Tên người nhận <span
+                                                class="text-danger">*</span></label>
+                                        <form:input path="receiver.receiverName" type="text" class="form-control"
+                                            placeholder="Nhập tên người nhận" />
+                                    </div>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Số điện thoại người nhận <span
+                                                class="text-danger">*</span></label>
+                                        <form:input path="receiver.receiverPhone" type="tel" class="form-control"
+                                            placeholder="Nhập số điện thoại người nhận" />
+                                    </div>
+
+                                    <div class="form-item mb-3">
+                                        <label class="form-label">Địa chỉ nhận hàng <span
+                                                class="text-danger">*</span></label>
+                                        <form:input path="receiver.receiverAddress" type="text" class="form-control"
+                                            placeholder="Nhập địa chỉ nhận hàng" />
+                                    </div>
+
+                                    <div class="form-item mb-4">
+                                        <label class="form-label">Ghi chú</label>
+                                        <form:textarea path="receiver.note" class="form-control" rows="3"
+                                            placeholder="Nhập ghi chú cho người giao hàng (nếu có)"></form:textarea>
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary py-3 px-5 text-uppercase w-100">
+                                            <i class="fa fa-save me-2"></i>Lưu thay đổi
+                                        </button>
                                     </div>
                                 </form:form>
                             </div>
-
-                            <!-- Change Password Form -->
                         </div>
                     </div>
                 </div>

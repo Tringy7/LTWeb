@@ -67,22 +67,32 @@ public class HomePageController {
         if (currentUser == null) {
             return "redirect:/login";
         }
+        // model.addAttribute("receiver", userService.handlUserAddress(currentUser));
         model.addAttribute("user", currentUser);
         return "client/homepage/account";
     }
 
     @PostMapping("/account/update-info")
-    public String handleUpdateAccount(@ModelAttribute User user, @RequestParam("avatarFile") MultipartFile avatarFile) {
+    public String handleUpdateAccount(@ModelAttribute User user,
+            @RequestParam("avatarFile") MultipartFile avatarFile,
+            RedirectAttributes redirectAttributes) {
         User userInSession = userAfterLogin.getUser();
         if (userInSession == null) {
             return "redirect:/login";
         }
         user.setId(userInSession.getId());
 
+        // Cập nhật thông tin user
         userService.handleUpdateAccount(user, avatarFile);
+
+        // Cập nhật địa chỉ nhận hàng
+        if (user.getReceiver() != null) {
+            userService.handleReceiverUser(userInSession, user.getReceiver());
+        }
 
         userAfterLogin.updateUserInSession(user.getId());
 
+        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
         return "redirect:/account";
     }
 
