@@ -7,7 +7,6 @@
             </head>
 
             <style>
-                /* Welcome Banner Animation */
                 @keyframes fadeInUp {
                     from {
                         opacity: 0;

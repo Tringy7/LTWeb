@@ -54,20 +54,52 @@ public class VendorProductController {
     public String showProducts(
             Model model,
             @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "category", required = false) String category) {
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "gender", required = false) String gender,
+            @RequestParam(value = "color", required = false) String color,
+            @RequestParam(value = "priceRange", required = false) String priceRange) {
 
-        List<Product> products;
         Long SHOP_ID = getCurrentShopId();
 
-        if ((keyword != null && !keyword.isEmpty()) && (category != null && !category.isEmpty())) {
-            products = productService.searchProductsByNameAndCategory(SHOP_ID, keyword, category);
-        } else if (keyword != null && !keyword.isEmpty()) {
-            products = productService.searchProductsByName(SHOP_ID, keyword);
-        } else if (category != null && !category.isEmpty()) {
-            products = productService.getProductsByShopIdAndCategory(SHOP_ID, category);
-        } else {
-            products = productService.getProductsByShopId(SHOP_ID);
+        Double minPrice = null;
+        Double maxPrice = null;
+
+        // Chuyển priceRange thành minPrice / maxPrice
+        if (priceRange != null) {
+            switch (priceRange) {
+                case "Dưới 500.000₫" -> {
+                    minPrice = 0.0;
+                    maxPrice = 500000.0;
+                }
+                case "500.000₫ - 1.000.000₫" -> {
+                    minPrice = 500000.0;
+                    maxPrice = 1000000.0;
+                }
+                case "1.000.000₫ - 3.000.000₫" -> {
+                    minPrice = 1000000.0;
+                    maxPrice = 3000000.0;
+                }
+                case "Trên 3.000.000₫" -> {
+                    minPrice = 3000000.0;
+                    maxPrice = null;
+                }
+            }
         }
+
+        if (category != null && category.isEmpty())
+            category = null;
+        if (brand != null && brand.isEmpty())
+            brand = null;
+        if (gender != null && gender.isEmpty())
+            gender = null;
+        if (color != null && color.isEmpty())
+            color = null;
+        if (keyword != null && keyword.isEmpty())
+            keyword = null;
+
+        List<Product> products = productService.filterProducts(SHOP_ID, keyword, category, brand, gender, color,
+                minPrice, maxPrice);
 
         products = products.stream()
                 .filter(p -> "Active".equalsIgnoreCase(p.getStatus()))
@@ -79,6 +111,11 @@ public class VendorProductController {
 
         List<String> categories = productService.getCategoriesByShopId(SHOP_ID);
         model.addAttribute("categories", categories);
+        model.addAttribute("brands", productService.getBrandsByShopId(SHOP_ID));
+        model.addAttribute("genders", productService.getGendersByShopId(SHOP_ID));
+        model.addAttribute("colors", productService.getColorsByShopId(SHOP_ID));
+        model.addAttribute("priceRanges",
+                List.of("Dưới 500.000₫", "500.000₫ - 1.000.000₫", "1.000.000₫ - 3.000.000₫", "Trên 3.000.000₫"));
 
         return "vendor/product/show";
     }

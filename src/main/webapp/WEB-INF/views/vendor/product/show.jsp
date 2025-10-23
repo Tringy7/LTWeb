@@ -179,6 +179,49 @@
                             transform: translateY(-2px);
                             box-shadow: 0 4px 12px rgba(57, 106, 252, 0.3);
                         }
+
+                        /* Nút gradient */
+                        .btn-gradient {
+                            background: linear-gradient(135deg, #396afc, #35edbc);
+                            color: #fff;
+                            border: none;
+                            border-radius: 50px;
+                            transition: all 0.3s ease;
+                        }
+
+                        .btn-gradient:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 6px 15px rgba(57, 106, 252, 0.3);
+                        }
+
+                        /* Hộp filter ẩn/hiện */
+                        .filter-box {
+                            position: absolute;
+                            right: 0;
+                            top: 120%;
+                            width: 330px;
+                            border-radius: 15px;
+                            background: #fff;
+                            display: none;
+                            z-index: 999;
+                            animation: fadeIn 0.3s ease-in-out;
+                            padding: 25px 20px;
+                            min-height: 350px;
+                            max-height: 480px;
+                            overflow-y: auto;
+                        }
+
+                        @keyframes fadeIn {
+                            from {
+                                opacity: 0;
+                                transform: translateY(-10px);
+                            }
+
+                            to {
+                                opacity: 1;
+                                transform: translateY(0);
+                            }
+                        }
                     </style>
 
                     <div class="main-panel">
@@ -226,24 +269,94 @@
                                                         </button>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-4">
-                                                    <label class="form-label fw-bold">
-                                                        <i class="fas fa-filter me-1" style="color: #396afc;"></i>
-                                                        Lọc theo Danh mục
-                                                    </label>
-                                                    <select name="category" class="form-select"
-                                                        onchange="this.form.submit()">
-                                                        <option value="">
-                                                            <i class="fas fa-th-large"></i> -- Tất cả Danh mục --
-                                                        </option>
-                                                        <c:forEach var="cat" items="${categories}">
-                                                            <option value="${cat}" ${param.category==cat ? 'selected'
-                                                                :''}>
-                                                                ${cat}
-                                                            </option>
-                                                        </c:forEach>
-                                                    </select>
+                                                    <div class="filter-wrapper text-end position-relative">
+                                                        <!-- Nút Bộ lọc -->
+                                                        <button type="button" id="filterToggle"
+                                                            class="btn btn-gradient fw-bold px-4 py-2 shadow-sm btn-lift">
+                                                            <i class="fas fa-filter me-2"></i> Bộ lọc
+                                                        </button>
+
+                                                        <!-- Hộp mở rộng các tiêu chí -->
+                                                        <div id="filterBox" class="filter-box card shadow-lg p-4 mt-2"
+                                                            style="max-height: 480px; overflow-y: auto; display: none;">
+                                                            <h6 class="fw-bold mb-3"><i
+                                                                    class="fas fa-sliders-h me-2"></i> Chọn tiêu chí lọc
+                                                            </h6>
+
+                                                            <!-- Danh mục -->
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Danh mục</label>
+                                                                <select class="form-select" name="category">
+                                                                    <option value="">Tất cả danh mục</option>
+                                                                    <c:forEach var="c" items="${categories}">
+                                                                        <option value="${c}" ${param.category==c
+                                                                            ? 'selected' : '' }>${c}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+
+                                                            <!-- Thương hiệu -->
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Thương
+                                                                    hiệu</label>
+                                                                <select class="form-select" name="brand">
+                                                                    <option value="">Tất cả thương hiệu</option>
+                                                                    <c:forEach var="b" items="${brands}">
+                                                                        <option value="${b}" ${param.brand==b
+                                                                            ? 'selected' : '' }>${b}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+
+                                                            <!-- Màu sắc -->
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Màu sắc</label>
+                                                                <select class="form-select" name="color">
+                                                                    <option value="">Tất cả màu</option>
+                                                                    <c:forEach var="cl" items="${colors}">
+                                                                        <option value="${cl}" ${param.color==cl
+                                                                            ? 'selected' : '' }>${cl}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+
+
+                                                            <!-- Giá tiền -->
+                                                            <div class="mb-3">
+                                                                <label class="form-label fw-semibold">Giá tiền</label>
+                                                                <select class="form-select" name="priceRange">
+                                                                    <option value="">Tất cả mức giá</option>
+                                                                    <option value="0-500000"
+                                                                        ${param.priceRange=='0-500000' ? 'selected' : ''
+                                                                        }>Dưới 500.000₫</option>
+                                                                    <option value="500000-1000000"
+                                                                        ${param.priceRange=='500000-1000000'
+                                                                        ? 'selected' : '' }>500.000₫ - 1.000.000₫
+                                                                    </option>
+                                                                    <option value="1000000-3000000"
+                                                                        ${param.priceRange=='1000000-3000000'
+                                                                        ? 'selected' : '' }>1.000.000₫ - 3.000.000₫
+                                                                    </option>
+                                                                    <option value="3000000+"
+                                                                        ${param.priceRange=='3000000+' ? 'selected' : ''
+                                                                        }>Trên 3.000.000₫</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <!-- Nút thao tác -->
+                                                            <div class="text-end mt-4">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-secondary me-2"
+                                                                    id="cancelFilter">Hủy</button>
+                                                                <button type="submit" class="btn btn-sm btn-primary">Áp
+                                                                    dụng</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
 
                                                 <div class="col-md-3">
                                                     <a href="${pageContext.request.contextPath}/vendor/product/add"
@@ -401,4 +514,26 @@
                                 modal.find('#deleteProductName').text(productName); // Cập nhật tên SP trong modal
                             });
                         });
+                    </script>
+
+                    <script>
+                        $(document).ready(function () {
+                            const filterBox = $("#filterBox");
+
+                            $("#filterToggle").click(function (e) {
+                                e.stopPropagation();
+                                filterBox.fadeToggle(200);
+                            });
+
+                            $("#cancelFilter").click(function () {
+                                filterBox.fadeOut(200);
+                            });
+
+                            $(document).click(function (e) {
+                                if (!$(e.target).closest('.filter-wrapper').length) {
+                                    filterBox.fadeOut(200);
+                                }
+                            });
+                        });
+
                     </script>

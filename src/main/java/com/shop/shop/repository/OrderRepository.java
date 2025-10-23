@@ -15,66 +15,66 @@ import com.shop.shop.domain.Order;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("SELECT o FROM Order o WHERE "
-            + "(:status IS NULL OR :status = '' OR o.status = :status) "
-            + "AND (:fromDate IS NULL OR o.createdAt >= :fromDate) "
-            + "AND (:toDate IS NULL OR o.createdAt <= :toDate)")
-    List<Order> filterOrders(
-            @Param("status") String status,
-            @Param("fromDate") LocalDateTime fromDate,
-            @Param("toDate") LocalDateTime toDate);
+        @Query("SELECT o FROM Order o WHERE "
+                        + "(:status IS NULL OR :status = '' OR o.status = :status) "
+                        + "AND (:fromDate IS NULL OR o.createdAt >= :fromDate) "
+                        + "AND (:toDate IS NULL OR o.createdAt <= :toDate)")
+        List<Order> filterOrders(
+                        @Param("status") String status,
+                        @Param("fromDate") LocalDateTime fromDate,
+                        @Param("toDate") LocalDateTime toDate);
 
-    @Query("SELECT COUNT(o) FROM Order o WHERE o.shop.id = :shopId")
-    long countByShopId(Long shopId);
+        @Query("SELECT COUNT(o) FROM Order o WHERE o.shop.id = :shopId")
+        long countByShopId(Long shopId);
 
-    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.shop.id = :shopId AND o.status = 'Đã giao'")
-    Double getTotalRevenueByShop(Long shopId);
+        @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.shop.id = :shopId AND o.status = 'DELIVERED'")
+        Double getTotalRevenueByShop(Long shopId);
 
-    @Query("SELECT o FROM Order o WHERE "
-            + "(:shopId IS NULL OR o.shop.id = :shopId) AND "
-            + "(:status IS NULL OR o.status = :status) AND "
-            + "(:startDate IS NULL OR o.createdAt >= :startDate) AND "
-            + "(:endDate IS NULL OR o.createdAt <= :endDate)")
-    List<Order> filterOrdersByShop(
-            @Param("shopId") Long shopId,
-            @Param("status") String status,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+        @Query("SELECT o FROM Order o WHERE "
+                        + "(:shopId IS NULL OR o.shop.id = :shopId) AND "
+                        + "(:status IS NULL OR o.status = :status) AND "
+                        + "(:startDate IS NULL OR o.createdAt >= :startDate) AND "
+                        + "(:endDate IS NULL OR o.createdAt <= :endDate)")
+        List<Order> filterOrdersByShop(
+                        @Param("shopId") Long shopId,
+                        @Param("status") String status,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 
-    List<Order> findByShopId(Long shopId);
+        List<Order> findByShopId(Long shopId);
 
-    // @Modifying(clearAutomatically = true, flushAutomatically = true)
-    // @Query("UPDATE Order o SET o.status = :status WHERE o.id = :orderId")
-    // void updateStatus(@Param("orderId") Long orderId, @Param("status") String
-    // status);
-    List<Order> findByStatus(String status);
+        // @Modifying(clearAutomatically = true, flushAutomatically = true)
+        // @Query("UPDATE Order o SET o.status = :status WHERE o.id = :orderId")
+        // void updateStatus(@Param("orderId") Long orderId, @Param("status") String
+        // status);
+        List<Order> findByStatus(String status);
 
-    // Lọc đơn hàng theo shop + trạng thái
-    List<Order> findByShopIdAndStatus(Long shopId, String status);
+        // Lọc đơn hàng theo shop + trạng thái
+        List<Order> findByShopIdAndStatus(Long shopId, String status);
 
-    // Find orders by shop ID - Spring Data JPA auto-implementation
-    List<Order> findByShop_IdOrderByCreatedAtDesc(Long shopId);
+        // Find orders by shop ID - Spring Data JPA auto-implementation
+        List<Order> findByShop_IdOrderByCreatedAtDesc(Long shopId);
 
-    // Find orders by status - Spring Data JPA auto-implementation
-    List<Order> findByStatusOrderByCreatedAtDesc(String status);
+        // Find orders by status - Spring Data JPA auto-implementation
+        List<Order> findByStatusOrderByCreatedAtDesc(String status);
 
-    // Find orders by date range - Spring Data JPA auto-implementation
-    List<Order> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime fromDate, LocalDateTime toDate);
+        // Find orders by date range - Spring Data JPA auto-implementation
+        List<Order> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime fromDate, LocalDateTime toDate);
 
-    // Find delivered orders by shop and date range - Spring Data JPA
-    // auto-implementation
-    List<Order> findByShop_IdAndStatusAndCreatedAtBetween(Long shopId, String status,
-            LocalDateTime fromDate, LocalDateTime toDate);
+        // Find delivered orders by shop and date range - Spring Data JPA
+        // auto-implementation
+        List<Order> findByShop_IdAndStatusAndCreatedAtBetween(Long shopId, String status,
+                        LocalDateTime fromDate, LocalDateTime toDate);
 
-    // Find delivered orders in date range - Spring Data JPA auto-implementation
-    List<Order> findByStatusAndCreatedAtBetween(String status, LocalDateTime fromDate, LocalDateTime toDate);
+        // Find delivered orders in date range - Spring Data JPA auto-implementation
+        List<Order> findByStatusAndCreatedAtBetween(String status, LocalDateTime fromDate, LocalDateTime toDate);
 
-    // Count orders by date range
-    Long countByCreatedAtBetween(LocalDateTime fromDate, LocalDateTime toDate);
+        // Count orders by date range
+        Long countByCreatedAtBetween(LocalDateTime fromDate, LocalDateTime toDate);
 
-    // Count orders by status
-    Long countByStatus(String status);
+        // Count orders by status
+        Long countByStatus(String status);
 
-    // Find all orders with pagination ordered by creation date
-    Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
+        // Find all orders with pagination ordered by creation date
+        Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

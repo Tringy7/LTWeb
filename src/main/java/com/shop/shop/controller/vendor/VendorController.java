@@ -36,7 +36,6 @@ public class VendorController {
 
     @GetMapping("/vendor")
     public String showDashboard(Model model) {
-        // Get current user from Spring Security context
         User currentUser = userAfterLogin.getUser();
         if (currentUser == null) {
             return "redirect:/login";
