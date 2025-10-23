@@ -7,14 +7,18 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.shop.shop.domain.Order;
+import com.shop.shop.domain.Shop;
+import com.shop.shop.domain.User;
 import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.service.vendor.OrderDetailService;
 import com.shop.shop.service.vendor.OrderService;
+import com.shop.shop.service.vendor.ShopService;
 
 @Controller
 @RequestMapping("/vendor/order")
@@ -26,9 +30,17 @@ public class VendorOrderController {
     @Autowired
     private OrderDetailService orderDetailService;
 
-    // Tạm thời giả lập shop đang đăng nhập
+    @Autowired
+    private ShopService shopService;
+
     private Long getCurrentShopId() {
-        return 1L;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User user) {
+            return shopService.getShopByUserId(user.getId())
+                    .map(Shop::getId)
+                    .orElseThrow(() -> new RuntimeException("Shop not found for vendor user"));
+        }
+        throw new RuntimeException("User not authenticated");
     }
 
     @GetMapping

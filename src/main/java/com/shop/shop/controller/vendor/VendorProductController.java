@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,21 +23,31 @@ import org.springframework.web.multipart.MultipartFile;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.Shop;
+import com.shop.shop.domain.User;
 import com.shop.shop.service.vendor.ProductDetailService;
 import com.shop.shop.service.vendor.ProductService;
+import com.shop.shop.service.vendor.ShopService;
 
 @Controller
 public class VendorProductController {
 
-    private final ProductService productService;
-    private final ProductDetailService productDetailService;
+    @Autowired
+    private ProductService productService;
 
-    // Giả định vendor thuộc shopId = 1
-    private static final Long SHOP_ID = 1L;
+    @Autowired
+    private ProductDetailService productDetailService;
 
-    public VendorProductController(ProductService productService, ProductDetailService productDetailService) {
-        this.productService = productService;
-        this.productDetailService = productDetailService;
+    @Autowired
+    private ShopService shopService;
+
+    private Long getCurrentShopId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User user) {
+            return shopService.getShopByUserId(user.getId())
+                    .map(Shop::getId)
+                    .orElseThrow(() -> new RuntimeException("Shop not found for vendor user"));
+        }
+        throw new RuntimeException("User not authenticated");
     }
 
     @GetMapping("/vendor/product")
@@ -45,6 +57,7 @@ public class VendorProductController {
             @RequestParam(value = "category", required = false) String category) {
 
         List<Product> products;
+        Long SHOP_ID = getCurrentShopId();
 
         if ((keyword != null && !keyword.isEmpty()) && (category != null && !category.isEmpty())) {
             products = productService.searchProductsByNameAndCategory(SHOP_ID, keyword, category);
@@ -72,6 +85,7 @@ public class VendorProductController {
 
     @GetMapping("/vendor/product/detail")
     public String showProductDetail(@RequestParam("id") Long id, Model model) {
+        Long SHOP_ID = getCurrentShopId();
         Optional<Product> optProduct = productService.getProductByIdAndShopId(id, SHOP_ID);
         if (optProduct.isEmpty()) {
             return "redirect:/vendor/product";
@@ -98,6 +112,7 @@ public class VendorProductController {
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
 
         Shop shop = new Shop();
+        Long SHOP_ID = getCurrentShopId();
         shop.setId(SHOP_ID);
         product.setShop(shop);
 
@@ -117,6 +132,7 @@ public class VendorProductController {
 
     @GetMapping("/vendor/product/edit/{id}")
     public String showEditProductPage(@PathVariable Long id, Model model) {
+        Long SHOP_ID = getCurrentShopId();
         Optional<Product> optProduct = productService.getProductByIdAndShopId(id, SHOP_ID);
         if (optProduct.isEmpty()) {
             return "redirect:/vendor/product";
@@ -140,7 +156,7 @@ public class VendorProductController {
             @RequestParam(value = "size[]", required = false) List<String> sizes,
             @RequestParam(value = "quantity[]", required = false) List<Long> quantities)
             throws IOException {
-
+        Long SHOP_ID = getCurrentShopId();
         Optional<Product> optProduct = productService.getProductByIdAndShopId(product.getId(), SHOP_ID);
         if (optProduct.isEmpty()) {
             return "redirect:/vendor/product";
@@ -152,7 +168,6 @@ public class VendorProductController {
         }
         product.setShop(existing.getShop());
 
-        // === Cập nhật hình ảnh ===
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
             Path uploadPath = Paths.get("src/main/webapp/resources/admin/images/product");
@@ -165,10 +180,8 @@ public class VendorProductController {
             product.setImage(existing.getImage());
         }
 
-        // === Cập nhật thông tin sản phẩm ===
         productService.save(product);
 
-        // === Cập nhật chi tiết size & số lượng ===
         if (sizes != null && quantities != null && detailIds != null) {
             List<ProductDetail> currentDetails = productDetailService.getDetailsByProductId(product.getId());
             Set<Long> updatedIds = new HashSet<>();
@@ -186,7 +199,6 @@ public class VendorProductController {
                         updatedIds.add(id);
                     }
                 } else {
-                    // Thêm mới
                     ProductDetail newDetail = new ProductDetail();
                     newDetail.setProduct(product);
                     newDetail.setSize(size);
@@ -208,11 +220,11 @@ public class VendorProductController {
     @PostMapping("/vendor/product/delete")
     public String deleteProduct(@ModelAttribute("product") Product product) {
         if (product.getId() != null) {
+            Long SHOP_ID = getCurrentShopId();
             Optional<Product> optProduct = productService.getProductByIdAndShopId(product.getId(), SHOP_ID);
             if (optProduct.isPresent()) {
                 Product existing = optProduct.get();
 
-                // kiểm tra trạng thái
                 if (!"Active".equalsIgnoreCase(existing.getStatus())) {
                     return "redirect:/vendor/product?error=status";
                 }

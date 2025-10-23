@@ -1,11 +1,15 @@
 package com.shop.shop.controller.vendor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.shop.shop.domain.Shop;
 import com.shop.shop.domain.User;
 import com.shop.shop.service.vendor.DashboardService;
+import com.shop.shop.service.vendor.ShopService;
 import com.shop.shop.util.UserAfterLogin;
 
 import lombok.RequiredArgsConstructor;
@@ -14,8 +18,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VendorController {
 
+    @Autowired
+    private ShopService shopService;
+
     private final DashboardService dashboardService;
     private final UserAfterLogin userAfterLogin;
+
+    private Long getCurrentShopId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User user) {
+            return shopService.getShopByUserId(user.getId())
+                    .map(Shop::getId)
+                    .orElseThrow(() -> new RuntimeException("Shop not found for vendor user"));
+        }
+        throw new RuntimeException("User not authenticated");
+    }
 
     @GetMapping("/vendor")
     public String showDashboard(Model model) {
@@ -24,13 +41,7 @@ public class VendorController {
         if (currentUser == null) {
             return "redirect:/login";
         }
-
-        // You can now use user info, for example to get shopId
-        Long shopId = 1L; // Replace with actual logic to get shopId from user
-
-        // If you have shop relationship in User entity:
-        // Long shopId = currentUser != null && currentUser.getShop() != null 
-        //               ? currentUser.getShop().getId() : 1L;
+        Long shopId = getCurrentShopId();
         long totalProducts = dashboardService.getTotalProducts(shopId);
         long totalVouchers = dashboardService.getTotalVouchers(shopId);
         long totalOrders = dashboardService.getTotalOrders(shopId);
