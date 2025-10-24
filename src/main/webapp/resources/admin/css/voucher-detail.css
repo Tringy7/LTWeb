@@ -1,0 +1,304 @@
+/* Voucher Detail Page Styles */
+
+.detail-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    color: white;
+}
+
+.detail-header h4 {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.detail-header p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0;
+}
+
+.detail-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+/* Information Sections */
+.info-section {
+    margin-bottom: 35px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.info-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f8f9fa;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    color: #667eea;
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* Information Items */
+.info-item {
+    margin-bottom: 20px;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.info-item .value {
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Special Value Styling */
+.voucher-code {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.discount-value {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 1.3rem;
+}
+
+/* Status Card */
+.status-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid #e9ecef;
+    height: fit-content;
+}
+
+.current-status {
+    margin-bottom: 25px;
+}
+
+.current-status label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.status-display {
+    margin-bottom: 0;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-badge {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Actions */
+.quick-actions {
+    margin-top: 20px;
+}
+
+.quick-actions label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.action-form {
+    margin-bottom: 10px;
+}
+
+.action-form:last-child {
+    margin-bottom: 0;
+}
+
+.action-form .btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.action-form .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Badge Enhancements */
+.badge {
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.badge-secondary {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+}
+
+.badge-warning {
+    background: linear-gradient(45deg, #ffc107, #fd7e14);
+    color: #212529;
+}
+
+/* Links */
+.info-item .value a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.info-item .value a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Date Formatting */
+.info-item .value time {
+    font-family: monospace;
+    background: #f8f9fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .detail-card {
+        padding: 20px;
+    }
+    
+    .detail-header {
+        padding: 20px;
+    }
+    
+    .status-card {
+        margin-top: 25px;
+    }
+    
+    .voucher-code {
+        font-size: 1rem;
+        padding: 6px 12px;
+    }
+    
+    .discount-value {
+        font-size: 1.1rem;
+        padding: 6px 12px;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Animation */
+.detail-card {
+    animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover Effects */
+.info-item {
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.info-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+/* Special States */
+.expired-indicator {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.active-indicator {
+    color: #28a745;
+    font-weight: bold;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}

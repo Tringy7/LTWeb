@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@
 taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <%@ taglib
 uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
     <!-- Profile -->
@@ -72,7 +73,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       </button>
     </li>
 
-    <!-- Order -->
+    <!-- Commission -->
     <li class="nav-item">
       <button
         class="nav-link btn btn-link w-100 text-left"
@@ -81,6 +82,18 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       >
         <i class="typcn typcn-th-small-outline menu-icon"></i>
         <span class="menu-title">Commission</span>
+        <i class="menu-arrow"></i>
+      </button>
+    </li>
+    <!-- Voucher -->
+    <li class="nav-item">
+      <button
+        class="nav-link btn btn-link w-100 text-left"
+        type="button"
+        onclick="location.href='/admin/voucher'"
+      >
+        <i class="typcn typcn-th-small-outline menu-icon"></i>
+        <span class="menu-title">Voucher</span>
         <i class="menu-arrow"></i>
       </button>
     </li>

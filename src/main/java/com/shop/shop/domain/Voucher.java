@@ -41,7 +41,7 @@ public class Voucher {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "shop_id", nullable = false)
+    @JoinColumn(name = "shop_id", nullable = true) // nullable for system vouchers
     private Shop shop;
 
     @OneToMany(mappedBy = "voucher")
