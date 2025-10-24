@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shop.shop.domain.Order;
 import com.shop.shop.domain.Shop;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
@@ -24,4 +25,8 @@ public interface UserService {
     Shop getShop(User user);
 
     void handleVendorRegistration(Shop shop, User user);
+
+    boolean handleDeleteOrder(Long orderId);
+
+    Order getOrderById(Long orderId);
 }

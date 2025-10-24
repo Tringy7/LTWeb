@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shop.shop.domain.Order;
 import com.shop.shop.domain.Shop;
 import com.shop.shop.domain.ShopSecurityInfo;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
 import com.shop.shop.domain.UserVoucher;
 import com.shop.shop.domain.Voucher;
+import com.shop.shop.repository.OrderDetailRepository;
+import com.shop.shop.repository.OrderRepository;
 import com.shop.shop.repository.ShopRepository;
 import com.shop.shop.repository.ShopSecurityInfoRepository;
 import com.shop.shop.repository.UserAddressRepository;
@@ -50,6 +53,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ShopSecurityInfoRepository shopSecurityInfoRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     @Override
     public UserAddress handlUserAddress(User user) {
@@ -205,5 +214,25 @@ public class UserServiceImpl implements UserService {
         // Lưu shop và securityInfo
         shopRepository.save(existingShop);
         shopSecurityInfoRepository.save(securityInfo);
+    }
+
+    @Override
+    @Transactional
+    public boolean handleDeleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            orderRepository.deleteById(orderId);
+            return true; // Xóa thành công
+        }
+        return false; // Không tìm thấy order để xóa
+    }
+
+    @Override
+    public Order getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            order.getOrderDetails().size();
+        }
+        return order;
     }
 }

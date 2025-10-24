@@ -2,6 +2,7 @@ package com.shop.shop.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.shop.shop.domain.Order;
+import com.shop.shop.domain.User;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -77,4 +79,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Find all orders with pagination ordered by creation date
     Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Optional<Order> findByTxnRef(String txnRef);
+
+    // Find the most recent order by user and status
+    Order findTopByUserAndStatusOrderByCreatedAtDesc(User user, String status);
 }

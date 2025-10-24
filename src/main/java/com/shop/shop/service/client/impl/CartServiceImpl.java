@@ -99,35 +99,81 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void updateCart(Cart cartFromForm) {
-        // 1. Lấy đối tượng Cart đầy đủ từ DB bằng ID gửi từ form.
+    public Long updateCart(Cart cartFromForm) {
         Cart cartInDB = cartRepository.findById(cartFromForm.getId()).orElse(null);
 
         if (cartInDB != null) {
             List<CartDetail> detailsFromForm = cartFromForm.getCartDetails();
             double newTotalCartPrice = 0.0;
 
-            // 2. Duyệt qua từng CartDetail được gửi từ form.
+            // Create a new Order
+            Order order = new Order();
+            order.setUser(cartInDB.getUser());
+            order.setTotalPrice(0.0); // Will calculate later
+            order.setStatus("PENDING_PAYMENT");
+            order.setPaymentStatus(false);
+            order.setAddress(cartInDB.getUser().getReceiver());
+
+            // Create OrderDetail list
+            List<OrderDetail> orderDetails = new ArrayList<>();
+
             for (CartDetail detailFromForm : detailsFromForm) {
-                // 3. Lấy đối tượng CartDetail đầy đủ từ DB.
+                // Lấy đối tượng CartDetail đầy đủ từ DB
                 CartDetail cartDetailInDB = cartDetailRepository.findById(detailFromForm.getId()).orElse(null);
 
                 if (cartDetailInDB != null) {
-                    // 4. Cập nhật số lượng (quantity).
+                    // Cập nhật số lượng (quantity)
                     cartDetailInDB.setQuantity(detailFromForm.getQuantity());
 
-                    // 5. Tính toán lại giá cho CartDetail này một cách an toàn.
+                    // Tính toán lại giá cho CartDetail này
                     double newPrice = cartDetailInDB.getProduct().getPrice() * detailFromForm.getQuantity();
                     cartDetailInDB.setPrice(newPrice);
+
+                    double finalPrice = newPrice;
                     if (cartDetailInDB.getVoucher() != null && cartDetailInDB.getVoucher().getDiscountPercent() != null) {
-                        newPrice = newPrice * (1 - cartDetailInDB.getVoucher().getDiscountPercent() / 100);
+                        finalPrice = newPrice * (1 - cartDetailInDB.getVoucher().getDiscountPercent() / 100);
                     }
 
-                    newTotalCartPrice += newPrice;
+                    newTotalCartPrice += finalPrice;
+
+                    // Create OrderDetail
+                    OrderDetail orderDetail = new OrderDetail();
+                    orderDetail.setOrder(order);
+                    orderDetail.setProduct(cartDetailInDB.getProduct());
+                    orderDetail.setPrice(cartDetailInDB.getPrice());
+                    orderDetail.setQuantity(cartDetailInDB.getQuantity());
+                    orderDetail.setShop(cartDetailInDB.getProduct().getShop());
+                    orderDetail.setSize(cartDetailInDB.getSize());
+
+                    // Lưu thông tin voucher nếu có
+                    if (cartDetailInDB.getVoucher() != null) {
+                        orderDetail.setVoucher(cartDetailInDB.getVoucher());
+
+                        // Cập nhật status của UserVoucher thành false
+                        userVoucherRepository.findByUserAndVoucher(cartInDB.getUser(), cartDetailInDB.getVoucher())
+                                .ifPresent(userVoucher -> {
+                                    userVoucher.setStatus(false);
+                                    userVoucherRepository.save(userVoucher);
+                                });
+                    }
+
+                    orderDetails.add(orderDetail);
                 }
             }
-            // 6. Cập nhật tổng giá trị cho toàn bộ giỏ hàng.
+
+            // Set order details and total price
+            order.setOrderDetails(orderDetails);
+            order.setTotalPrice(newTotalCartPrice);
+
+            // Save the order
+            orderRepository.save(order);
+
+            // Update cart total price
             cartInDB.setTotalPrice(newTotalCartPrice);
+            cartRepository.save(cartInDB);
+            return order.getId();
+        } else {
+            return null;
         }
     }
 
@@ -140,55 +186,35 @@ public class CartServiceImpl implements CartService {
         }
 
         try {
-            // Create a new Order
-            Order order = new Order();
-            order.setUser(user);
-            order.setTotalPrice(cart.getTotalPrice());
-            order.setPaymentMethod(payment);
-            order.setStatus("PENDING");
+            // Find the most recent order with PENDING_PAYMENT status for this user
+            Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
 
-            // Create OrderDetail list from CartDetail list
-            List<OrderDetail> orderDetails = new ArrayList<>();
-            for (CartDetail cd : cart.getCartDetails()) {
-                OrderDetail orderDetail = new OrderDetail();
-                orderDetail.setOrder(order);
-                orderDetail.setProduct(cd.getProduct());
-                orderDetail.setPrice(cd.getPrice());
-                orderDetail.setQuantity(cd.getQuantity());
-                orderDetail.setShop(cd.getProduct().getShop());
-                orderDetail.setSize(cd.getSize());
+            if (order != null) {
+                // Update order status and payment info
+                order.setPaymentMethod(payment);
 
-                // Lưu thông tin voucher nếu có
-                if (cd.getVoucher() != null) {
-                    orderDetail.setVoucher(cd.getVoucher());
+                if ("Direct Bank Transfer".equals(payment)) {
+                    order.setPaymentStatus(true);
+                    order.setStatus("PENDING"); // Đợi xác nhận
+                } else if ("Cash On Delivery".equals(payment)) {
+                    order.setPaymentStatus(false);
+                    order.setStatus("PENDING"); // Đợi xác nhận
                 }
 
-                orderDetails.add(orderDetail);
+                orderRepository.save(order);
+            }
 
-                // Update product quantity
+            // Update product quantity in stock
+            for (CartDetail cd : cart.getCartDetails()) {
                 ProductDetail productDetail = productDetailService.findByProductAndSize(cd.getProduct(), cd.getSize());
                 if (productDetail != null) {
                     productDetail.setQuantity(productDetail.getQuantity() - cd.getQuantity());
                     productDetail.setSold(productDetail.getSold() + cd.getQuantity());
                 }
-
-                // Cập nhật status của UserVoucher thành false nếu có sử dụng voucher
-                if (cd.getVoucher() != null) {
-                    userVoucherRepository.findByUserAndVoucher(user, cd.getVoucher())
-                            .ifPresent(userVoucher -> {
-                                userVoucher.setStatus(false);
-                                userVoucherRepository.save(userVoucher);
-                            });
-                }
             }
-            order.setOrderDetails(orderDetails);
-
-            // Save the order
-            orderRepository.save(order);
 
             // Clear the cart
             cartDetailRepository.deleteAll(cart.getCartDetails());
-            // Important: Clear the list in the parent entity to break the association
             cart.getCartDetails().clear();
             cart.setTotalPrice(0.0);
             cartRepository.save(cart);
@@ -245,9 +271,7 @@ public class CartServiceImpl implements CartService {
         for (CartDetail cd : cart.getCartDetails()) {
             double itemPrice = cd.getPrice(); // This is price * quantity
             if (cd.getVoucher() != null && cd.getVoucher().getDiscountPercent() != null) {
-                double discount = cd.getVoucher().getDiscountPercent();
-                // // Apply discount to the item's total price
-                // itemPrice = itemPrice * (1 - discount / 100);
+                // Voucher is applied but discount calculation will be done in updateCart
             }
             newTotalCartPrice += itemPrice;
         }

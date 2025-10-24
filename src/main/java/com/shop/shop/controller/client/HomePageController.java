@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +60,12 @@ public class HomePageController {
         }
         model.addAttribute("orders", orders != null ? orders : Collections.emptyList());
         return "client/homepage/order";
+    }
+
+    @PostMapping("/order/cancel/{id}")
+    public String cancelOrder(@PathVariable("id") Long orderId) {
+        boolean check = userService.handleDeleteOrder(orderId);
+        return "redirect:/order";
     }
 
     @GetMapping("/account")

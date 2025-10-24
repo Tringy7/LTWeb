@@ -61,13 +61,14 @@
                                         <th scope="col">Số lượng</th>
                                         <th scope="col">Tổng</th>
                                         <th scope="col">Trạng thái</th>
+                                        <th scope="col">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <c:set var="currentDate" value="${createdAtFormatted}" />
                                     </c:if>
 
-                                    <c:forEach var="detail" items="${order.orderDetails}">
+                                    <c:forEach var="detail" items="${order.orderDetails}" varStatus="loop">
                                         <tr>
                                             <th scope="row">
                                                 <div class="d-flex align-items-center">
@@ -77,7 +78,9 @@
                                                 </div>
                                             </th>
                                             <td>
-                                                <p class="mb-0 mt-4">${detail.product.name}</p>
+                                                <p class="mb-0 mt-4"><a
+                                                        href="/shop/product/${detail.product.id}">${detail.product.name}</a>
+                                                </p>
                                             </td>
                                             <td>
                                                 <p class="mb-0 mt-4">${detail.size}</p>
@@ -138,22 +141,71 @@
                                                     </c:if>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <p class="mb-0 mt-4">
-                                                    <c:choose>
-                                                        <c:when test="${order.status == 'PENDING'}">
-                                                            <span class="text-danger fw-bold">Đợi xác nhận</span>
-                                                        </c:when>
-                                                        <c:when test="${order.status == 'SHIPPING'}">
-                                                            <span class="text-warning fw-bold">Đang giao hàng</span>
-                                                        </c:when>
-                                                        <c:when test="${order.status == 'DELIVERED'}">
-                                                            <span class="text-success fw-bold">Đã giao hàng</span>
-                                                        </c:when>
-                                                        <c:otherwise>${order.status}</c:otherwise>
-                                                    </c:choose>
-                                                </p>
-                                            </td>
+                                            <%-- Chỉ hiển thị cột Trạng thái và Thao tác cho dòng đầu tiên của mỗi đơn
+                                                hàng --%>
+                                                <c:if test="${loop.first}">
+                                                    <td class="align-middle" rowspan="${fn:length(order.orderDetails)}">
+                                                        <p class="mb-0">
+                                                            <c:choose>
+                                                                <c:when test="${order.status == 'PENDING'}">
+                                                                    <span class="text-danger fw-bold">Đợi xác
+                                                                        nhận</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'PENDING_PAYMENT'}">
+                                                                    <span class="text-info fw-bold">Chờ thanh
+                                                                        toán</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'SHIPPING'}">
+                                                                    <span class="text-warning vfw-bold">Đang giao
+                                                                        hàng</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'DELIVERED'}">
+                                                                    <span class="text-success fw-bold">Đã giao
+                                                                        hàng</span>
+                                                                </c:when>
+                                                                <c:otherwise>${order.status}</c:otherwise>
+                                                            </c:choose>
+                                                        </p>
+                                                    </td>
+                                                    <td class="align-middle" rowspan="${fn:length(order.orderDetails)}">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <c:if test="${order.status == 'PENDING_PAYMENT'}">
+                                                                <a href="/checkout?orderId=${order.id}"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                                                </a>
+                                                                <form action="/order/cancel/${order.id}" method="post"
+                                                                    style="margin: 0;">
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-outline-danger w-100"
+                                                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                                                        <i class="fas fa-times me-1"></i>Hủy đơn
+                                                                    </button>
+                                                                </form>
+                                                            </c:if>
+                                                            <c:if test="${order.status == 'DELIVERED'}">
+                                                                <a href="/review/create?orderId=${order.id}&productId=${detail.product.id}"
+                                                                    class="btn btn-sm btn-outline-primary">
+                                                                    <i class="fas fa-comment me-1"></i>Đánh giá
+                                                                </a>
+                                                                <a href="/return/request?orderId=${order.id}&productId=${detail.product.id}"
+                                                                    class="btn btn-sm btn-outline-warning">
+                                                                    <i class="fas fa-undo me-1"></i>Trả hàng
+                                                                </a>
+                                                            </c:if>
+                                                            <c:if test="${order.status == 'PENDING'}">
+                                                                <form action="/order/cancel/${order.id}" method="post"
+                                                                    style="margin: 0;">
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-outline-danger w-100"
+                                                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                                                        <i class="fas fa-times me-1"></i>Hủy đơn
+                                                                    </button>
+                                                                </form>
+                                                            </c:if>
+                                                        </div>
+                                                    </td>
+                                                </c:if>
                                         </tr>
                                     </c:forEach>
                                     <!-- Voucher Info Row -->
@@ -181,7 +233,15 @@
                                                 <fmt:formatNumber value="${order.totalPrice}" type="currency"
                                                     currencySymbol="" minFractionDigits="0" maxFractionDigits="0" /> VND
                                             </strong></td>
-                                        <td><strong>${order.paymentMethod}</strong></td>
+                                        <td colspan="2"><strong>
+                                                <c:choose>
+                                                    <c:when test="${order.paymentMethod == 'Direct Bank Transfer'}">
+                                                        Thanh toán trực tuyến</c:when>
+                                                    <c:when test="${order.paymentMethod == 'Cash On Delivery'}">Thanh
+                                                        toán khi nhận hàng</c:when>
+                                                    <c:otherwise>${order.paymentMethod}</c:otherwise>
+                                                </c:choose>
+                                            </strong></td>
                                     </tr>
 
                                     </c:forEach>

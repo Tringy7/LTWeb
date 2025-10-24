@@ -38,6 +38,9 @@ public class Order {
     @JoinColumn(name = "addressId")
     private UserAddress address;
 
+    @Column(unique = true)
+    private String txnRef;
+
     @Column
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -46,6 +49,8 @@ public class Order {
 
     @Column(length = 50)
     private String status;
+
+    private Boolean paymentStatus;
 
     private Double totalPrice;
 
@@ -56,7 +61,7 @@ public class Order {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
 
 }

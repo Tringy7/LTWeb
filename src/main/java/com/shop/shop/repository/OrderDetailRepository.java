@@ -21,5 +21,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
             + "WHERE od.order.id = :orderId AND od.shop.id = :shopId")
     List<OrderDetailDTO> findOrderDetailsDTOByOrderIdAndShopId(@Param("orderId") Long orderId,
             @Param("shopId") Long shopId);
+        
 
 }

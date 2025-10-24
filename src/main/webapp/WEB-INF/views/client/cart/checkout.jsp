@@ -108,10 +108,9 @@
                         <!-- Checkout Page Start -->
                         <div class="container-fluid bg-light overflow-hidden py-5">
                             <div class="container py-5">
-                                <h1 class="mb-4 wow fadeInUp" data-wow-delay="0.1s">Billing details</h1>
+                                <h1 class="mb-4 wow fadeInUp" data-wow-delay="0.1s">Thông tin nhận hàng</h1>
                                 <form:form action="/checkout" method="post" modelAttribute="user">
 
-                                    <form:hidden path="cart" />
                                     <div class="row g-5">
 
                                         <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -162,7 +161,7 @@
                                                         <tr>
                                                             <td colspan="7">
                                                                 <div style="max-height: 260px; overflow-y: auto;">
-                                                                    <c:forEach var="item" items="${cart.cartDetails}">
+                                                                    <c:forEach var="item" items="${order.orderDetails}">
                                                                         <div class="row text-center mx-0">
                                                                             <div
                                                                                 class="col-2 d-flex align-items-center">
@@ -175,7 +174,7 @@
                                                                             </div>
                                                                             <div class="col-1 py-5">${item.size}</div>
                                                                             <div class="col-2 py-5">
-                                                                                ${item.product.shop.shopName}</div>
+                                                                                ${item.shop.shopName}</div>
                                                                             <div class="col-2 py-5">
                                                                                 <c:if test="${not empty item.voucher}">
                                                                                     <c:set var="discountedUnitPrice"
@@ -255,7 +254,7 @@
                                             <div class="d-flex justify-content-end">
                                                 <h5 class="mb-0 me-4">Total:</h5>
                                                 <p class="mb-0">
-                                                    <fmt:formatNumber value="${cart.totalPrice}" type="currency"
+                                                    <fmt:formatNumber value="${order.totalPrice}" type="currency"
                                                         currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
                                                     VND
                                                 </p>
@@ -267,12 +266,9 @@
                                                         <input type="radio" class="form-check-input bg-primary border-0"
                                                             checked id="Delivery-1" name="paymentMethod"
                                                             value="Cash On Delivery">
-                                                        <label class="form-check-label" for="Delivery-1">Cash On
-                                                            Delivery</label>
+                                                        <label class="form-check-label" for="Delivery-1">Thanh toán khi
+                                                            nhận hàng</label>
                                                     </div>
-                                                    <p>
-                                                        Thanh toán khi nhận hàng
-                                                    </p>
                                                 </div>
                                             </div>
                                             <div
@@ -282,25 +278,50 @@
                                                         <input type="radio" class="form-check-input bg-primary border-0"
                                                             id="Transfer-1" name="paymentMethod"
                                                             value="Direct Bank Transfer">
-                                                        <label class="form-check-label" for="Transfer-1">Direct Bank
-                                                            Transfer</label>
+                                                        <label class="form-check-label" for="Transfer-1">Thanh toán trực
+                                                            tuyến</label>
                                                     </div>
-                                                    <p>Thanh toán qua mã QR</p>
-                                                    <!-- QR Code Image -->
-                                                    <div id="qrCodeContainer" class="text-center mt-3">
-                                                        <img src="${pageContext.request.contextPath}/resources/client/img/QR.jpg"
-                                                            alt="QR Code for `Bank Transfer" class="img-fluid"
-                                                            style="max-width: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px;">
-                                                        <p class="text-muted mt-2 small">Scan QR code to complete your
-                                                            bank transfer</p>
+
+                                                    <!-- Payment options container - hidden by default -->
+                                                    <div id="onlinePaymentOptions" class="mt-3" style="display: none;">
+                                                        <p class="text-start mb-2">Chọn phương thức thanh toán:</p>
+
+                                                        <!-- VNPAY Option -->
+                                                        <div
+                                                            class="d-flex justify-content-between align-items-center my-2 ps-4">
+                                                            <div class="form-check">
+                                                                <input type="radio" class="form-check-input"
+                                                                    id="vnpay-option" name="onlinePaymentType"
+                                                                    value="VNPAY">
+                                                                <label
+                                                                    class="form-check-label d-flex align-items-center"
+                                                                    for="vnpay-option">
+                                                                    <span class="me-2">VNPAY</span>
+                                                                    <small class="text-muted">(Ví điện tử, thẻ ATM, thẻ
+                                                                        tín
+                                                                        dụng)</small>
+                                                                </label>
+                                                            </div>
+                                                            <form action="/payment/create-payment?amount=100000">
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-outline-primary">Thanh
+                                                                    toán</button>
+                                                            </form>
+                                                        </div>
+
+                                                        <!-- QR Code Container -->
+                                                        <div id="qrCodeContainer" class="text-center mt-3"
+                                                            style="display: none;">
+                                                            <!-- QR code will be displayed here -->
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div
                                                 class="row g-4 text-center align-items-center justify-content-center pt-4">
                                                 <button type="submit"
-                                                    class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place
-                                                    Order</button>
+                                                    class="btn btn-primary border-secondary py-3 px-4 text-uppercase w-100 text-primary">Đặt
+                                                    hàng</button>
                                             </div>
                                         </div>
                                     </div>
@@ -358,27 +379,45 @@
                                         }
                                     });
 
-                                    // QR Code visibility toggle based on payment method
+                                    // Payment method toggle
                                     const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+                                    const onlinePaymentOptions = document.getElementById('onlinePaymentOptions');
                                     const qrCodeContainer = document.getElementById('qrCodeContainer');
+                                    const onlinePaymentTypeRadios = document.querySelectorAll('input[name="onlinePaymentType"]');
 
-                                    // Function to toggle QR code visibility
-                                    function toggleQRCode() {
+                                    // Function to toggle online payment options
+                                    function togglePaymentOptions() {
                                         const selectedPayment = document.querySelector('input[name="paymentMethod"]:checked');
                                         if (selectedPayment && selectedPayment.value === 'Direct Bank Transfer') {
+                                            onlinePaymentOptions.style.display = 'block';
+                                        } else {
+                                            onlinePaymentOptions.style.display = 'none';
+                                            qrCodeContainer.style.display = 'none';
+                                        }
+                                    }
+
+                                    // Function to toggle QR code based on online payment type
+                                    function toggleQRCode() {
+                                        const selectedOnlineType = document.querySelector('input[name="onlinePaymentType"]:checked');
+                                        if (selectedOnlineType && selectedOnlineType.value === 'QR') {
                                             qrCodeContainer.style.display = 'block';
                                         } else {
                                             qrCodeContainer.style.display = 'none';
                                         }
                                     }
 
-                                    // Add event listeners to all payment method radio buttons
+                                    // Add event listeners to payment method radio buttons
                                     paymentRadios.forEach(radio => {
+                                        radio.addEventListener('change', togglePaymentOptions);
+                                    });
+
+                                    // Add event listeners to online payment type radio buttons
+                                    onlinePaymentTypeRadios.forEach(radio => {
                                         radio.addEventListener('change', toggleQRCode);
                                     });
 
                                     // Initial check on page load
-                                    toggleQRCode();
+                                    togglePaymentOptions();
                                 });
                             </script>
                     </body>

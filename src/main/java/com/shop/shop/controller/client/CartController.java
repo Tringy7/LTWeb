@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
+import com.shop.shop.domain.Order;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
 import com.shop.shop.service.client.CartService;
@@ -64,8 +66,8 @@ public class CartController {
 
     @PostMapping("/cart")
     public String handleUpdateCart(@ModelAttribute("cart") Cart cartFromForm) {
-        cartService.updateCart(cartFromForm);
-        return "redirect:/checkout";
+        Long orderId = cartService.updateCart(cartFromForm);
+        return "redirect:/checkout?orderId=" + orderId;
     }
 
     @PostMapping("/cart/delete/{id}")
@@ -114,13 +116,21 @@ public class CartController {
     }
 
     @GetMapping("/checkout")
-    public String showCheckout(Model model) {
+    public String showCheckout(@RequestParam(value = "orderId", required = false) Long orderId, Model model) {
         User user = userAfterLogin.getUser();
-        Cart cart = cartService.getCart(user);
-        UserAddress userAddress = userService.handlUserAddress(user);
-        model.addAttribute("user", user);
-        model.addAttribute("cart", cart);
 
+        // Kiểm tra xem orderId có tồn tại không
+        if (orderId == null) {
+            return "redirect:/cart";
+        }
+
+        Order order = userService.getOrderById(orderId);
+        if (order == null) {
+            return "redirect:/cart";
+        }
+
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
         return "client/cart/checkout";
     }
 
