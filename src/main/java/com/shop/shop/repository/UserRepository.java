@@ -49,4 +49,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Count users by role name using custom query
     @Query("SELECT COUNT(u) FROM User u WHERE u.role.name = :roleName")
     long countByRoleName(@Param("roleName") String roleName);
+
+    // Fetch user with orders only (avoid MultipleBagFetchException)
+    // OrderDetails will be lazy loaded with batch fetching
+    @Query("SELECT DISTINCT u FROM User u "
+            + "LEFT JOIN FETCH u.orders "
+            + "WHERE u.id = :id")
+    Optional<User> findByIdWithOrders(@Param("id") Long id);
 }

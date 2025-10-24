@@ -74,13 +74,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user != null) {
-            // Khởi tạo collection 'orders' (mặc dù đã là EAGER, nhưng để cho chắc chắn)
-            user.getOrders().size();
-            // Khởi tạo collection 'orderDetails' bên trong mỗi order
-            user.getOrders().forEach(order -> order.getOrderDetails().size());
+        // Bước 1: Load User với Orders (không load OrderDetails)
+        User user = userRepository.findByIdWithOrders(id).orElse(null);
+
+        if (user != null && user.getOrders() != null && !user.getOrders().isEmpty()) {
+            // Bước 2: Load OrderDetails cho từng Order (Hibernate sẽ batch fetch)
+            // Trigger lazy loading trong transaction
+            user.getOrders().forEach(order -> {
+                if (order.getOrderDetails() != null) {
+                    order.getOrderDetails().size(); // Trigger lazy loading
+                }
+            });
         }
+
         return user;
     }
 
@@ -219,12 +225,27 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean handleDeleteOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElse(null);
-        if (order != null) {
+        try {
+            // Kiểm tra order có tồn tại không (chỉ cần check ID, không cần load toàn bộ entity)
+            if (!orderRepository.existsById(orderId)) {
+                return false; // Không tìm thấy order
+            }
+
+            // Xóa order details trước (tránh foreign key constraint)
+            orderRepository.deleteOrderDetailsByOrderId(orderId);
+
+            // Sau đó xóa order
             orderRepository.deleteById(orderId);
+
+            // Flush để đảm bảo SQL được execute ngay
+            orderRepository.flush();
+
             return true; // Xóa thành công
+        } catch (Exception e) {
+            // Log error nếu cần
+            System.err.println("Error deleting order: " + e.getMessage());
+            throw new RuntimeException("Không thể xóa đơn hàng: " + e.getMessage(), e);
         }
-        return false; // Không tìm thấy order để xóa
     }
 
     @Override

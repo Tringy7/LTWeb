@@ -181,44 +181,50 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public boolean handleCheckout(User user, String payment) {
         Cart cart = cartRepository.findByUser(user);
-        if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
-            return false;
-        }
+        // if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
+        //     return false;
+        // }
 
         try {
             // Find the most recent order with PENDING_PAYMENT status for this user
             Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
 
-            if (order != null) {
-                // Update order status and payment info
-                order.setPaymentMethod(payment);
-
-                if ("Direct Bank Transfer".equals(payment)) {
-                    order.setPaymentStatus(true);
-                    order.setStatus("PENDING"); // Đợi xác nhận
-                } else if ("Cash On Delivery".equals(payment)) {
-                    order.setPaymentStatus(false);
-                    order.setStatus("PENDING"); // Đợi xác nhận
-                }
-
-                orderRepository.save(order);
+            if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
+                return false;
             }
 
-            // Update product quantity in stock
-            for (CartDetail cd : cart.getCartDetails()) {
-                ProductDetail productDetail = productDetailService.findByProductAndSize(cd.getProduct(), cd.getSize());
+            // Update order status and payment info
+            order.setPaymentMethod(payment);
+
+            if ("Direct Bank Transfer".equals(payment)) {
+                order.setPaymentStatus(true);
+                order.setStatus("PENDING"); // Đợi xác nhận
+            } else if ("Cash On Delivery".equals(payment)) {
+                order.setPaymentStatus(false);
+                order.setStatus("PENDING"); // Đợi xác nhận
+            }
+
+            orderRepository.save(order);
+
+            // Update product quantity in stock based on ORDER DETAILS (not cart)
+            for (OrderDetail orderDetail : order.getOrderDetails()) {
+                ProductDetail productDetail = productDetailService.findByProductAndSize(
+                        orderDetail.getProduct(),
+                        orderDetail.getSize()
+                );
                 if (productDetail != null) {
-                    productDetail.setQuantity(productDetail.getQuantity() - cd.getQuantity());
-                    productDetail.setSold(productDetail.getSold() + cd.getQuantity());
+                    productDetail.setQuantity(productDetail.getQuantity() - orderDetail.getQuantity());
+                    productDetail.setSold(productDetail.getSold() + orderDetail.getQuantity());
                 }
             }
 
-            // Clear the cart
-            cartDetailRepository.deleteAll(cart.getCartDetails());
-            cart.getCartDetails().clear();
-            cart.setTotalPrice(0.0);
-            cartRepository.save(cart);
-
+            if (cart != null) {
+                // Clear the cart
+                cartDetailRepository.deleteAll(cart.getCartDetails());
+                cart.getCartDetails().clear();
+                cart.setTotalPrice(0.0);
+                cartRepository.save(cart);
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();

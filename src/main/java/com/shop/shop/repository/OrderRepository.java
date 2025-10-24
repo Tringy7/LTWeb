@@ -84,4 +84,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Find the most recent order by user and status
     Order findTopByUserAndStatusOrderByCreatedAtDesc(User user, String status);
+
+    // Delete order using native query for better performance
+    @org.springframework.data.jpa.repository.Modifying
+    @Query(value = "DELETE FROM order_details WHERE order_id = :orderId", nativeQuery = true)
+    void deleteOrderDetailsByOrderId(@Param("orderId") Long orderId);
 }
