@@ -55,7 +55,9 @@ public class VendorOrderController {
         LocalDateTime startDateTime = (fromDate != null) ? fromDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
-        List<Order> orders = orderService.filterOrdersByShop(shopId, status, startDateTime, endDateTime);
+        // List<Order> orders = orderService.filterOrdersByShop(shopId, status,
+        // startDateTime, endDateTime);
+        List<Order> orders = orderService.getOrdersByShopThroughDetails(shopId);
 
         model.addAttribute("orders", orders);
         model.addAttribute("status", status);
@@ -88,7 +90,7 @@ public class VendorOrderController {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null) {
-            return "redirect:/vendor/orders?error=notfound";
+            return "redirect:/vendor/order?error=notfound";
         }
 
         List<OrderDetailDTO> dtoList = orderDetailService.getOrderDetailsByOrderIdAndShopId(orderId, shopId);
@@ -148,6 +150,39 @@ public class VendorOrderController {
             } else {
                 response.put("status", "error");
                 response.put("message", "Không tìm thấy đơn hàng cần cập nhật!");
+            }
+
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Lỗi: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+    @PostMapping("/order-detail/update-status")
+    @ResponseBody
+    public Map<String, Object> updateOrderDetailStatus(
+            @RequestParam("detailId") Long detailId,
+            @RequestParam("status") String status) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (detailId == null || status == null || status.trim().isEmpty()) {
+                response.put("status", "error");
+                response.put("message", "Thiếu thông tin chi tiết đơn hoặc trạng thái!");
+                return response;
+            }
+
+            boolean updated = orderDetailService.updateOrderDetailStatus(detailId, status);
+
+            if (updated) {
+                response.put("status", "success");
+                response.put("message", "Cập nhật trạng thái chi tiết đơn hàng thành công!");
+            } else {
+                response.put("status", "error");
+                response.put("message", "Không tìm thấy chi tiết đơn hàng cần cập nhật!");
             }
 
         } catch (Exception e) {

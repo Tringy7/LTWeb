@@ -77,4 +77,25 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
         // Find all orders with pagination ordered by creation date
         Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+        @Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od "
+                        + "WHERE od.shop.id = :shopId "
+                        + "AND (:status IS NULL OR UPPER(od.status) = UPPER(:status)) "
+                        + "AND (:start IS NULL OR o.createdAt >= :start) "
+                        + "AND (:end IS NULL OR o.createdAt <= :end) "
+                        + "ORDER BY o.createdAt DESC")
+        List<Order> findOrdersByShop(
+                        @Param("shopId") Long shopId,
+                        @Param("status") String status,
+                        @Param("start") LocalDateTime start,
+                        @Param("end") LocalDateTime end);
+
+        // // Lấy orders chỉ theo shop (không filter)
+        // @Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od WHERE
+        // od.shop.id = :shopId ORDER BY o.createdAt DESC")
+        // List<Order> findByShopId(@Param("shopId") Long shopId);
+
+        // Nếu cần lấy theo shop + order status tổng thể (không bắt buộc, hiếm dùng)
+        @Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od WHERE od.shop.id = :shopId AND (:orderStatus IS NULL OR UPPER(o.status) = UPPER(:orderStatus)) ORDER BY o.createdAt DESC")
+        List<Order> findByShopIdAndOrderStatus(@Param("shopId") Long shopId, @Param("orderStatus") String orderStatus);
 }

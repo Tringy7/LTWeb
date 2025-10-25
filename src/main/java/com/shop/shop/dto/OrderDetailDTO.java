@@ -4,21 +4,25 @@ package com.shop.shop.dto;
 //dto -> tmp
 //tmp -> dto
 public class OrderDetailDTO {
+    private Long id;
     private Long productId;
     private String productName;
     private String shopName;
     private Long quantity;
     private double price;
     private String image;
+    private String status;
 
-    public OrderDetailDTO(Long productId, String productName, String shopName, Long quantity, double price,
-            String image) {
+    public OrderDetailDTO(Long id, Long productId, String productName, String shopName, Long quantity, double price,
+            String image, String status) {
+        this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.shopName = shopName;
         this.quantity = quantity;
         this.price = price;
         this.image = image;
+        this.status = status;
     }
 
     public Long getProductId() {
@@ -67,6 +71,22 @@ public class OrderDetailDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

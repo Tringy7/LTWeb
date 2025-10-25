@@ -284,14 +284,6 @@
                                                                         hàng - Hoàn tiền</span>
                                                                 </c:when>
                                                             </c:choose>
-
-
-
-                                                            <i class="bi bi-pencil edit-status" data-bs-toggle="modal"
-                                                                data-bs-target="#updateStatusModal"
-                                                                data-order-id="${order.id}"
-                                                                data-status="${order.status}"
-                                                                title="Cập nhật trạng thái"></i>
                                                         </td>
                                                         <td>
                                                             <a href="${pageContext.request.contextPath}/vendor/order/detail/${order.id}"
@@ -434,6 +426,7 @@
                         background-color: #dce6ff;
                     }
                 </style>
+
                 <!-- Modal cập nhật trạng thái -->
                 <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusLabel"
                     aria-hidden="true">
@@ -481,13 +474,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
 
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
@@ -659,24 +645,16 @@
                         $(document).on("click", ".edit-status", function () {
                             const orderId = $(this).data("order-id");
                             const currentStatus = $(this).data("status");
-
-                            // Gán giá trị orderId vào input ẩn
                             $("#orderIdUpdate").val(orderId);
-
-                            // Gán trạng thái hiện tại vào dropdown
                             $("#statusUpdate").val(currentStatus);
-
-                            // Hiển thị modal
                             $("#updateStatusModal").modal("show");
                         });
-
-                        // Khi nhấn “Lưu” trong modal
                         $("#saveStatusBtn").click(function () {
                             const orderId = $("#orderIdUpdate").val();
                             const status = $("#statusUpdate").val();
 
                             if (!orderId || !status) {
-                                alert("❌ Thiếu orderId hoặc status!");
+                                alert("Thiếu orderId hoặc status!");
                                 return;
                             }
 
@@ -686,23 +664,17 @@
                                 data: { orderId: orderId, status: status },
                                 success: function (response) {
                                     if (response.status === "success") {
-                                        alert("✅ " + response.message);
+                                        alert(response.message);
                                         location.reload();
                                     } else {
-                                        alert("⚠️ " + response.message);
+                                        alert(response.message);
                                     }
                                 },
                                 error: function () {
-                                    alert("❌ Có lỗi xảy ra khi cập nhật trạng thái!");
+                                    alert("Có lỗi xảy ra khi cập nhật trạng thái!");
                                 }
                             });
                         });
                     });
 
                 </script>
-
-
-
-
-                </div>
-                </div>

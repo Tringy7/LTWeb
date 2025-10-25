@@ -45,7 +45,7 @@ public class Order {
 
     @Column(length = 50)
     private String paymentMethod;
-    
+
     @Column(length = 50)
     private String status;
 
