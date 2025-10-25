@@ -60,4 +60,23 @@ public class ProductService {
     public boolean existsByNameAndShopId(String name, Long shopId) {
         return productRepository.existsByNameAndShopId(name, shopId);
     }
+
+    public List<String> getBrandsByShopId(Long shopId) {
+        return productRepository.findDistinctBrandsByShopId(shopId);
+    }
+
+    public List<String> getGendersByShopId(Long shopId) {
+        return productRepository.findDistinctGendersByShopId(shopId);
+    }
+
+    public List<String> getColorsByShopId(Long shopId) {
+        return productRepository.findDistinctColorsByShopId(shopId);
+    }
+
+    public List<Product> filterProducts(Long shopId, String keyword, String category,
+            String brand, String gender, String color,
+            Double minPrice, Double maxPrice) {
+        return productRepository.filterProducts(shopId, keyword, category, brand, gender, color, minPrice, maxPrice);
+    }
+
 }

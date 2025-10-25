@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shop.shop.domain.Shop;
+import com.shop.shop.domain.User;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.service.vendor.ProductService;
+import com.shop.shop.service.vendor.ShopService;
 import com.shop.shop.service.vendor.VoucherService;
 
 @Controller
@@ -33,10 +37,22 @@ public class VendorEventController {
     @Autowired
     private ProductService productService;
 
-    private static final Long SHOP_ID = 1L;
+    @Autowired
+    private ShopService shopService;
+
+    private Long getCurrentShopId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User user) {
+            return shopService.getShopByUserId(user.getId())
+                    .map(Shop::getId)
+                    .orElseThrow(() -> new RuntimeException("Shop not found for vendor user"));
+        }
+        throw new RuntimeException("User not authenticated");
+    }
 
     @GetMapping
     public String showVouchers(Model model) {
+        Long SHOP_ID = getCurrentShopId();
         List<Voucher> vouchers = voucherService.getVouchersByShopId(SHOP_ID);
 
         List<Map<String, Object>> voucherData = vouchers.stream().map(v -> {
@@ -71,6 +87,7 @@ public class VendorEventController {
 
     @PostMapping("/add")
     public String addVoucher(@ModelAttribute("voucher") Voucher voucher) {
+        Long SHOP_ID = getCurrentShopId();
         voucherService.saveVoucher(voucher, SHOP_ID);
         return "redirect:/vendor/event";
     }
@@ -91,6 +108,7 @@ public class VendorEventController {
 
     @PostMapping("/update")
     public String updateVoucher(@ModelAttribute("voucher") Voucher voucher) {
+        Long SHOP_ID = getCurrentShopId();
         voucherService.saveVoucher(voucher, SHOP_ID);
         return "redirect:/vendor/event";
     }

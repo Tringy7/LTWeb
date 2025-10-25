@@ -88,4 +88,36 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Find all products with pagination ordered by ID
     Page<Product> findAllByOrderByIdDesc(Pageable pageable);
+
+    @Query("SELECT DISTINCT p.brand FROM Product p WHERE p.shop.id = :shopId")
+    List<String> findDistinctBrandsByShopId(@Param("shopId") Long shopId);
+
+    @Query("SELECT DISTINCT p.gender FROM Product p WHERE p.shop.id = :shopId")
+    List<String> findDistinctGendersByShopId(@Param("shopId") Long shopId);
+
+    @Query("SELECT DISTINCT p.color FROM Product p WHERE p.shop.id = :shopId")
+    List<String> findDistinctColorsByShopId(@Param("shopId") Long shopId);
+
+    @Query("""
+            SELECT p FROM Product p
+            WHERE
+                (:shopId IS NULL OR p.shop.id = :shopId)
+            AND (:keyword IS NULL OR UPPER(p.name) LIKE CONCAT('%', UPPER(:keyword), '%'))
+            AND (:category IS NULL OR UPPER(p.category) = UPPER(:category))
+            AND (:brand IS NULL OR UPPER(p.brand) = UPPER(:brand))
+            AND (:gender IS NULL OR UPPER(p.gender) = UPPER(:gender))
+            AND (:color IS NULL OR UPPER(p.color) = UPPER(:color))
+            AND (:minPrice IS NULL OR p.price >= :minPrice)
+            AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+            """)
+    List<Product> filterProducts(
+            @Param("shopId") Long shopId,
+            @Param("keyword") String keyword,
+            @Param("category") String category,
+            @Param("brand") String brand,
+            @Param("gender") String gender,
+            @Param("color") String color,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice);
+
 }

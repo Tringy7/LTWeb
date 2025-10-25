@@ -503,66 +503,64 @@
 
                             <!-- Modal Edit Coupon -->
                             <div class="modal fade" id="editCouponModal" tabindex="-1" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-centered">
-                                    <div class="modal-content">
+                                <div class="modal-dialog modal-md modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg rounded-4">
 
                                         <!-- Header -->
-                                        <div class="modal-header bg-warning text-white">
-                                            <h5 class="modal-title">Chỉnh sửa Coupon</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Đóng"></button>
+                                        <div class="modal-header bg-warning text-white py-2">
+                                            <h5 class="modal-title fw-semibold">Chỉnh sửa Mã giảm</h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Đóng"></button>
                                         </div>
 
                                         <!-- Form -->
                                         <form id="editCouponForm"
                                             action="${pageContext.request.contextPath}/vendor/event/update"
-                                            method="post" class="p-3">
+                                            method="post" class="p-4">
                                             <input type="hidden" name="id" />
-
-                                            <!-- Hàng 1: Sản phẩm - Mã - Giảm -->
-                                            <div class="row g-3 mb-3">
-
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Mã Coupon</label>
-                                                    <input type="text" name="code" class="form-control"
-                                                        placeholder="Nhập mã coupon" />
-                                                </div>
-
-                                                <div class="col-md-4">
-                                                    <label class="form-label">Giảm</label>
-                                                    <input type="number" step="1" name="discountPercent"
-                                                        class="form-control" placeholder="%" />
-                                                </div>
-                                            </div>
-
-                                            <!-- Hàng 2: Ngày bắt đầu - Ngày kết thúc -->
-                                            <div class="row g-3 mb-3">
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Ngày bắt đầu</label>
-                                                    <input type="datetime-local" name="startDate"
-                                                        class="form-control" />
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <label class="form-label">Ngày kết thúc</label>
-                                                    <input type="datetime-local" name="endDate" class="form-control" />
-                                                </div>
-                                            </div>
-
-                                            <!-- Trạng thái ẩn -->
                                             <input type="hidden" name="status" />
 
+                                            <!-- Mã Coupon & Giảm -->
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Mã giảm giá</label>
+                                                    <input type="text" name="code" class="form-control form-control-sm"
+                                                        placeholder="Nhập mã coupon" required />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Giảm (%)</label>
+                                                    <input type="number" step="1" name="discountPercent"
+                                                        class="form-control form-control-sm" placeholder="%" required />
+                                                </div>
+                                            </div>
+
+                                            <!-- Ngày bắt đầu & kết thúc -->
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Ngày bắt đầu</label>
+                                                    <input type="datetime-local" name="startDate"
+                                                        class="form-control form-control-sm" required />
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label fw-semibold">Ngày kết thúc</label>
+                                                    <input type="datetime-local" name="endDate"
+                                                        class="form-control form-control-sm" required />
+                                                </div>
+                                            </div>
+
                                             <!-- Footer -->
-                                            <div class="modal-footer justify-content-center mt-3">
-                                                <button type="button" class="btn btn-secondary"
+                                            <div class="modal-footer border-0 justify-content-center pt-0">
+                                                <button type="button" class="btn btn-outline-secondary px-4"
                                                     data-bs-dismiss="modal">Hủy</button>
-                                                <button type="submit" class="btn btn-warning">Cập nhật</button>
+                                                <button type="submit" class="btn btn-warning text-white px-4">Cập
+                                                    nhật</button>
                                             </div>
                                         </form>
 
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -697,6 +695,79 @@
                                     .finally(() => {
                                         couponIdToDelete = null;
                                     });
+                            });
+                        });
+                    </script>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const addCouponForm = document.querySelector('#newCouponModal form');
+                            const inputs = addCouponForm.querySelectorAll("input");
+
+                            addCouponForm.addEventListener("submit", function (e) {
+                                let isValid = true;
+
+                                inputs.forEach(input => {
+                                    const formGroup = input.closest(".mb-3");
+                                    let errorEl = formGroup.querySelector(".invalid-feedback");
+
+                                    // Nếu chưa có vùng hiển thị lỗi thì tạo mới
+                                    if (!errorEl) {
+                                        errorEl = document.createElement("div");
+                                        errorEl.className = "invalid-feedback";
+                                        formGroup.appendChild(errorEl);
+                                    }
+
+                                    // Reset trạng thái mỗi lần submit
+                                    input.classList.remove("is-invalid");
+                                    errorEl.textContent = "";
+
+                                    // Kiểm tra từng input cụ thể
+                                    if (input.name === "code" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng nhập mã giảm giá.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    if (input.name === "discountPercent") {
+                                        const val = parseInt(input.value);
+                                        if (isNaN(val) || val <= 0) {
+                                            errorEl.textContent = "Phần trăm giảm phải lớn hơn 0.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        } else if (val > 100) {
+                                            errorEl.textContent = "Phần trăm giảm không được vượt quá 100%.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        }
+                                    }
+
+                                    if (input.name === "startDate" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng chọn ngày bắt đầu.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    if (input.name === "endDate" && input.value.trim() === "") {
+                                        errorEl.textContent = "Vui lòng chọn ngày kết thúc.";
+                                        input.classList.add("is-invalid");
+                                        isValid = false;
+                                    }
+
+                                    // Kiểm tra nếu ngày kết thúc trước ngày bắt đầu
+                                    if (input.name === "endDate" && input.value.trim() !== "" &&
+                                        addCouponForm.querySelector('input[name="startDate"]').value.trim() !== "") {
+                                        const start = new Date(addCouponForm.querySelector('input[name="startDate"]').value);
+                                        const end = new Date(input.value);
+                                        if (end < start) {
+                                            errorEl.textContent = "Ngày kết thúc phải sau ngày bắt đầu.";
+                                            input.classList.add("is-invalid");
+                                            isValid = false;
+                                        }
+                                    }
+                                });
+
+                                if (!isValid) e.preventDefault();
                             });
                         });
                     </script>

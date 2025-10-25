@@ -1,5 +1,6 @@
 package com.shop.shop.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -64,4 +65,16 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
+
+    @Column(length = 20)
+    private String status = "ACTIVE";
+
+    @Column(length = 50)
+    private String violationType;
+
+    @Column(length = 1000)
+    private String adminNotes;
+
+    @Column
+    private LocalDateTime lastModifiedByAdmin;
 }
