@@ -39,8 +39,4 @@ public class CartDetail {
     private String size;
 
     private Double price;
-
-    @ManyToOne
-    @JoinColumn(name = "voucherId")
-    private Voucher voucher;
 }

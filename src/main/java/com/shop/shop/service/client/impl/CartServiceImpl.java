@@ -20,6 +20,7 @@ import com.shop.shop.dto.ProductDTO;
 import com.shop.shop.repository.CartDetailRepository;
 import com.shop.shop.repository.CartRepository;
 import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductDetailService;
@@ -47,6 +48,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private VoucherRepository voucherRepository;
+
+    @Autowired
+    private UserVoucherRepository userVoucherRepository;
 
     @Override
     @Transactional
@@ -180,6 +184,17 @@ public class CartServiceImpl implements CartService {
                 order.setStatus("PENDING"); // Đợi xác nhận
             }
 
+            // Handle Voucher: set voucherCode and mark user's UserVoucher as used (status=false) when payment recorded
+            if (order.getVoucher() != null) {
+                order.setVoucherCode(order.getVoucher().getCode());
+                // mark the corresponding UserVoucher as used
+                userVoucherRepository.findByUserAndVoucher(order.getUser(), order.getVoucher())
+                        .ifPresent(userVoucher -> {
+                            userVoucher.setStatus(false);
+                            userVoucherRepository.save(userVoucher);
+                        });
+            }
+
             orderRepository.save(order);
 
             // Update product quantity in stock based on ORDER DETAILS (not cart)
@@ -206,63 +221,6 @@ public class CartServiceImpl implements CartService {
             e.printStackTrace();
             return false;
         }
-    }
-
-    @Override
-    public Cart handleApplyVoucher(String code, User user) {
-        Cart cart = cartRepository.findByUser(user);
-        if (cart == null) {
-            return null;
-        }
-
-        Voucher voucher = voucherRepository.findByCode(code);
-        if (voucher == null) {
-            return null;
-        }
-        // Validate thời gian hiệu lực và trạng thái
-        LocalDateTime now = LocalDateTime.now();
-        if (Boolean.FALSE.equals(voucher.getStatus())) {
-            return null;
-        }
-        if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(now)) {
-            return null;
-        }
-        if (voucher.getEndDate() != null && voucher.getEndDate().isBefore(now)) {
-            return null;
-        }
-        // Áp dụng cho các CartDetail thuộc cùng shop của voucher, đồng thời bỏ voucher ở shop khác
-        List<CartDetail> toUpdate = new ArrayList<>();
-        for (CartDetail cd : cart.getCartDetails()) {
-            boolean sameShop = cd.getProduct() != null
-                    && cd.getProduct().getShop() != null
-                    && voucher.getShop() != null
-                    && Objects.equals(cd.getProduct().getShop().getId(), voucher.getShop().getId());
-            Voucher newVoucher = sameShop ? voucher : null;
-            Long currentId = cd.getVoucher() == null ? null : cd.getVoucher().getId();
-            Long newId = newVoucher == null ? null : newVoucher.getId();
-            if (!Objects.equals(currentId, newId)) {
-                cd.setVoucher(newVoucher);
-                toUpdate.add(cd);
-            }
-        }
-        if (!toUpdate.isEmpty()) {
-            cartDetailRepository.saveAll(toUpdate);
-        }
-        // Recalculate cart total price after applying/changing vouchers
-        double newTotalCartPrice = 0.0;
-        for (CartDetail cd : cart.getCartDetails()) {
-            double itemPrice = cd.getPrice(); // This is price * quantity
-            if (cd.getVoucher() != null && cd.getVoucher().getDiscountPercent() != null) {
-                // Voucher is applied but discount calculation will be done in updateCart
-            }
-            newTotalCartPrice += itemPrice;
-        }
-        // Only update if the total price has changed
-        if (Double.compare(cart.getTotalPrice(), newTotalCartPrice) != 0) {
-            cart.setTotalPrice(newTotalCartPrice);
-            cartRepository.save(cart);
-        }
-        return cart;
     }
 
     @Override
@@ -331,46 +289,6 @@ public class CartServiceImpl implements CartService {
         order.setVoucherCode(null);
         orderRepository.save(order);
         return null;
-    }
-
-    @Override
-    @Transactional
-    public boolean handleRemoveVoucher(User user) {
-        Cart cart = cartRepository.findByUser(user);
-        if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
-            return false;
-        }
-
-        try {
-            // Xóa voucher khỏi tất cả các CartDetail
-            List<CartDetail> toUpdate = new ArrayList<>();
-            for (CartDetail cd : cart.getCartDetails()) {
-                if (cd.getVoucher() != null) {
-                    cd.setVoucher(null);
-                    toUpdate.add(cd);
-                }
-            }
-
-            // Lưu các CartDetail đã cập nhật
-            if (!toUpdate.isEmpty()) {
-                cartDetailRepository.saveAll(toUpdate);
-            }
-
-            // Tính lại tổng giá trị giỏ hàng không có voucher
-            double newTotalCartPrice = 0.0;
-            for (CartDetail cd : cart.getCartDetails()) {
-                newTotalCartPrice += cd.getPrice(); // Price gốc (không có discount)
-            }
-
-            // Cập nhật tổng giá trị giỏ hàng
-            cart.setTotalPrice(newTotalCartPrice);
-            cartRepository.save(cart);
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     @Override

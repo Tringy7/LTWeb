@@ -125,7 +125,13 @@
                                                             </p>
                                                         </div>
                                                         <div class="voucher-actions">
-                                                            <a href="/cart" class="btn btn-primary">Dùng ngay</a>
+                                                            <form action="/checkout/apply-voucher" method="post"
+                                                                style="margin:0;">
+                                                                <input type="hidden" name="voucherCode"
+                                                                    value="${voucher.code}" />
+                                                                <button type="submit" class="btn btn-primary">Dùng
+                                                                    ngay</button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>

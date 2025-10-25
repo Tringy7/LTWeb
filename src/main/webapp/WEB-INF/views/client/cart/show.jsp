@@ -72,7 +72,9 @@
                                                                 </div>
                                                             </th>
                                                             <td>
-                                                                <p class="mb-0 mt-4">${item.product.name}</p>
+                                                                <p class="mb-0 mt-4"><a
+                                                                        href="/shop/product/${item.product.id}">${item.product.name}</a>
+                                                                </p>
                                                             </td>
                                                             <td>
                                                                 <p class="mb-0 mt-4">${item.size}</p>
@@ -83,34 +85,13 @@
                                                             <td>
                                                                 <div class="mb-0 mt-4 item-price"
                                                                     data-price="${item.product.price}"
-                                                                    data-discount="${not empty item.voucher ? item.voucher.discountPercent : 0}">
-                                                                    <c:if test="${not empty item.voucher}">
-                                                                        <c:set var="discountedUnitPrice"
-                                                                            value="${item.product.price * (1 - item.voucher.discountPercent / 100)}" />
-                                                                        <del>
-                                                                            <fmt:formatNumber
-                                                                                value="${item.product.price}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </del>
-                                                                        <p class="mb-0" style="color: red;">
-                                                                            <fmt:formatNumber
-                                                                                value="${discountedUnitPrice}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </p>
-                                                                    </c:if>
-                                                                    <c:if test="${empty item.voucher}">
-                                                                        <p class="mb-0">
-                                                                            <fmt:formatNumber
-                                                                                value="${item.product.price}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </p>
-                                                                    </c:if>
+                                                                    data-discount="0">
+                                                                    <p class="mb-0">
+                                                                        <fmt:formatNumber value="${item.product.price}"
+                                                                            type="currency" currencySymbol=""
+                                                                            minFractionDigits="0"
+                                                                            maxFractionDigits="0" /> VND
+                                                                    </p>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -137,31 +118,12 @@
                                                             <td>
                                                                 <div class="mb-0 mt-4 item-total"
                                                                     data-total="${item.price}">
-                                                                    <c:if test="${not empty item.voucher}">
-                                                                        <c:set var="discountedTotalPrice"
-                                                                            value="${item.price * (1 - item.voucher.discountPercent / 100)}" />
-                                                                        <del>
-                                                                            <fmt:formatNumber value="${item.price}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </del>
-                                                                        <p class="mb-0" style="color: red;">
-                                                                            <fmt:formatNumber
-                                                                                value="${discountedTotalPrice}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </p>
-                                                                    </c:if>
-                                                                    <c:if test="${empty item.voucher}">
-                                                                        <p class="mb-0">
-                                                                            <fmt:formatNumber value="${item.price}"
-                                                                                type="currency" currencySymbol=""
-                                                                                minFractionDigits="0"
-                                                                                maxFractionDigits="0" /> VND
-                                                                        </p>
-                                                                    </c:if>
+                                                                    <p class="mb-0">
+                                                                        <fmt:formatNumber value="${item.price}"
+                                                                            type="currency" currencySymbol=""
+                                                                            minFractionDigits="0"
+                                                                            maxFractionDigits="0" /> VND
+                                                                    </p>
                                                                 </div>
                                                             </td>
                                                             <td class="mt-4">

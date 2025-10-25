@@ -17,11 +17,6 @@ public interface CartService {
 
     boolean handleCheckout(User user, String payment);
 
-    Cart handleApplyVoucher(String voucher, User user);
-
-    boolean handleRemoveVoucher(User user);
-
-    // New methods: apply/remove voucher on the pending Order (used during checkout)
     Order handleApplyVoucherToOrder(String voucherCode, User user);
 
     Order handleRemoveVoucherFromOrder(User user);

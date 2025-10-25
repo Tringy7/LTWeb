@@ -48,8 +48,5 @@ public class Voucher {
     private List<UserVoucher> userVouchers;
 
     @OneToMany(mappedBy = "voucher")
-    private List<CartDetail> cartDetails;
-
-    @OneToMany(mappedBy = "voucher")
     private List<Order> orders;
 }

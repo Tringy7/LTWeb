@@ -331,13 +331,19 @@
                                                 </div>
                                             </div>
 
-                                            <div class="d-flex justify-content-end">
-                                                <h5 class="mb-0 me-4">Total:</h5>
-                                                <p class="mb-0">
-                                                    <fmt:formatNumber value="${order.totalPrice}" type="currency"
-                                                        currencySymbol="" minFractionDigits="0" maxFractionDigits="0" />
-                                                    VND
-                                                </p>
+                                            <div class="d-flex justify-content-end align-items-center">
+                                                <div class="me-4 text-end">
+                                                    <h5 class="mb-0">Total:</h5>
+                                                </div>
+                                                <div
+                                                    class="px-3 py-2 bg-primary text-white rounded shadow d-flex align-items-center">
+                                                    <span class="h4 mb-0 fw-bold">
+                                                        <fmt:formatNumber value="${order.totalPrice}" type="currency"
+                                                            currencySymbol="" minFractionDigits="0"
+                                                            maxFractionDigits="0" />
+                                                        VND
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
                                                 data-wow-delay="0.1s">

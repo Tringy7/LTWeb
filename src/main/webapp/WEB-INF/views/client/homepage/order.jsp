@@ -206,14 +206,6 @@
                                                                 </a>
                                                             </c:if>
                                                             <c:if test="${order.status == 'PENDING'}">
-                                                                <form action="/order/cancel/${order.id}" method="post"
-                                                                    style="margin: 0;">
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-outline-danger w-100"
-                                                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
-                                                                        <i class="fas fa-times me-1"></i>Hủy đơn
-                                                                    </button>
-                                                                </form>
                                                             </c:if>
                                                         </div>
                                                     </td>
