@@ -12,29 +12,40 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shop.shop.config.VNPAYConfig;
+import com.shop.shop.domain.Order;
+import com.shop.shop.repository.OrderRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@RestController
+@Controller
 @RequestMapping("/payment")
 public class PaymentController {
 
     @Autowired
     private VNPAYConfig vnpConfig;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
     @GetMapping("/create-payment")
-    public String createPayment(@RequestParam("amount") long amount, HttpServletRequest request) throws Exception {
+    @ResponseBody
+    public String createPayment(
+            @RequestParam("amount") Long amount,
+            @RequestParam("orderId") Long orderId,
+            HttpServletRequest request) throws Exception {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        String vnp_OrderInfo = "Thanh toan don hang #" + System.currentTimeMillis();
+        String vnp_OrderInfo = "Thanh toan don hang #" + orderId;
         String orderType = "billpayment";
-        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
+        String vnp_TxnRef = String.valueOf(orderId); // Sử dụng orderId làm transaction reference
 
         String vnp_IpAddr = request.getRemoteAddr();
         String vnp_TmnCode = vnpConfig.getVnpTmnCode();
@@ -103,15 +114,21 @@ public class PaymentController {
     }
 
     @GetMapping("/vnpay-return")
-    public String vnpayReturn(@RequestParam Map<String, String> allParams) throws Exception {
+    public String vnpayReturn(@RequestParam Map<String, String> allParams, Model model) throws Exception {
         String vnp_SecureHash = allParams.remove("vnp_SecureHash");
+        allParams.remove("vnp_SecureHashType"); // 👈 thêm dòng này
+
         List<String> fieldNames = new ArrayList<>(allParams.keySet());
         Collections.sort(fieldNames);
         StringBuilder hashData = new StringBuilder();
+
         for (String fieldName : fieldNames) {
             String fieldValue = allParams.get(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
-                hashData.append(fieldName).append('=').append(fieldValue);
+                // 👇 encode giống khi tạo thanh toán
+                hashData.append(fieldName)
+                        .append('=')
+                        .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
                 if (!fieldName.equals(fieldNames.get(fieldNames.size() - 1))) {
                     hashData.append('&');
                 }
@@ -119,15 +136,43 @@ public class PaymentController {
         }
 
         String computedHash = hmacSHA512(vnpConfig.getVnpHashSecret(), hashData.toString());
+
+        String responseCode = allParams.get("vnp_ResponseCode");
+        String txnRef = allParams.get("vnp_TxnRef"); // Order ID
+        String message;
+        boolean success = false;
+
         if (computedHash.equals(vnp_SecureHash)) {
-            String responseCode = allParams.get("vnp_ResponseCode");
             if ("00".equals(responseCode)) {
-                return "Thanh toán thành công!";
+                // Thanh toán thành công - cập nhật order
+                try {
+                    Long orderId = Long.parseLong(txnRef);
+                    Order order = orderRepository.findById(orderId).orElse(null);
+                    if (order != null) {
+                        order.setPaymentStatus(true);
+                        order.setPaymentMethod("Direct Bank Transfer");
+                        // order.setStatus("PENDING"); // Chuyển sang trạng thái chờ xác nhận
+                        order.setTxnRef(txnRef);
+                        orderRepository.save(order);
+                        message = "Thanh toán thành công!";
+                        success = true;
+                    } else {
+                        message = "Không tìm thấy đơn hàng!";
+                    }
+                } catch (Exception e) {
+                    message = "Lỗi khi cập nhật đơn hàng: " + e.getMessage();
+                }
             } else {
-                return "Thanh toán thất bại! Mã lỗi: " + responseCode;
+                message = "Thanh toán thất bại! Mã lỗi: " + responseCode;
             }
         } else {
-            return "Chữ ký không hợp lệ!";
+            message = "Chữ ký không hợp lệ!";
         }
+
+        model.addAttribute("message", message);
+        model.addAttribute("success", success);
+        model.addAttribute("orderId", txnRef);
+
+        return "client/payment/result";
     }
 }

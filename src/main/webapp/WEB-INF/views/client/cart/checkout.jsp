@@ -262,61 +262,84 @@
                                             <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-2"
                                                 data-wow-delay="0.1s">
                                                 <div class="col-12">
-                                                    <div class="form-check text-start my-2">
-                                                        <input type="radio" class="form-check-input bg-primary border-0"
-                                                            checked id="Delivery-1" name="paymentMethod"
-                                                            value="Cash On Delivery">
-                                                        <label class="form-check-label" for="Delivery-1">Thanh toán khi
-                                                            nhận hàng</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
-                                                <div class="col-12">
-                                                    <div class="form-check text-start my-2">
-                                                        <input type="radio" class="form-check-input bg-primary border-0"
-                                                            id="Transfer-1" name="paymentMethod"
-                                                            value="Direct Bank Transfer">
-                                                        <label class="form-check-label" for="Transfer-1">Thanh toán trực
-                                                            tuyến</label>
-                                                    </div>
-
-                                                    <!-- Payment options container - hidden by default -->
-                                                    <div id="onlinePaymentOptions" class="mt-3" style="display: none;">
-                                                        <p class="text-start mb-2">Chọn phương thức thanh toán:</p>
-
-                                                        <!-- VNPAY Option -->
-                                                        <div
-                                                            class="d-flex justify-content-between align-items-center my-2 ps-4">
-                                                            <div class="form-check">
-                                                                <input type="radio" class="form-check-input"
-                                                                    id="vnpay-option" name="onlinePaymentType"
-                                                                    value="VNPAY">
-                                                                <label
-                                                                    class="form-check-label d-flex align-items-center"
-                                                                    for="vnpay-option">
-                                                                    <span class="me-2">VNPAY</span>
-                                                                    <small class="text-muted">(Ví điện tử, thẻ ATM, thẻ
-                                                                        tín
-                                                                        dụng)</small>
-                                                                </label>
+                                                    <c:choose>
+                                                        <c:when test="${isPaid}">
+                                                            <!-- Hiển thị thông báo đã thanh toán -->
+                                                            <div class="alert alert-success d-flex align-items-center"
+                                                                role="alert">
+                                                                <i class="fas fa-check-circle me-2"></i>
+                                                                <div>
+                                                                    <input type="hidden" name="paymentMethod"
+                                                                        value="Direct Bank Transfer">
+                                                                    <strong>Đơn hàng này đã được thanh toán!</strong>
+                                                                    <br>
+                                                                    <small>Phương thức: Thanh toán trực tuyến
+                                                                        (VNPAY)</small>
+                                                                </div>
                                                             </div>
-                                                            <form action="/payment/create-payment?amount=100000">
-                                                                <button type="submit"
-                                                                    class="btn btn-sm btn-outline-primary">Thanh
-                                                                    toán</button>
-                                                            </form>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <!-- Hiển thị các phương thức thanh toán -->
+                                                            <div class="form-check text-start my-2">
+                                                                <input type="radio"
+                                                                    class="form-check-input bg-primary border-0" checked
+                                                                    id="Delivery-1" name="paymentMethod"
+                                                                    value="Cash On Delivery">
+                                                                <label class="form-check-label" for="Delivery-1">Thanh
+                                                                    toán khi
+                                                                    nhận hàng</label>
+                                                            </div>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </div>
+                                            <c:if test="${!isPaid}">
+                                                <div
+                                                    class="row g-0 text-center align-items-center justify-content-center border-bottom py-2">
+                                                    <div class="col-12">
+                                                        <div class="form-check text-start my-2">
+                                                            <input type="radio"
+                                                                class="form-check-input bg-primary border-0"
+                                                                id="Transfer-1" name="paymentMethod"
+                                                                value="Direct Bank Transfer">
+                                                            <label class="form-check-label" for="Transfer-1">Thanh toán
+                                                                trực
+                                                                tuyến</label>
                                                         </div>
 
-                                                        <!-- QR Code Container -->
-                                                        <div id="qrCodeContainer" class="text-center mt-3"
+                                                        <!-- Payment options container - hidden by default -->
+                                                        <div id="onlinePaymentOptions" class="mt-3"
                                                             style="display: none;">
-                                                            <!-- QR code will be displayed here -->
+                                                            <p class="text-start mb-2">Chọn phương thức thanh toán:</p>
+
+                                                            <!-- VNPAY Option -->
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center my-2 ps-4">
+                                                                <div class="form-check">
+                                                                    <input type="radio" class="form-check-input"
+                                                                        id="vnpay-option" name="onlinePaymentType"
+                                                                        value="VNPAY" checked>
+                                                                    <label
+                                                                        class="form-check-label d-flex align-items-center"
+                                                                        for="vnpay-option">
+                                                                        <span class="me-2">VNPAY</span>
+                                                                        <small class="text-muted">(Ví điện tử, thẻ ATM,
+                                                                            thẻ
+                                                                            tín dụng)</small>
+                                                                    </label>
+                                                                </div>
+                                                                <button type="button" id="vnpayButton"
+                                                                    class="btn btn-sm btn-primary"
+                                                                    data-order-id="${order.id}"
+                                                                    data-total-price="${order.totalPrice}">
+                                                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
+                                                                    VNPAY
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </c:if>
                                             <div
                                                 class="row g-4 text-center align-items-center justify-content-center pt-4">
                                                 <button type="submit"
@@ -344,6 +367,7 @@
 
                             <!-- Template Javascript -->
                             <script src="/client/js/main.js"></script>
+                            <script src="/client/js/vnpay-payment.js"></script>
                             <script>
                                 document.addEventListener('DOMContentLoaded', function () {
                                     const form = document.querySelector('form');

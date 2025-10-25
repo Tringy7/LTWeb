@@ -131,6 +131,12 @@ public class CartController {
 
         model.addAttribute("order", order);
         model.addAttribute("user", user);
+
+        // Kiểm tra xem đơn hàng đã thanh toán chưa
+        if (order.getPaymentStatus()) {
+            model.addAttribute("isPaid", true);
+        }
+
         return "client/cart/checkout";
     }
 

@@ -163,6 +163,14 @@
                                                                     <span class="text-success fw-bold">Đã giao
                                                                         hàng</span>
                                                                 </c:when>
+                                                                <c:when test="${order.status == 'RETURN_REQUESTED'}">
+                                                                    <span class="text-warning fw-bold">Yêu cầu trả
+                                                                        hàng</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'RETURNED'}">
+                                                                    <span class="text-secondary fw-bold">Đã trả
+                                                                        hàng</span>
+                                                                </c:when>
                                                                 <c:otherwise>${order.status}</c:otherwise>
                                                             </c:choose>
                                                         </p>
@@ -184,7 +192,7 @@
                                                                 </form>
                                                             </c:if>
                                                             <c:if test="${order.status == 'DELIVERED'}">
-                                                                <a href="/review/create?orderId=${order.id}&productId=${detail.product.id}"
+                                                                <a href="/shop/product/${detail.product.id}"
                                                                     class="btn btn-sm btn-outline-primary">
                                                                     <i class="fas fa-comment me-1"></i>Đánh giá
                                                                 </a>
