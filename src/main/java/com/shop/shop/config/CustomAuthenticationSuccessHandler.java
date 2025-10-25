@@ -53,6 +53,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_VENDOR"))) {
             return "/vendor";
         }
+        else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_SHIPPER"))) {
+            return "/shipper";
+        }
         return "/";
     }
 

@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/vendor/**").hasAuthority("ROLE_VENDOR")
+                .requestMatchers("/shipper/**").hasAuthority("ROLE_SHIPPER")
                 .anyRequest().authenticated())
                 .formLogin(form -> form
                 .loginPage("/login")
