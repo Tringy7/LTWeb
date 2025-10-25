@@ -200,10 +200,15 @@
                                                                     class="btn btn-sm btn-outline-primary">
                                                                     <i class="fas fa-comment me-1"></i>Đánh giá
                                                                 </a>
-                                                                <a href="/return/request?orderId=${order.id}&productId=${detail.product.id}"
-                                                                    class="btn btn-sm btn-outline-warning">
-                                                                    <i class="fas fa-undo me-1"></i>Trả hàng
-                                                                </a>
+                                                                <form action="/order/request" method="post"
+                                                                    style="margin: 0;">
+                                                                    <input type="hidden" name="orderId"
+                                                                        value="${order.id}" />
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-outline-warning w-100">
+                                                                        <i class="fas fa-undo me-1"></i>Trả hàng
+                                                                    </button>
+                                                                </form>
                                                             </c:if>
                                                             <c:if test="${order.status == 'PENDING'}">
                                                             </c:if>

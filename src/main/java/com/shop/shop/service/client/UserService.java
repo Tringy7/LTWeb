@@ -29,4 +29,6 @@ public interface UserService {
     boolean handleDeleteOrder(Long orderId);
 
     Order getOrderById(Long orderId);
+
+    void requestOrder(Long orderId);
 }

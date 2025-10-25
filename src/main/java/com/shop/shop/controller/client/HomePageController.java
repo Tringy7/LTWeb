@@ -149,4 +149,11 @@ public class HomePageController {
             return "client/homepage/registraionSale";
         }
     }
+
+    @PostMapping("/order/request")
+    public String requestReturnOrder(@RequestParam("orderId") Long orderId) {
+        userService.requestOrder(orderId);
+        return "redirect:/order";
+    }
+
 }

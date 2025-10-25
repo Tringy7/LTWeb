@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -255,5 +256,15 @@ public class UserServiceImpl implements UserService {
             order.getOrderDetails().size();
         }
         return order;
+    }
+
+    @Override
+    public void requestOrder(Long orderId) {
+        Optional<Order> check = orderRepository.findById(orderId);
+        if (check.isPresent()) {
+            Order order = check.get();
+            order.setStatus("RETURN_REQUESTED");
+            orderRepository.save(order);
+        }
     }
 }
