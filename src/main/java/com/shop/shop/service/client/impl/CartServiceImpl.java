@@ -20,7 +20,6 @@ import com.shop.shop.dto.ProductDTO;
 import com.shop.shop.repository.CartDetailRepository;
 import com.shop.shop.repository.CartRepository;
 import com.shop.shop.repository.OrderRepository;
-import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductDetailService;
@@ -48,9 +47,6 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private VoucherRepository voucherRepository;
-
-    @Autowired
-    private UserVoucherRepository userVoucherRepository;
 
     @Override
     @Transactional
@@ -125,37 +121,21 @@ public class CartServiceImpl implements CartService {
                     // Cập nhật số lượng (quantity)
                     cartDetailInDB.setQuantity(detailFromForm.getQuantity());
 
-                    // Tính toán lại giá cho CartDetail này
+                    // Tính toán lại giá cho CartDetail này (KHÔNG áp dụng voucher ở đây)
                     double newPrice = cartDetailInDB.getProduct().getPrice() * detailFromForm.getQuantity();
                     cartDetailInDB.setPrice(newPrice);
 
-                    double finalPrice = newPrice;
-                    if (cartDetailInDB.getVoucher() != null && cartDetailInDB.getVoucher().getDiscountPercent() != null) {
-                        finalPrice = newPrice * (1 - cartDetailInDB.getVoucher().getDiscountPercent() / 100);
-                    }
+                    // Chỉ cộng giá gốc (no voucher)
+                    newTotalCartPrice += newPrice;
 
-                    newTotalCartPrice += finalPrice;
-
-                    // Create OrderDetail
+                    // Create OrderDetail (without voucher)
                     OrderDetail orderDetail = new OrderDetail();
                     orderDetail.setOrder(order);
                     orderDetail.setProduct(cartDetailInDB.getProduct());
-                    orderDetail.setPrice(cartDetailInDB.getPrice());
+                    orderDetail.setPrice(newPrice);
                     orderDetail.setQuantity(cartDetailInDB.getQuantity());
                     orderDetail.setShop(cartDetailInDB.getProduct().getShop());
                     orderDetail.setSize(cartDetailInDB.getSize());
-
-                    // Lưu thông tin voucher nếu có
-                    if (cartDetailInDB.getVoucher() != null) {
-                        orderDetail.setVoucher(cartDetailInDB.getVoucher());
-
-                        // Cập nhật status của UserVoucher thành false
-                        userVoucherRepository.findByUserAndVoucher(cartInDB.getUser(), cartDetailInDB.getVoucher())
-                                .ifPresent(userVoucher -> {
-                                    userVoucher.setStatus(false);
-                                    userVoucherRepository.save(userVoucher);
-                                });
-                    }
 
                     orderDetails.add(orderDetail);
                 }
@@ -181,10 +161,6 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public boolean handleCheckout(User user, String payment) {
         Cart cart = cartRepository.findByUser(user);
-        // if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
-        //     return false;
-        // }
-
         try {
             // Find the most recent order with PENDING_PAYMENT status for this user
             Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
@@ -291,6 +267,74 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
+    public Order handleApplyVoucherToOrder(String code, User user) {
+        // Find the voucher
+        Voucher voucher = voucherRepository.findByCode(code);
+        if (voucher == null) {
+            return null;
+        }
+        // Validate thời gian hiệu lực và trạng thái
+        LocalDateTime now = LocalDateTime.now();
+        if (Boolean.FALSE.equals(voucher.getStatus())) {
+            return null;
+        }
+        if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(now)) {
+            return null;
+        }
+        if (voucher.getEndDate() != null && voucher.getEndDate().isBefore(now)) {
+            return null;
+        }
+
+        // Find the most recent pending order for this user
+        Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
+        if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
+            return null;
+        }
+
+        boolean applied = false;
+
+        // Store the voucher on the order itself
+        order.setVoucher(voucher);
+        order.setVoucherCode(voucher.getCode());
+
+        // Calculate total for the order applying voucher only at order-level.
+        double total = 0.0;
+        for (OrderDetail od : order.getOrderDetails()) {
+            double basePrice = od.getProduct().getPrice() * od.getQuantity();
+            if (od.getProduct() != null && od.getProduct().getShop() != null
+                    && voucher.getShop() != null
+                    && Objects.equals(od.getProduct().getShop().getId(), voucher.getShop().getId())) {
+                Double discountPercent = voucher.getDiscountPercent();
+                if (discountPercent != null) {
+                    total += basePrice * (1 - discountPercent / 100);
+                } else {
+                    total += basePrice;
+                }
+                applied = true;
+            } else {
+                // Non-eligible items keep their base price (OrderDetail.price remains unchanged)
+                total += basePrice;
+            }
+        }
+
+        // Set the order totalPrice to the computed (possibly discounted) total.
+        order.setTotalPrice(total);
+
+        if (applied) {
+            // Save order with voucher and updated totals
+            orderRepository.save(order);
+            return order;
+        }
+
+        // If voucher didn't apply to any items, clear voucher fields and save order (total is base sum)
+        order.setVoucher(null);
+        order.setVoucherCode(null);
+        orderRepository.save(order);
+        return null;
+    }
+
+    @Override
+    @Transactional
     public boolean handleRemoveVoucher(User user) {
         Cart cart = cartRepository.findByUser(user);
         if (cart == null || cart.getCartDetails() == null || cart.getCartDetails().isEmpty()) {
@@ -327,5 +371,31 @@ public class CartServiceImpl implements CartService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    @Transactional
+    public Order handleRemoveVoucherFromOrder(User user) {
+        // Find the most recent pending order for this user
+        Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
+        if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
+            return null;
+        }
+        // Remove voucher from the order and reset all orderDetail prices to base prices
+        order.setVoucher(null);
+        order.setVoucherCode(null);
+
+        for (OrderDetail od : order.getOrderDetails()) {
+            double basePrice = od.getProduct().getPrice() * od.getQuantity();
+            od.setPrice(basePrice);
+        }
+
+        double total = 0.0;
+        for (OrderDetail od : order.getOrderDetails()) {
+            total += od.getPrice();
+        }
+        order.setTotalPrice(total);
+        orderRepository.save(order);
+        return order;
     }
 }

@@ -1,7 +1,6 @@
 package com.shop.shop.controller.client;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,12 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.shop.domain.Cart;
-import com.shop.shop.domain.CartDetail;
 import com.shop.shop.domain.Order;
 import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
@@ -39,28 +36,11 @@ public class CartController {
     public String showCart(Model model) {
         User user = userAfterLogin.getUser();
         Cart cart = cartService.getCart(user);
-        List<CartDetail> cardDetails = new ArrayList<>();
-        if (cart.getCartDetails() != null) {
-            cardDetails = cart.getCartDetails();
-        } else {
-            cart.setCartDetails(cardDetails);
-        }
-
-        // Tìm mã voucher đang được áp dụng (nếu có)
-        String appliedVoucherCode = null;
-        if (cart.getCartDetails() != null) {
-            for (CartDetail cd : cart.getCartDetails()) {
-                if (cd.getVoucher() != null) {
-                    appliedVoucherCode = cd.getVoucher().getCode();
-                    break;
-                }
-            }
+        if (cart.getCartDetails() == null) {
+            cart.setCartDetails(new ArrayList<>());
         }
 
         model.addAttribute("cart", cart);
-        if (appliedVoucherCode != null) {
-            model.addAttribute("appliedVoucherCode", appliedVoucherCode);
-        }
         return "client/cart/show";
     }
 
@@ -76,22 +56,20 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @PostMapping("/cart/apply-voucher")
+    @PostMapping("/checkout/apply-voucher")
     public String handleVoucher(@RequestParam("voucherCode") String voucherCode, RedirectAttributes redirectAttributes) {
         User user = userAfterLogin.getUser();
-        Cart cart = cartService.handleApplyVoucher(voucherCode, user);
-        if (cart == null) {
-            // Mã voucher không hợp lệ - hủy voucher hiện tại và đưa về trạng thái ban đầu
-            cartService.handleRemoveVoucher(user);
+        Order order = cartService.handleApplyVoucherToOrder(voucherCode, user);
+        if (order == null) {
+            // Mã voucher không hợp lệ hoặc không có order - hủy voucher trên order (best-effort)
+            cartService.handleRemoveVoucherFromOrder(user);
             redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
+            return "redirect:/cart";
         } else {
-            // Tìm discount percent từ cart details có voucher vừa được áp dụng
+            // Voucher is stored on the Order; read discountPercent from order.voucher
             Double discountPercent = null;
-            for (var cartDetail : cart.getCartDetails()) {
-                if (cartDetail.getVoucher() != null && cartDetail.getVoucher().getCode().equals(voucherCode)) {
-                    discountPercent = cartDetail.getVoucher().getDiscountPercent();
-                    break;
-                }
+            if (order.getVoucher() != null && voucherCode.equals(order.getVoucher().getCode())) {
+                discountPercent = order.getVoucher().getDiscountPercent();
             }
 
             redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
@@ -99,20 +77,21 @@ public class CartController {
             if (discountPercent != null) {
                 redirectAttributes.addFlashAttribute("discountPercent", discountPercent);
             }
+            return "redirect:/checkout?orderId=" + order.getId();
         }
-        return "redirect:/cart";
     }
 
-    @PostMapping("/cart/remove-voucher")
+    @PostMapping("/checkout/remove-voucher")
     public String handleRemoveVoucher(RedirectAttributes redirectAttributes) {
         User user = userAfterLogin.getUser();
-        boolean isSuccess = cartService.handleRemoveVoucher(user);
-        if (isSuccess) {
+        Order order = cartService.handleRemoveVoucherFromOrder(user);
+        if (order != null) {
             redirectAttributes.addFlashAttribute("success", "Đã hủy mã giảm giá thành công!");
+            return "redirect:/checkout?orderId=" + order.getId();
         } else {
             redirectAttributes.addFlashAttribute("error", "Không thể hủy mã giảm giá!");
+            return "redirect:/cart";
         }
-        return "redirect:/cart";
     }
 
     @GetMapping("/checkout")

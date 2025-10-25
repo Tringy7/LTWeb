@@ -87,11 +87,12 @@
                                             </td>
                                             <td>
                                                 <div class="mb-0 mt-4">
-                                                    <c:if test="${not empty detail.voucher}">
+                                                    <c:if
+                                                        test="${not empty order.voucher and not empty order.voucher.shop and not empty detail.shop and detail.shop.id eq order.voucher.shop.id}">
                                                         <c:set var="originalUnitPrice"
                                                             value="${detail.price / detail.quantity}" />
                                                         <c:set var="discountedUnitPrice"
-                                                            value="${originalUnitPrice * (1 - detail.voucher.discountPercent / 100)}" />
+                                                            value="${originalUnitPrice * (1 - order.voucher.discountPercent / 100)}" />
                                                         <del>
                                                             <fmt:formatNumber value="${originalUnitPrice}"
                                                                 type="currency" currencySymbol="" minFractionDigits="0"
@@ -103,7 +104,8 @@
                                                                 maxFractionDigits="0" /> VND
                                                         </p>
                                                     </c:if>
-                                                    <c:if test="${empty detail.voucher}">
+                                                    <c:if
+                                                        test="${empty order.voucher or empty order.voucher.shop or empty detail.shop or detail.shop.id ne order.voucher.shop.id}">
                                                         <p class="mb-0">
                                                             <fmt:formatNumber value="${detail.price / detail.quantity}"
                                                                 type="currency" currencySymbol="" minFractionDigits="0"
@@ -117,9 +119,10 @@
                                             </td>
                                             <td>
                                                 <div class="mb-0 mt-4">
-                                                    <c:if test="${not empty detail.voucher}">
+                                                    <c:if
+                                                        test="${not empty order.voucher and not empty order.voucher.shop and not empty detail.shop and detail.shop.id eq order.voucher.shop.id}">
                                                         <c:set var="discountedTotalPrice"
-                                                            value="${detail.price * (1 - detail.voucher.discountPercent / 100)}" />
+                                                            value="${detail.price * (1 - order.voucher.discountPercent / 100)}" />
                                                         <del>
                                                             <fmt:formatNumber value="${detail.price}" type="currency"
                                                                 currencySymbol="" minFractionDigits="0"
@@ -131,7 +134,8 @@
                                                                 maxFractionDigits="0" /> VND
                                                         </p>
                                                     </c:if>
-                                                    <c:if test="${empty detail.voucher}">
+                                                    <c:if
+                                                        test="${empty order.voucher or empty order.voucher.shop or empty detail.shop or detail.shop.id ne order.voucher.shop.id}">
                                                         <p class="mb-0">
                                                             <fmt:formatNumber value="${detail.price}" type="currency"
                                                                 currencySymbol="" minFractionDigits="0"
@@ -217,16 +221,11 @@
                                         </tr>
                                     </c:forEach>
                                     <!-- Voucher Info Row -->
-                                    <c:set var="hasVoucher" value="false" />
-                                    <c:set var="voucherCode" value="" />
-                                    <c:set var="voucherDiscount" value="0" />
-                                    <c:forEach var="detail" items="${order.orderDetails}">
-                                        <c:if test="${not empty detail.voucher and not hasVoucher}">
-                                            <c:set var="hasVoucher" value="true" />
-                                            <c:set var="voucherCode" value="${detail.voucher.code}" />
-                                            <c:set var="voucherDiscount" value="${detail.voucher.discountPercent}" />
-                                        </c:if>
-                                    </c:forEach>
+                                    <c:set var="hasVoucher" value="${not empty order.voucher}" />
+                                    <c:set var="voucherCode"
+                                        value="${not empty order.voucher ? order.voucher.code : ''}" />
+                                    <c:set var="voucherDiscount"
+                                        value="${not empty order.voucher ? order.voucher.discountPercent : 0}" />
                                     <tr class="table-light">
                                         <td colspan="5" class="text-end">
                                             <c:if test="${hasVoucher}">

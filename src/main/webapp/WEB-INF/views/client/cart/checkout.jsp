@@ -176,9 +176,10 @@
                                                                             <div class="col-2 py-5">
                                                                                 ${item.shop.shopName}</div>
                                                                             <div class="col-2 py-5">
-                                                                                <c:if test="${not empty item.voucher}">
+                                                                                <c:if
+                                                                                    test="${not empty order.voucher and not empty order.voucher.shop and not empty item.shop and item.shop.id eq order.voucher.shop.id}">
                                                                                     <c:set var="discountedUnitPrice"
-                                                                                        value="${item.product.price * (1 - item.voucher.discountPercent / 100)}" />
+                                                                                        value="${item.product.price * (1 - order.voucher.discountPercent / 100)}" />
                                                                                     <del>
                                                                                         <fmt:formatNumber
                                                                                             value="${item.product.price}"
@@ -198,7 +199,8 @@
                                                                                         VND
                                                                                     </div>
                                                                                 </c:if>
-                                                                                <c:if test="${empty item.voucher}">
+                                                                                <c:if
+                                                                                    test="${empty order.voucher or empty order.voucher.shop or empty item.shop or item.shop.id ne order.voucher.shop.id}">
                                                                                     <fmt:formatNumber
                                                                                         value="${item.product.price}"
                                                                                         type="currency"
@@ -211,9 +213,10 @@
                                                                             <div class="col-1 py-5">${item.quantity}
                                                                             </div>
                                                                             <div class="col-2 py-5">
-                                                                                <c:if test="${not empty item.voucher}">
+                                                                                <c:if
+                                                                                    test="${not empty order.voucher and not empty order.voucher.shop and not empty item.shop and item.shop.id eq order.voucher.shop.id}">
                                                                                     <c:set var="discountedTotalPrice"
-                                                                                        value="${item.price * (1 - item.voucher.discountPercent / 100)}" />
+                                                                                        value="${item.price * (1 - order.voucher.discountPercent / 100)}" />
                                                                                     <del>
                                                                                         <fmt:formatNumber
                                                                                             value="${item.price}"
@@ -233,7 +236,8 @@
                                                                                         VND
                                                                                     </div>
                                                                                 </c:if>
-                                                                                <c:if test="${empty item.voucher}">
+                                                                                <c:if
+                                                                                    test="${empty order.voucher or empty order.voucher.shop or empty item.shop or item.shop.id ne order.voucher.shop.id}">
                                                                                     <fmt:formatNumber
                                                                                         value="${item.price}"
                                                                                         type="currency"
@@ -251,6 +255,82 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <!-- Voucher area (moved from cart) + messages -->
+                                            <div class="mb-3">
+                                                <c:if test="${not empty success}">
+                                                    <div class="alert alert-success d-flex align-items-center"
+                                                        role="alert">
+                                                        <i class="fa fa-check-circle me-2"></i>
+                                                        <div>
+                                                            ${success}
+                                                            <c:if test="${not empty voucherCodeApplied}">
+                                                                <strong> Mã: ${voucherCodeApplied}</strong>
+                                                            </c:if>
+                                                            <c:if test="${not empty discountPercent}">
+                                                                <span> - Giảm
+                                                                    <strong>${discountPercent}%</strong></span>
+                                                            </c:if>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <c:if test="${not empty error}">
+                                                    <div class="alert alert-danger alert-dismissible fade show"
+                                                        role="alert">
+                                                        <i class="fa fa-exclamation-circle me-2"></i>${error}
+                                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                </c:if>
+
+                                                <div
+                                                    class="voucher-card bg-white p-3 rounded shadow-sm d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center" style="gap:12px;">
+                                                        <div class="input-group" style="max-width:420px;">
+                                                            <input type="text" name="voucherCode" class="form-control"
+                                                                placeholder="Nhập mã giảm giá" aria-label="Voucher code"
+                                                                value="${not empty appliedVoucherCode ? appliedVoucherCode : ''}">
+                                                            <button class="btn btn-outline-primary" type="submit"
+                                                                formaction="/checkout/apply-voucher" formmethod="post">
+                                                                <i class="fa fa-check me-1"></i>Áp dụng
+                                                            </button>
+                                                        </div>
+                                                        <div class="d-none d-md-block text-muted small">Nhập mã và nhấn
+                                                            Áp dụng để kiểm tra ưu đãi.</div>
+                                                    </div>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-outline-danger" type="submit"
+                                                            formaction="/checkout/remove-voucher" formmethod="post">
+                                                            <i class="fa fa-times me-1"></i>Hủy
+                                                        </button>
+                                                        <a href="/voucher" class="btn btn-outline-secondary">
+                                                            <i class="fa fa-ticket me-1"></i>Xem Voucher
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!-- Voucher Information Note (clean card, moved out of voucher-card) -->
+                                                <div class="w-100 mt-3">
+                                                    <div class="card border-0 shadow-sm p-3 bg-white">
+                                                        <div class="d-flex align-items-start">
+                                                            <div class="me-3">
+                                                                <i class="fa fa-info-circle fa-2x text-primary"
+                                                                    aria-hidden="true"></i>
+                                                            </div>
+                                                            <div>
+                                                                <h6 class="mb-2">Lưu ý khi sử dụng mã giảm giá</h6>
+                                                                <ul class="mb-0 ps-3 small text-muted">
+                                                                    <li>Mã voucher chỉ áp dụng cho sản phẩm do cùng shop
+                                                                        phát hành.</li>
+                                                                    <li>Mã chỉ áp dụng cho sản phẩm hiện có trong đơn
+                                                                        hàng của bạn.</li>
+                                                                    <li>Khi áp dụng mã mới cho cùng shop, mã cũ sẽ tự
+                                                                        động bị thay thế.</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="d-flex justify-content-end">
                                                 <h5 class="mb-0 me-4">Total:</h5>
                                                 <p class="mb-0">

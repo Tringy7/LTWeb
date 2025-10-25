@@ -32,28 +32,7 @@
                         <form action="/cart" method="post">
                             <input type="hidden" name="id" value="${cart.id}" />
                             <div class="container py-5">
-                                <!-- Success/Error Messages -->
-                                <c:if test="${not empty success}">
-                                    <div class="alert alert-success d-flex align-items-center" role="alert">
-                                        <i class="fa fa-check-circle me-2"></i>
-                                        <div>
-                                            ${success}
-                                            <c:if test="${not empty voucherCodeApplied}">
-                                                <strong> Mã: ${voucherCodeApplied}</strong>
-                                            </c:if>
-                                            <c:if test="${not empty discountPercent}">
-                                                <span> - Giảm <strong>${discountPercent}%</strong></span>
-                                            </c:if>
-                                        </div>
-                                    </div>
-                                </c:if>
-                                <c:if test="${not empty error}">
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <i class="fa fa-exclamation-circle me-2"></i>${error}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                </c:if>
+                                <!-- Success/Error Messages moved to checkout page -->
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
@@ -211,43 +190,9 @@
                                         </c:choose>
                                     </table>
                                 </div>
-                                <div class="mt-5 d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <input type="text" class="border-0 border-bottom rounded me-3 py-3 mb-4"
-                                            name="voucherCode" placeholder="Mã giảm giá" style="margin-top: 22px"
-                                            value="${not empty appliedVoucherCode ? appliedVoucherCode : ''}">
-                                        <button class=" btn btn-primary rounded-pill px-4 py-3 me-2"
-                                            formaction="/cart/apply-voucher" formmethod="post" type="submit">
-                                            <i class="fa fa-check me-2"></i>Áp dụng Voucher
-                                        </button>
-                                        <button class="btn btn-danger rounded-pill px-4 py-3 me-2"
-                                            formaction="/cart/remove-voucher" formmethod="post" type="submit">
-                                            <i class="fa fa-times me-2"></i>Hủy Voucher
-                                        </button>
-                                        <a href="/voucher" class="btn btn-primary rounded-pill px-4 py-3 me-2">
-                                            <i class="fa fa-ticket me-2"></i>Xem Voucher
-                                        </a>
-                                    </div>
-                                </div>
+                                <!-- Voucher UI moved to checkout page -->
                                 <div class="row g-4 justify-content-end">
                                     <div class="col-8">
-                                        <!-- Voucher Information Notice -->
-                                        <div class="alert alert-info d-flex align-items-start mt-4" role="alert">
-                                            <i class="fa fa-info-circle me-3"
-                                                style="font-size: 24px; margin-top: 2px;"></i>
-                                            <div>
-                                                <strong>Lưu ý khi sử dụng mã giảm giá:</strong>
-                                                <ul class="mb-0 mt-2" style="padding-left: 20px;">
-                                                    <li>Mã voucher chỉ được áp dụng cho các sản phẩm của shop phát hành
-                                                        voucher
-                                                        đó</li>
-                                                    <li>Mã giảm giá chỉ áp dụng cho các sản phẩm đang có trong giỏ hàng
-                                                        hiện tại
-                                                    </li>
-                                                    <li>Nếu áp dụng mã mới, mã cũ của shop đó sẽ bị thay thế</li>
-                                                </ul>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
                                         <div class="bg-light rounded">

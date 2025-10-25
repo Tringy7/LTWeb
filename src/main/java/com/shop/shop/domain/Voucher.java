@@ -49,4 +49,7 @@ public class Voucher {
 
     @OneToMany(mappedBy = "voucher")
     private List<CartDetail> cartDetails;
+
+    @OneToMany(mappedBy = "voucher")
+    private List<Order> orders;
 }

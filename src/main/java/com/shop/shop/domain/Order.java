@@ -58,6 +58,10 @@ public class Order {
     private String voucherCode;
 
     @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
