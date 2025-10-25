@@ -158,7 +158,7 @@
                                                     <th>Cửa hàng</th>
                                                     <th>Số lượng</th>
                                                     <th>Giá (VND)</th>
-                                                    <th>Trạng thái</th>
+                                                    <!-- <th>Trạng thái</th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -175,11 +175,9 @@
                                                             <fmt:formatNumber value="${d.price}" type="number"
                                                                 groupingUsed="true" />
                                                         </td>
-                                                        <td>
+                                                        <!-- <td>
                                                             <c:set var="statusUpper"
                                                                 value="${d.status != null ? fn:toUpperCase(d.status) : ''}" />
-
-
                                                             <c:choose>
                                                                 <c:when test="${statusUpper == 'PENDING'}">
                                                                     <span class="badge badge-danger">Đơn hàng mới</span>
@@ -208,7 +206,7 @@
                                                                 title="Cập nhật trạng thái"></i>
 
 
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -230,7 +228,7 @@
                     </div>
 
                     <!-- Modal cập nhật trạng thái -->
-                    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusLabel"
+                    <!-- <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusLabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content shadow-lg border-0 rounded-4">
@@ -276,12 +274,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
-                    <script>
+                    <!-- <script>
                         $(document).ready(function () {
                             $(document).on("click", ".edit-status", function () {
                                 const detailId = $(this).data("detail-id");
@@ -319,7 +317,8 @@
                             });
                         });
 
-                    </script>
+                    </script> -->
+
                 </body>
 
 
