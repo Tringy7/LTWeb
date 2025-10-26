@@ -257,32 +257,39 @@ public class CartServiceImpl implements CartService {
             return null;
         }
 
-        boolean applied = false;
+        // If voucher is shop-specific, check for eligible products first.
+        if (voucher.getShop() != null) {
+            boolean anyEligible = order.getOrderDetails().stream()
+                    .anyMatch(od -> od.getProduct() != null && od.getProduct().getShop() != null
+                    && Objects.equals(od.getProduct().getShop().getId(), voucher.getShop().getId()));
 
-        // Store the voucher on the order itself
-        order.setVoucher(voucher);
-        order.setVoucherCode(voucher.getCode());
+            if (!anyEligible) {
+                return order;
+            }
+        }
 
-        // Calculate total for the order applying voucher only at order-level.
-        // Also store per-orderDetail finalPrice so the discounted values are persisted.
+        // --- Apply the voucher ---
         double total = 0.0;
         for (OrderDetail od : order.getOrderDetails()) {
             double basePrice = od.getProduct().getPrice() * od.getQuantity();
-            boolean eligible = od.getProduct() != null && od.getProduct().getShop() != null
-                    && voucher.getShop() != null
+
+            // Một sản phẩm được coi là hợp lệ nếu:
+            // 1. Voucher này là voucher toàn hệ thống (voucher.getShop() == null).
+            // 2. Hoặc, shop của sản phẩm khớp với shop của voucher.
+            boolean isGlobalVoucher = voucher.getShop() == null;
+            boolean isShopMatch = !isGlobalVoucher && od.getProduct() != null && od.getProduct().getShop() != null
                     && Objects.equals(od.getProduct().getShop().getId(), voucher.getShop().getId());
+            boolean eligible = isGlobalVoucher || isShopMatch;
 
             if (eligible) {
                 Double discountPercent = voucher.getDiscountPercent();
                 double discounted = basePrice;
                 if (discountPercent != null) {
-                    discounted = basePrice * (1 - discountPercent / 100);
+                    discounted = basePrice * (1 - (discountPercent / 100.0));
                 }
                 od.setFinalPrice(discounted);
-                // keep od.price as the original/base price for reference
                 od.setPrice(basePrice);
                 total += discounted;
-                applied = true;
             } else {
                 // Non-eligible items keep their base price
                 od.setFinalPrice(basePrice);
@@ -291,20 +298,14 @@ public class CartServiceImpl implements CartService {
             }
         }
 
+        order.setVoucher(voucher);
+        order.setVoucherCode(voucher.getCode());
+
         // Set the order totalPrice to the computed (possibly discounted) total.
         order.setTotalPrice(total);
 
-        if (applied) {
-            // Save order with voucher and updated totals
-            orderRepository.save(order);
-            return order;
-        }
-
-        // If voucher didn't apply to any items, clear voucher fields and save order (total is base sum)
-        order.setVoucher(null);
-        order.setVoucherCode(null);
         orderRepository.save(order);
-        return null;
+        return order;
     }
 
     @Override

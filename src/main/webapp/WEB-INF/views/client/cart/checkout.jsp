@@ -176,76 +176,83 @@
                                                                             <div class="col-2 py-5">
                                                                                 ${item.shop.shopName}</div>
                                                                             <div class="col-2 py-5">
-                                                                                <c:if
-                                                                                    test="${not empty order.voucher and not empty order.voucher.shop and not empty item.shop and item.shop.id eq order.voucher.shop.id}">
-                                                                                    <c:set var="discountedUnitPrice"
-                                                                                        value="${item.product.price * (1 - order.voucher.discountPercent / 100)}" />
-                                                                                    <del>
-                                                                                        <fmt:formatNumber
-                                                                                            value="${item.product.price}"
-                                                                                            type="currency"
-                                                                                            currencySymbol=""
-                                                                                            minFractionDigits="0"
-                                                                                            maxFractionDigits="0" />
-                                                                                        VND
-                                                                                    </del>
-                                                                                    <div style="color: red;">
-                                                                                        <fmt:formatNumber
-                                                                                            value="${discountedUnitPrice}"
-                                                                                            type="currency"
-                                                                                            currencySymbol=""
-                                                                                            minFractionDigits="0"
-                                                                                            maxFractionDigits="0" />
-                                                                                        VND
-                                                                                    </div>
-                                                                                </c:if>
-                                                                                <c:if
-                                                                                    test="${empty order.voucher or empty order.voucher.shop or empty item.shop or item.shop.id ne order.voucher.shop.id}">
-                                                                                    <fmt:formatNumber
-                                                                                        value="${item.product.price}"
-                                                                                        type="currency"
-                                                                                        currencySymbol=""
-                                                                                        minFractionDigits="0"
-                                                                                        maxFractionDigits="0" />
-                                                                                    VND
-                                                                                </c:if>
+                                                                                <%-- Logic to check if item is eligible
+                                                                                    for discount --%>
+                                                                                    <c:set var="isEligible"
+                                                                                        value="${not empty order.voucher and (empty order.voucher.shop or (not empty item.shop and item.shop.id eq order.voucher.shop.id))}" />
+                                                                                    <c:choose>
+                                                                                        <c:when test="${isEligible}">
+                                                                                            <c:set
+                                                                                                var="discountedUnitPrice"
+                                                                                                value="${item.product.price * (1 - order.voucher.discountPercent / 100)}" />
+                                                                                            <del>
+                                                                                                <fmt:formatNumber
+                                                                                                    value="${item.product.price}"
+                                                                                                    type="currency"
+                                                                                                    currencySymbol=""
+                                                                                                    minFractionDigits="0"
+                                                                                                    maxFractionDigits="0" />
+                                                                                                VND
+                                                                                            </del>
+                                                                                            <div style="color: red;">
+                                                                                                <fmt:formatNumber
+                                                                                                    value="${discountedUnitPrice}"
+                                                                                                    type="currency"
+                                                                                                    currencySymbol=""
+                                                                                                    minFractionDigits="0"
+                                                                                                    maxFractionDigits="0" />
+                                                                                                VND
+                                                                                            </div>
+                                                                                        </c:when>
+                                                                                        <c:otherwise>
+                                                                                            <fmt:formatNumber
+                                                                                                value="${item.product.price}"
+                                                                                                type="currency"
+                                                                                                currencySymbol=""
+                                                                                                minFractionDigits="0"
+                                                                                                maxFractionDigits="0" />
+                                                                                            VND
+                                                                                        </c:otherwise>
+                                                                                    </c:choose>
                                                                             </div>
                                                                             <div class="col-1 py-5">${item.quantity}
                                                                             </div>
                                                                             <div class="col-2 py-5">
-                                                                                <c:if
-                                                                                    test="${not empty order.voucher and not empty order.voucher.shop and not empty item.shop and item.shop.id eq order.voucher.shop.id}">
-                                                                                    <c:set var="discountedTotalPrice"
-                                                                                        value="${item.price * (1 - order.voucher.discountPercent / 100)}" />
-                                                                                    <del>
-                                                                                        <fmt:formatNumber
-                                                                                            value="${item.price}"
-                                                                                            type="currency"
-                                                                                            currencySymbol=""
-                                                                                            minFractionDigits="0"
-                                                                                            maxFractionDigits="0" />
-                                                                                        VND
-                                                                                    </del>
-                                                                                    <div style="color: red;">
-                                                                                        <fmt:formatNumber
-                                                                                            value="${discountedTotalPrice}"
-                                                                                            type="currency"
-                                                                                            currencySymbol=""
-                                                                                            minFractionDigits="0"
-                                                                                            maxFractionDigits="0" />
-                                                                                        VND
-                                                                                    </div>
-                                                                                </c:if>
-                                                                                <c:if
-                                                                                    test="${empty order.voucher or empty order.voucher.shop or empty item.shop or item.shop.id ne order.voucher.shop.id}">
-                                                                                    <fmt:formatNumber
-                                                                                        value="${item.price}"
-                                                                                        type="currency"
-                                                                                        currencySymbol=""
-                                                                                        minFractionDigits="0"
-                                                                                        maxFractionDigits="0" />
-                                                                                    VND
-                                                                                </c:if>
+                                                                                <%-- Re-use the isEligible variable --%>
+                                                                                    <c:choose>
+                                                                                        <c:when test="${isEligible}">
+                                                                                            <c:set
+                                                                                                var="discountedTotalPrice"
+                                                                                                value="${item.price * (1 - order.voucher.discountPercent / 100)}" />
+                                                                                            <del>
+                                                                                                <fmt:formatNumber
+                                                                                                    value="${item.price}"
+                                                                                                    type="currency"
+                                                                                                    currencySymbol=""
+                                                                                                    minFractionDigits="0"
+                                                                                                    maxFractionDigits="0" />
+                                                                                                VND
+                                                                                            </del>
+                                                                                            <div style="color: red;">
+                                                                                                <fmt:formatNumber
+                                                                                                    value="${discountedTotalPrice}"
+                                                                                                    type="currency"
+                                                                                                    currencySymbol=""
+                                                                                                    minFractionDigits="0"
+                                                                                                    maxFractionDigits="0" />
+                                                                                                VND
+                                                                                            </div>
+                                                                                        </c:when>
+                                                                                        <c:otherwise>
+                                                                                            <fmt:formatNumber
+                                                                                                value="${item.price}"
+                                                                                                type="currency"
+                                                                                                currencySymbol=""
+                                                                                                minFractionDigits="0"
+                                                                                                maxFractionDigits="0" />
+                                                                                            VND
+                                                                                        </c:otherwise>
+                                                                                    </c:choose>
                                                                             </div>
                                                                         </div>
                                                                     </c:forEach>

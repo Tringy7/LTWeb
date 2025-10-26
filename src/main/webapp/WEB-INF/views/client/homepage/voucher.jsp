@@ -99,9 +99,14 @@
                                             <c:forEach var="voucher" items="${vouchers}">
                                                 <div class="col-md-6">
                                                     <div class="voucher-card h-100">
-                                                        <div class="voucher-brand">
-                                                            <span>${voucher.shop.shopName}</span>
-                                                        </div>
+                                                        <div class="voucher-brand"><span>
+                                                                <c:choose>
+                                                                    <c:when test="${not empty voucher.shop.shopName}">
+                                                                        ${voucher.shop.shopName}
+                                                                    </c:when>
+                                                                    <c:otherwise>Shop</c:otherwise>
+                                                                </c:choose>
+                                                            </span></div>
                                                         <div class="voucher-details">
                                                             <h5 class="voucher-title">Giảm ${voucher.discountPercent}%
                                                                 cho sản phẩm</h5>

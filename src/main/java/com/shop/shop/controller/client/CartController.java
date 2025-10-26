@@ -60,25 +60,32 @@ public class CartController {
     public String handleVoucher(@RequestParam("voucherCode") String voucherCode, RedirectAttributes redirectAttributes) {
         User user = userAfterLogin.getUser();
         Order order = cartService.handleApplyVoucherToOrder(voucherCode, user);
-        if (order == null) {
-            // Mã voucher không hợp lệ hoặc không có order - hủy voucher trên order (best-effort)
-            cartService.handleRemoveVoucherFromOrder(user);
-            redirectAttributes.addFlashAttribute("error", "Mã voucher không hợp lệ hoặc đã hết hạn!");
-            return "redirect:/cart";
-        } else {
-            // Voucher is stored on the Order; read discountPercent from order.voucher
-            Double discountPercent = null;
-            if (order.getVoucher() != null && voucherCode.equals(order.getVoucher().getCode())) {
-                discountPercent = order.getVoucher().getDiscountPercent();
-            }
 
-            redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
-            redirectAttributes.addFlashAttribute("voucherCodeApplied", voucherCode);
-            if (discountPercent != null) {
-                redirectAttributes.addFlashAttribute("discountPercent", discountPercent);
-            }
+        // Case 1: Voucher code is invalid, expired, or no pending order exists.
+        if (order == null) {
+            redirectAttributes.addFlashAttribute("error", "Mã giảm giá không hợp lệ hoặc đã hết hạn.");
+            // Cannot get orderId, so redirect to cart as a fallback.
+            return "redirect:/cart";
+        }
+
+        // Case 2: Voucher is valid, but no products in the order are eligible for it.
+        if (order.getVoucher() == null) {
+            redirectAttributes.addFlashAttribute("error", "Không có sản phẩm phù hợp để giảm giá trong đơn hàng.");
             return "redirect:/checkout?orderId=" + order.getId();
         }
+
+        // Voucher is stored on the Order; read discountPercent from order.voucher
+        Double discountPercent = null;
+        if (order.getVoucher() != null && voucherCode.equals(order.getVoucher().getCode())) {
+            discountPercent = order.getVoucher().getDiscountPercent();
+        }
+
+        redirectAttributes.addFlashAttribute("success", "Áp dụng mã giảm giá thành công!");
+        redirectAttributes.addFlashAttribute("voucherCodeApplied", voucherCode);
+        if (discountPercent != null) {
+            redirectAttributes.addFlashAttribute("discountPercent", discountPercent);
+        }
+        return "redirect:/checkout?orderId=" + order.getId();
     }
 
     @PostMapping("/checkout/remove-voucher")
