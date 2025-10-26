@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shop.shop.domain.Commission;
-import com.shop.shop.domain.Order;
+import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.domain.Shop;
 import com.shop.shop.dto.CommissionCalculationRequestDTO;
 import com.shop.shop.dto.CommissionResponseDTO;
 import com.shop.shop.dto.CommissionSummaryDTO;
 import com.shop.shop.mapper.CommissionMapper;
 import com.shop.shop.repository.CommissionRepository;
-import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.OrderDetailRepository;
 import com.shop.shop.repository.ShopRepository;
 import com.shop.shop.service.admin.CommissionService;
 
@@ -33,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class CommissionServiceImpl implements CommissionService {
 
         private final CommissionRepository commissionRepository;
-        private final OrderRepository orderRepository;
+        private final OrderDetailRepository orderDetailRepository;
         private final ShopRepository shopRepository;
         private final CommissionMapper commissionMapper;
 
@@ -53,140 +53,148 @@ public class CommissionServiceImpl implements CommissionService {
                 LocalDateTime fromDateTime = fromDate.atStartOfDay();
                 LocalDateTime toDateTime = actualToDate.atTime(23, 59, 59);
 
-                // Get all delivered orders in the date range
-                List<Order> deliveredOrders = orderRepository.findByStatusAndCreatedAtBetween("DELIVERED", fromDateTime,
-                                toDateTime);
+                // Debug logging
+                System.out.println("=== Commission Calculation Debug ===");
+                System.out.println("From: " + fromDateTime + ", To: " + toDateTime);
 
-                // Group orders by shop and by month-year
-                Map<Long, Map<YearMonth, List<Order>>> ordersByShopAndMonth = deliveredOrders.stream()
-                                .filter(order -> order.getShop() != null && order.getTotalPrice() != null)
+                // Get all delivered order details in the date range
+                List<OrderDetail> deliveredOrderDetails = orderDetailRepository
+                                .findByStatusAndOrderCreatedAtBetween("DELIVERED", fromDateTime, toDateTime);
+
+                System.out.println("Found " + deliveredOrderDetails.size() + " delivered order details");
+
+                // Debug: Print some sample order details
+                if (!deliveredOrderDetails.isEmpty()) {
+                        OrderDetail sample = deliveredOrderDetails.get(0);
+                        System.out.println("Sample OrderDetail - ID: " + sample.getId() +
+                                        ", Status: " + sample.getStatus() +
+                                        ", FinalPrice: " + sample.getFinalPrice() +
+                                        ", Shop: " + (sample.getShop() != null ? sample.getShop().getId() : "null") +
+                                        ", Order Date: "
+                                        + (sample.getOrder() != null ? sample.getOrder().getCreatedAt() : "null"));
+                }
+
+                // Group by shop and month
+                Map<Long, Map<YearMonth, List<OrderDetail>>> detailsByShopAndMonth = deliveredOrderDetails.stream()
+                                .filter(detail -> detail.getShop() != null && detail.getOrder() != null &&
+                                                detail.getFinalPrice() != null)
                                 .collect(Collectors.groupingBy(
-                                                order -> order.getShop().getId(),
-                                                Collectors.groupingBy(order -> YearMonth.from(order.getCreatedAt()))));
-
-                // System.out.println("Orders grouped by shop and month:");
-                // for (Map.Entry<Long, Map<YearMonth, List<Order>>> shopEntry :
-                // ordersByShopAndMonth.entrySet()) {
-                // Long shopId = shopEntry.getKey();
-                // System.out.println(" Shop " + shopId + ":");
-                // for (Map.Entry<YearMonth, List<Order>> monthEntry :
-                // shopEntry.getValue().entrySet()) {
-                // YearMonth yearMonth = monthEntry.getKey();
-                // List<Order> orders = monthEntry.getValue();
-                // System.out.println(" " + yearMonth + ": " + orders.size() + " orders");
-                // }
-                // }
+                                                detail -> detail.getShop().getId(),
+                                                Collectors.groupingBy(
+                                                                detail -> YearMonth.from(
+                                                                                detail.getOrder().getCreatedAt()))));
 
                 List<CommissionResponseDTO> results = new ArrayList<>();
 
-                // For each shop and each month, calculate commission if not already exists
-                for (Map.Entry<Long, Map<YearMonth, List<Order>>> shopEntry : ordersByShopAndMonth.entrySet()) {
+                System.out.println("Grouped by " + detailsByShopAndMonth.size() + " shops");
+
+                // Calculate commission for each shop per month
+                for (Map.Entry<Long, Map<YearMonth, List<OrderDetail>>> shopEntry : detailsByShopAndMonth.entrySet()) {
                         Long shopId = shopEntry.getKey();
-                        Map<YearMonth, List<Order>> monthlyOrders = shopEntry.getValue();
+                        Map<YearMonth, List<OrderDetail>> monthlyOrderDetails = shopEntry.getValue();
 
-                        for (Map.Entry<YearMonth, List<Order>> monthEntry : monthlyOrders.entrySet()) {
+                        System.out.println("Processing shop " + shopId + " with " + monthlyOrderDetails.size()
+                                        + " months");
+
+                        for (Map.Entry<YearMonth, List<OrderDetail>> monthEntry : monthlyOrderDetails.entrySet()) {
                                 YearMonth yearMonth = monthEntry.getKey();
-                                List<Order> ordersInMonth = monthEntry.getValue();
+                                List<OrderDetail> orderDetails = monthEntry.getValue();
 
-                                // System.out.println("Processing shop " + shopId + " for month " + yearMonth +
-                                // " with "
-                                // + ordersInMonth.size() + " orders");
+                                System.out.println("  Month " + yearMonth + " has " + orderDetails.size()
+                                                + " order details");
 
                                 Optional<CommissionResponseDTO> commission = calculateMonthlyCommissionForShop(
-                                                shopId, yearMonth, ordersInMonth);
-                                // if (commission.isPresent()) {
-                                // System.out.println(" Commission calculated successfully");
-                                // results.add(commission.get());
-                                // } else {
-                                // System.out.println(
-                                // " Commission calculation skipped (already exists or error)");
-                                // }
+                                                shopId, yearMonth, orderDetails);
+                                if (commission.isPresent()) {
+                                        results.add(commission.get());
+                                        System.out.println("  ✓ Commission created for shop " + shopId + " month "
+                                                        + yearMonth);
+                                } else {
+                                        System.out.println("  ✗ No commission created for shop " + shopId + " month "
+                                                        + yearMonth);
+                                }
                         }
                 }
 
-                // System.out.println("Total commissions calculated: " + results.size());
-                // System.out.println("=== End Commission Calculation Debug ===");
                 return results;
         }
 
-        private Optional<CommissionResponseDTO> calculateMonthlyCommissionForShop(Long shopId, YearMonth yearMonth,
-                        List<Order> ordersInMonth) {
-                try {
-                        // System.out.println(" Calculating commission for shop " + shopId + " month " +
-                        // yearMonth);
+        private Optional<CommissionResponseDTO> calculateMonthlyCommissionForShop(Long shopId,
+                        YearMonth yearMonth,
+                        List<OrderDetail> orderDetails) {
 
-                        // Get shop information
-                        Optional<Shop> shopOpt = shopRepository.findById(shopId);
-                        if (shopOpt.isEmpty()) {
-                                System.out.println("    Shop not found: " + shopId);
-                                return Optional.empty();
-                        }
-                        Shop shop = shopOpt.get();
+                System.out.println("    calculateMonthlyCommissionForShop - Shop: " + shopId + ", Month: " + yearMonth);
 
-                        // Define the period for this month
-                        LocalDate periodStart = yearMonth.atDay(1);
-                        LocalDate periodEnd = yearMonth.atEndOfMonth();
-
-                        System.out.println("    Period: " + periodStart + " to " + periodEnd);
-
-                        // Check if commission already exists for this shop and month
-                        boolean exists = commissionRepository.existsByShopIdAndPeriodStartAndPeriodEnd(shopId,
-                                        periodStart,
-                                        periodEnd);
-                        // System.out.println(" Commission already exists: " + exists);
-                        if (exists) {
-                                return Optional.empty(); // Skip if already calculated for this month
-                        }
-
-                        // Calculate total revenue for this month using the orders provided
-                        BigDecimal totalRevenue = ordersInMonth.stream()
-                                        .filter(order -> order.getTotalPrice() != null)
-                                        .map(this::getOrderTotal)
-                                        .filter(amount -> amount != null)
-                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                        // System.out.println(" Total revenue calculated: " + totalRevenue);
-                        // System.out.println(" Number of orders: " + ordersInMonth.size());
-
-                        if (totalRevenue.compareTo(BigDecimal.ZERO) <= 0) {
-                                System.out.println("    No revenue to calculate commission");
-                                return Optional.empty(); // No revenue to calculate commission
-                        }
-
-                        // Calculate commission amount (totalRevenue * percent / 100)
-                        BigDecimal commissionAmount = totalRevenue.multiply(DEFAULT_COMMISSION_RATE)
-                                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
-                        System.out.println("    Commission amount: " + commissionAmount);
-
-                        // Create and save commission record for this specific month
-                        Commission commission = Commission.builder()
-                                        .shop(shop)
-                                        .periodStart(periodStart)
-                                        .periodEnd(periodEnd)
-                                        .totalRevenue(totalRevenue)
-                                        .percent(DEFAULT_COMMISSION_RATE)
-                                        .amount(commissionAmount)
-                                        .status("pending")
-                                        .createdAt(LocalDateTime.now())
-                                        .build();
-
-                        Commission savedCommission = commissionRepository.save(commission);
-                        // System.out.println(" Commission saved with ID: " + savedCommission.getId());
-
-                        // Convert to DTO using mapper
-                        CommissionResponseDTO dto = commissionMapper.toResponseDTO(savedCommission);
-                        dto.setShopName(shop.getShopName());
-
-                        return Optional.of(dto);
-
-                } catch (Exception e) {
-                        // Log error and continue with other shops
-                        System.err.println("Error calculating commission for shop " + shopId + " for month " + yearMonth
-                                        + ": "
-                                        + e.getMessage());
+                // Get shop information
+                Optional<Shop> shopOpt = shopRepository.findById(shopId);
+                if (shopOpt.isEmpty()) {
+                        System.out.println("    ✗ Shop not found: " + shopId);
                         return Optional.empty();
                 }
+                Shop shop = shopOpt.get();
+
+                // Set period start and end for the month
+                LocalDate periodStart = yearMonth.atDay(1);
+                LocalDate periodEnd = yearMonth.atEndOfMonth();
+
+                // Check if commission already exists for this shop and period
+                boolean commissionExists = commissionRepository.existsByShopIdAndPeriodStartAndPeriodEnd(
+                                shopId, periodStart, periodEnd);
+
+                if (commissionExists) {
+                        System.out.println("    ✗ Commission already exists for shop " + shopId + " period "
+                                        + periodStart + " to " + periodEnd);
+                        return Optional.empty();
+                }
+
+                // Calculate total revenue from delivered order details (finalPrice is already
+                // the total)
+                BigDecimal totalRevenue = orderDetails.stream()
+                                .filter(detail -> detail.getFinalPrice() != null)
+                                .map(detail -> new BigDecimal(detail.getFinalPrice().toString()))
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                System.out.println("    Total revenue calculated: " + totalRevenue);
+
+                // Only create commission if there's revenue
+                if (totalRevenue.compareTo(BigDecimal.ZERO) <= 0) {
+                        System.out.println("    ✗ No revenue found for shop " + shopId);
+                        return Optional.empty();
+                }
+
+                // Calculate commission amount
+                BigDecimal commissionAmount = totalRevenue
+                                .multiply(DEFAULT_COMMISSION_RATE.divide(new BigDecimal("100"), 4,
+                                                RoundingMode.HALF_UP));
+
+                // Create and save commission record
+                Commission commission = Commission.builder()
+                                .shop(shop)
+                                .periodStart(periodStart)
+                                .periodEnd(periodEnd)
+                                .totalRevenue(totalRevenue)
+                                .percent(DEFAULT_COMMISSION_RATE)
+                                .amount(commissionAmount)
+                                .status("pending") // Use consistent lowercase status
+                                .createdAt(LocalDateTime.now())
+                                .build();
+
+                Commission savedCommission = commissionRepository.save(commission);
+
+                // Convert to DTO
+                CommissionResponseDTO responseDTO = new CommissionResponseDTO();
+                responseDTO.setId(savedCommission.getId());
+                responseDTO.setShopId(savedCommission.getShopId());
+                responseDTO.setShopName(savedCommission.getShop().getShopName());
+                responseDTO.setFromDate(savedCommission.getFromDate());
+                responseDTO.setToDate(savedCommission.getToDate());
+                responseDTO.setTotalRevenue(savedCommission.getTotalRevenue());
+                responseDTO.setCommissionRate(savedCommission.getCommissionRate());
+                responseDTO.setCommissionAmount(savedCommission.getCommissionAmount());
+                responseDTO.setCalculationDate(savedCommission.getCalculationDate());
+                responseDTO.setStatus(savedCommission.getStatus());
+
+                return Optional.of(responseDTO);
         }
 
         @Override
@@ -196,16 +204,6 @@ public class CommissionServiceImpl implements CommissionService {
                 LocalDate toDate = currentMonth.atEndOfMonth();
 
                 CommissionCalculationRequestDTO request = new CommissionCalculationRequestDTO(fromDate, toDate, false);
-                return calculateCommissions(request);
-        }
-
-        @Override
-        public List<CommissionResponseDTO> calculateCommissionsUpToNow() {
-                // Calculate commissions from January 2020 to now, month by month
-                LocalDate startDate = LocalDate.of(2020, 1, 1);
-                LocalDate endDate = LocalDate.now();
-
-                CommissionCalculationRequestDTO request = new CommissionCalculationRequestDTO(startDate, endDate, true);
                 return calculateCommissions(request);
         }
 
@@ -350,13 +348,4 @@ public class CommissionServiceImpl implements CommissionService {
                 return dto;
         }
 
-        // Helper method to get order total - you need to replace this with the correct
-        // field name from Order entity
-        private BigDecimal getOrderTotal(Order order) {
-                // The Order entity has a field called "totalPrice" of type Double
-                if (order != null && order.getTotalPrice() != null) {
-                        return BigDecimal.valueOf(order.getTotalPrice());
-                }
-                return BigDecimal.ZERO;
-        }
 }

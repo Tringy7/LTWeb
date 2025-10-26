@@ -42,6 +42,11 @@ public class UserMapper {
         user.setPhone(dto.getPhone());
         user.setAddress(dto.getAddress());
         user.setRole(role);
+
+        // Update image only if provided in DTO
+        if (dto.getImage() != null) {
+            user.setImage(dto.getImage());
+        }
     }
 
     // Converts a User entity to UserResponseDTO

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+            <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
                 <!-- Include CSS Files -->
                 <link rel="stylesheet" href="/admin/css/voucher-base.css">
@@ -53,35 +53,31 @@
                             <form method="GET" action="/admin/voucher" class="search-form">
                                 <div class="row align-items-end">
                                     <div class="col-md-4">
-                                        <label for="keyword" class="form-label">Từ khóa tìm kiếm</label>
+                                        <label for="keyword" class="form-label"
+                                        style="color: #2c2323; font-weight: 500;">Từ khóa tìm kiếm</label>
                                         <input type="text" name="keyword" value="${keyword}" class="form-control"
                                             placeholder="Mã voucher hoặc trạng thái..." id="keyword" />
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="status" class="form-label">Trạng thái</label>
-                                        <!-- <select name="status" class="form-control">
+                                        <label for="status" class="form-label"
+                                        style="color: #2c2323; font-weight: 500;">Trạng thái</label>
+
+                                        <select name="status" class="form-control" onchange="this.form.submit()">
                                             <option value="ALL" ${status=='ALL' ? 'selected' : '' }>-- Tất cả --
                                             </option>
-                                            <option value="ACTIVE" ${status=='ACTIVE' ? 'selected' : '' }>Hoạt động
+                                            <option value="Active" ${status=='Active' ? 'selected' : '' }>Hoạt động
                                             </option>
-                                            <option value="INACTIVE" ${status=='INACTIVE' ? 'selected' : '' }>Không hoạt
-                                                động</option>
-                                            <option value="LOCKED" ${status=='LOCKED' ? 'selected' : '' }>Bị khóa
-                                            </option>
-                                        </select> -->
-                                         <select name="status" class="form-control" onchange="this.form.submit()">
-                                            <option value="ALL" ${status=='ALL' ? 'selected' : '' }>-- Tất cả --
-                                            </option>
-                                            <option value="true" ${status=='true' ? 'selected' : '' }>Hoạt động
-                                            </option>
-                                            <option value="false" ${status=='false' ? 'selected' : '' }>Không hoạt
+                                            <option value="Expired" ${status=='Expired' ? 'selected' : '' }>Không hoạt
                                                 động</option>
                                         </select>
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="voucherType" class="form-label">Loại voucher</label>
+                                        <label for="voucherType" class="form-label"
+                                            style="color: #2c2323; font-weight: 500;">
+                                            Loại voucher
+                                        </label>
                                         <select name="voucherType" class="form-control">
                                             <option value="SYSTEM" ${voucherType=='SYSTEM' ? 'selected' : '' }>Voucher
                                                 hệ thống</option>
@@ -166,11 +162,11 @@
 
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${voucher.status == 'true'}">
+                                                                <c:when test="${voucher.status == 'Active'}">
                                                                     <span class="status-badge status-active">Hoạt
                                                                         động</span>
                                                                 </c:when>
-                                                                <c:when test="${voucher.status == 'false'}">
+                                                                <c:when test="${voucher.status == 'Expired'}">
                                                                     <span class="status-badge status-inactive">Không
                                                                         hoạt động</span>
                                                                 </c:when>
@@ -215,9 +211,10 @@
                                                                         title="Chỉnh sửa">
                                                                         <i class="typcn typcn-edit"></i>
                                                                     </a>
-                                                                    
+
                                                                     <!-- Assign to All Users -->
-                                                                    <form action="/admin/voucher/${voucher.id}/assign-to-all"
+                                                                    <form
+                                                                        action="/admin/voucher/${voucher.id}/assign-to-all"
                                                                         method="POST" style="display: inline;"
                                                                         onsubmit="return confirmAssignToAll('${voucher.code}')">
                                                                         <button type="submit"
@@ -230,7 +227,7 @@
 
                                                                 <!-- Status Actions -->
                                                                 <c:choose>
-                                                                    <c:when test="${voucher.status == 'false'}">
+                                                                    <c:when test="${voucher.status == 'Expired'}">
                                                                         <form
                                                                             action="/admin/voucher/${voucher.id}/unlock"
                                                                             method="POST" style="display: inline;">
@@ -241,7 +238,7 @@
                                                                             </button>
                                                                         </form>
                                                                     </c:when>
-                                                                    <c:when test="${voucher.status == 'true'}">
+                                                                    <c:when test="${voucher.status == 'Active'}">
                                                                         <form action="/admin/voucher/${voucher.id}/lock"
                                                                             method="POST" style="display: inline;"
                                                                             onsubmit="return confirmLock('${voucher.code}')">

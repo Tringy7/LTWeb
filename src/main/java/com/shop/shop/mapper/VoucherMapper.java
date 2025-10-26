@@ -37,7 +37,7 @@ public class VoucherMapper {
         // Set calculated fields
         LocalDateTime now = LocalDateTime.now();
         dto.setExpired(voucher.getEndDate().isBefore(now));
-        dto.setActive("ACTIVE".equals(voucher.getStatus()) &&
+        dto.setActive("Active".equals(voucher.getStatus()) &&
                 voucher.getStartDate().isBefore(now) &&
                 voucher.getEndDate().isAfter(now));
 

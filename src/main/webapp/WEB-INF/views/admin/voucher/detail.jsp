@@ -16,12 +16,22 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <i class="typcn typcn-ticket mr-2"></i>
             Chi tiết Voucher
           </h4>
-          <p class="text-muted mb-0">
+          <p class="mb-0" style="color: #ffffff; font-weight: 500">
             Thông tin chi tiết về voucher #${voucher.id}
           </p>
         </div>
         <div>
-          <a href="/admin/voucher" class="btn btn-outline-secondary">
+          <a
+            href="/admin/voucher"
+            class="btn"
+            style="
+              color: #ffffff;
+              font-weight: 600;
+              border: 2px solid #ffffff;
+              background: transparent;
+              transition: 0.3s;
+            "
+          >
             <i class="typcn typcn-arrow-left mr-1"></i> Quay lại
           </a>
           <c:if test="${voucher.voucherType == 'SYSTEM'}">

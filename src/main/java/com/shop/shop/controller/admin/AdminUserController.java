@@ -22,6 +22,7 @@ import com.shop.shop.dto.UserUpdateDTO;
 import com.shop.shop.mapper.UserMapper;
 import com.shop.shop.service.admin.RoleService;
 import com.shop.shop.service.admin.UserService;
+import com.shop.shop.service.admin.FileUploadService;
 
 import jakarta.validation.Valid;
 
@@ -31,11 +32,26 @@ public class AdminUserController {
     private final UserService userService;
     private final RoleService roleService;
     private final UserMapper userMapper;
+    private final FileUploadService fileUploadService;
 
-    public AdminUserController(UserService userService, RoleService roleService, UserMapper userMapper) {
+    public AdminUserController(UserService userService, RoleService roleService, UserMapper userMapper,
+            FileUploadService fileUploadService) {
         this.userService = userService;
         this.roleService = roleService;
         this.userMapper = userMapper;
+        this.fileUploadService = fileUploadService;
+    }
+
+    /**
+     * Get current admin user ID
+     * TODO: Replace this with proper authentication/session management
+     * For now, this assumes admin user ID = 1
+     */
+    private Long getCurrentAdminId() {
+        // TODO: Replace with proper authentication logic
+        // This could be from HttpSession, Spring Security, or your custom auth
+        // mechanism
+        return 1L; // CHANGE THIS: Replace with actual logic to get current admin ID
     }
 
     /**
@@ -46,6 +62,8 @@ public class AdminUserController {
     public String show(@RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "roleId", required = false) Long roleId,
             Model model) {
+
+        Long currentAdminId = getCurrentAdminId();
 
         // Get users from service layer (domain entities)
         List<User> users;
@@ -78,6 +96,7 @@ public class AdminUserController {
         model.addAttribute("searchForm", searchDTO);
         model.addAttribute("totalUsers", userDTOs.size());
         model.addAttribute("searchPerformed", keyword != null || roleId != null);
+        model.addAttribute("currentAdminId", currentAdminId); // Add current admin ID for UI logic
 
         return "admin/user/show";
     }
@@ -93,7 +112,10 @@ public class AdminUserController {
         Optional<User> userOptional = userService.getUserById(id);
 
         if (userOptional.isPresent()) {
+            Long currentAdminId = getCurrentAdminId();
+
             model.addAttribute("user", userOptional.get());
+            model.addAttribute("currentAdminId", currentAdminId); // Add for UI logic
             return "admin/user/detail";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng với ID: " + id);
@@ -107,8 +129,20 @@ public class AdminUserController {
         Optional<User> userOptional = userService.getUserById(id);
 
         if (userOptional.isPresent()) {
+            User targetUser = userOptional.get();
+            Long currentAdminId = getCurrentAdminId();
+
+            // Check if admin is trying to edit their own account or if they're editing
+            // other users
+            if (!targetUser.getId().equals(currentAdminId)) {
+                // Admin can only edit their own account, not other users
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Bạn chỉ có thể chỉnh sửa tài khoản của chính mình. Đối với người dùng khác, bạn chỉ có quyền xem và xóa.");
+                return "redirect:/admin/user/detail/" + id;
+            }
+
             List<Role> roles = roleService.getAllRoles();
-            UserUpdateDTO userUpdateDTO = userMapper.toUpdateDTO(userOptional.get());
+            UserUpdateDTO userUpdateDTO = userMapper.toUpdateDTO(targetUser);
             model.addAttribute("userUpdateDTO", userUpdateDTO);
             model.addAttribute("roles", roles);
             return "admin/user/edit";
@@ -127,6 +161,15 @@ public class AdminUserController {
             RedirectAttributes redirectAttributes) {
 
         userUpdateDTO.setId(id); // Ensure the ID is set
+
+        Long currentAdminId = getCurrentAdminId();
+
+        // Check if admin is trying to edit their own account
+        if (!id.equals(currentAdminId)) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Bạn chỉ có thể chỉnh sửa tài khoản của chính mình. Đối với người dùng khác, bạn chỉ có quyền xem và xóa.");
+            return "redirect:/admin/user/detail/" + id;
+        }
 
         // Backend validation - check if email exists for other users
         Optional<User> existingUserByEmail = userService.getUserByEmail(userUpdateDTO.getEmail());
@@ -157,8 +200,32 @@ public class AdminUserController {
                 return "redirect:/admin/user";
             }
 
-            // Update entity with DTO data
             User existingUser = existingUserOptional.get();
+
+            // Handle profile picture upload
+            if (userUpdateDTO.getImageFile() != null && !userUpdateDTO.getImageFile().isEmpty()) {
+                try {
+                    // Delete old profile picture if exists
+                    if (existingUser.getImage() != null && !existingUser.getImage().isEmpty()) {
+                        fileUploadService.deleteProfilePicture(existingUser.getImage());
+                    }
+
+                    // Upload new profile picture
+                    String newImagePath = fileUploadService.uploadProfilePicture(userUpdateDTO.getImageFile(), id);
+                    userUpdateDTO.setImage(newImagePath);
+                } catch (Exception e) {
+                    bindingResult.rejectValue("imageFile", "error.user", "Lỗi upload ảnh: " + e.getMessage());
+                    List<Role> roles = roleService.getAllRoles();
+                    model.addAttribute("roles", roles);
+                    model.addAttribute("userUpdateDTO", userUpdateDTO);
+                    return "admin/user/edit";
+                }
+            } else {
+                // Keep existing image if no new file uploaded
+                userUpdateDTO.setImage(existingUser.getImage());
+            }
+
+            // Update entity with DTO data
             userMapper.updateEntityFromDTO(existingUser, userUpdateDTO, roleOptional.get());
             userService.saveUser(existingUser);
 

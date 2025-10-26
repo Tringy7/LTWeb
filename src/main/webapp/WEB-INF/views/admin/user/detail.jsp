@@ -85,7 +85,16 @@
         <div class="user-detail-header">
             <c:choose>
                 <c:when test="${not empty user.image}">
-                    <img src="/admin/images/users/${user.image}" alt="Avatar" class="user-avatar-large">
+                    <c:choose>
+                        <c:when test="${user.image.startsWith('/admin/images/user/')}">
+                            <!-- New format: Full path already included -->
+                            <img src="${user.image}" alt="Avatar" class="user-avatar-large">
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Old format: Just filename, add path -->
+                            <img src="/admin/images/user/${user.image}" alt="Avatar" class="user-avatar-large">
+                        </c:otherwise>
+                    </c:choose>
                 </c:when>
                 <c:otherwise>
                     <div class="user-avatar-large d-inline-flex align-items-center justify-content-center mx-auto" 
@@ -234,14 +243,23 @@
         
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <a href="/admin/user/edit/${user.id}" class="btn btn-warning">
-                <i class="typcn typcn-edit mr-1"></i>
-                Chỉnh sửa
-            </a>
-            <button class="btn btn-danger" onclick="deleteUser('${user.id}', '${user.fullName}')">
-                <i class="typcn typcn-trash mr-1"></i>
-                Xóa người dùng
-            </button>
+            <!-- Edit button - Only for admin's own account -->
+            <c:if test="${user.id == currentAdminId}">
+                <a href="/admin/user/edit/${user.id}" class="btn btn-warning">
+                    <i class="typcn typcn-edit mr-1"></i>
+                    Chỉnh sửa tài khoản
+                </a>
+            </c:if>
+            
+            <!-- Delete button - Only for other users (not admin's own account) -->
+            <c:if test="${user.id != currentAdminId}">
+                <button class="btn btn-danger" onclick="deleteUser('${user.id}', '${user.fullName}')">
+                    <i class="typcn typcn-trash mr-1"></i>
+                    Xóa người dùng
+                </button>
+            </c:if>
+            
+            <!-- Back button - Always available -->
             <a href="/admin/user" class="btn btn-secondary">
                 <i class="typcn typcn-arrow-back mr-1"></i>
                 Quay lại

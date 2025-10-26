@@ -32,7 +32,9 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
             <i class="typcn typcn-ticket mr-2"></i>
             Tạo Voucher Hệ Thống
           </h4>
-          <p class="text-muted mb-0">Tạo voucher áp dụng cho toàn hệ thống</p>
+          <p class="mb-0" style="color: #ffffff; font-weight: 400">
+            Tạo voucher áp dụng cho toàn hệ thống
+          </p>
         </div>
         <a href="/admin/voucher" class="btn btn-outline-secondary">
           <i class="typcn typcn-arrow-left mr-1"></i> Quay lại
@@ -155,8 +157,8 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                   >Trạng thái ban đầu</label
                 >
                 <form:select path="status" cssClass="form-control" id="status">
-                  <form:option value="true">Hoạt động</form:option>
-                  <form:option value="false">Không hoạt động</form:option>
+                  <form:option value="Active">Hoạt động</form:option>
+                  <form:option value="Expired">Không hoạt động</form:option>
                 </form:select>
                 <form:errors path="status" cssClass="text-danger" />
               </div>

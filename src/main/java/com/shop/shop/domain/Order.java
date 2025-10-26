@@ -38,14 +38,16 @@ public class Order {
     @JoinColumn(name = "addressId")
     private UserAddress address;
 
+    @Column(unique = true)
+    private String txnRef;
+
     @Column
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(length = 50)
     private String paymentMethod;
 
-    @Column(length = 50)
-    private String status;
+    private Boolean paymentStatus;
 
     private Double totalPrice;
 
@@ -53,10 +55,64 @@ public class Order {
     private String voucherCode;
 
     @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
+
+    @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
+
+    // Helper method to get overall order status based on order details
+    public String getStatus() {
+        if (orderDetails == null || orderDetails.isEmpty()) {
+            return "NEW";
+        }
+
+        // Get unique statuses from order details
+        List<String> statuses = orderDetails.stream()
+                .map(OrderDetail::getStatus)
+                .filter(status -> status != null)
+                .distinct()
+                .toList();
+
+        // If all order details are delivered, order is delivered
+        if (statuses.size() == 1 && "DELIVERED".equals(statuses.get(0))) {
+            return "DELIVERED";
+        }
+
+        // If all order details are cancelled, order is cancelled
+        if (statuses.size() == 1 && "CANCELLED".equals(statuses.get(0))) {
+            return "CANCELLED";
+        }
+
+        // If any order detail is delivered, order is partially delivered
+        if (statuses.contains("DELIVERED")) {
+            return "PROCESSING"; // Partially delivered, still processing
+        }
+
+        // If any order detail is cancelled but not all, still processing
+        if (statuses.contains("CANCELLED")) {
+            return "PROCESSING";
+        }
+
+        // If all are pending/processing, order is processing
+        if (statuses.stream().allMatch(status -> "PENDING".equals(status) || "PROCESSING".equals(status))) {
+            return "PROCESSING";
+        }
+
+        // Default to processing for any other combination
+        return "PROCESSING";
+    }
+
+    // @PrePersist
+    // @PreUpdate
+    // public void formatStatus() {
+    // if (status != null) {
+    // status = status.toUpperCase();
+    // }
+    // }
 
 }

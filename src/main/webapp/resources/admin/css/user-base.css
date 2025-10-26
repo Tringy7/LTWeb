@@ -4,6 +4,27 @@
     padding: 20px;
 }
 
+/* Mini Statistics */
+.stats-mini {
+    text-align: center;
+    padding: 10px;
+}
+
+.stats-mini-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stats-mini-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
 /* Common User Elements */
 .user-avatar {
     width: 40px;

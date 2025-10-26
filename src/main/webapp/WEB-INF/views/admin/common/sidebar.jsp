@@ -60,29 +60,16 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       </button>
     </li>
 
-    <!-- Event -->
-    <li class="nav-item">
-      <button
-        class="nav-link btn btn-link w-100 text-left"
-        type="button"
-        onclick="location.href='/admin/event'"
-      >
-        <i class="typcn typcn-film menu-icon"></i>
-        <span class="menu-title">Event</span>
-        <i class="menu-arrow"></i>
-      </button>
-    </li>
-
     <!-- Commission -->
     <li class="nav-item">
       <button
         class="nav-link btn btn-link w-100 text-left"
         type="button"
-        onclick="location.href='/admin/order'"
+        onclick="location.href='/admin/commission'"
       >
-        <i class="typcn typcn-th-small-outline menu-icon"></i>
+        <i class="typcn typcn-calculator menu-icon"></i>
         <span class="menu-title">Commission</span>
-        <i class="menu-arrow"></i>
+        <i class="typcn typcn-chevron-right menu-arrow"></i>
       </button>
     </li>
     <!-- Voucher -->
@@ -92,9 +79,21 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         type="button"
         onclick="location.href='/admin/voucher'"
       >
-        <i class="typcn typcn-th-small-outline menu-icon"></i>
+        <i class="typcn typcn-ticket menu-icon"></i>
         <span class="menu-title">Voucher</span>
-        <i class="menu-arrow"></i>
+        <i class="typcn typcn-chevron-right menu-arrow"></i>
+      </button>
+    </li>
+    <!-- Vendor Approval -->
+    <li class="nav-item">
+      <button
+        class="nav-link btn btn-link w-100 text-left"
+        type="button"
+        onclick="location.href='/admin/vendor-approval'"
+      >
+        <i class="typcn typcn-tick menu-icon"></i>
+        <span class="menu-title">Vendor Approval</span>
+        <i class="typcn typcn-chevron-right menu-arrow"></i>
       </button>
     </li>
   </ul>

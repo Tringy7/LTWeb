@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,7 +46,16 @@ public class OrderDetail {
 
     private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "voucherId")
-    private Voucher voucher;
+    private Double finalPrice;
+
+    @Column(length = 50)
+    private String status;
+
+    @PrePersist
+    @PreUpdate
+    public void normalizeStatus() {
+        if (status != null) {
+            status = status.toUpperCase();
+        }
+    }
 }

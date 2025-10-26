@@ -40,6 +40,22 @@ public class UserUpdateDTO {
 
     private String image;
 
+    // File upload field for profile picture
+    private MultipartFile imageFile;
+
+    // Custom constructor for mapper (without imageFile)
+    public UserUpdateDTO(Long id, String fullName, String email, String phone, String address, Long roleId,
+            String image) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.roleId = roleId;
+        this.image = image;
+        // imageFile is left as null - will be set separately when needed
+    }
+
     @Override
     public String toString() {
         return "UserUpdateDTO{" +

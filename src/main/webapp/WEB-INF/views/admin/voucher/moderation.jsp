@@ -17,11 +17,21 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <i class="typcn typcn-warning mr-2"></i>
             Kiểm duyệt Voucher Shop
           </h4>
-          <p class="text-muted mb-0">
+          <p class="mb-0" style="color: #ffffff">
             Quản lý và kiểm duyệt voucher từ các shop
           </p>
         </div>
-        <a href="/admin/voucher" class="btn btn-outline-secondary">
+        <a
+          href="/admin/voucher"
+          class="btn"
+          style="
+            border: 1.8px solid #ffffff;
+            color: #ffffff;
+            background: transparent;
+            font-weight: 600;
+            transition: 0.3s;
+          "
+        >
           <i class="typcn typcn-arrow-left mr-1"></i> Quay lại
         </a>
       </div>
@@ -50,7 +60,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <h3 class="text-success mb-0">
               <c:set var="activeCount" value="0" />
               <c:forEach var="voucher" items="${vouchers}">
-                <c:if test="${voucher.status == 'true'}">
+                <c:if test="${voucher.status == 'Active'}">
                   <c:set var="activeCount" value="${activeCount + 1}" />
                 </c:if>
               </c:forEach>
@@ -64,7 +74,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <h3 class="text-danger mb-0">
               <c:set var="lockedCount" value="0" />
               <c:forEach var="voucher" items="${vouchers}">
-                <c:if test="${voucher.status == 'false'}">
+                <c:if test="${voucher.status == 'Expired'}">
                   <c:set var="lockedCount" value="${lockedCount + 1}" />
                 </c:if>
               </c:forEach>
@@ -111,7 +121,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
               <tbody>
                 <c:forEach var="voucher" items="${vouchers}" varStatus="status">
                   <tr
-                    class="moderation-row ${voucher.status == 'false' ? 'row-locked' : ''}"
+                    class="moderation-row ${voucher.status == 'Expired' ? 'row-locked' : ''}"
                   >
                     <td><strong>#${voucher.id}</strong></td>
                     <td>
@@ -149,12 +159,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
                     <td>
                       <c:choose>
-                        <c:when test="${voucher.status == 'true'}">
+                        <c:when test="${voucher.status == 'Active'}">
                           <span class="status-badge status-active"
                             >Hoạt động</span
                           >
                         </c:when>
-                        <c:when test="${voucher.status == 'false'}">
+                        <c:when test="${voucher.status == 'Expired'}">
                           <span class="status-badge status-inactive"
                             >Không hoạt động</span
                           >
@@ -194,7 +204,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
                         <!-- Moderation Actions -->
                         <c:choose>
-                          <c:when test="${voucher.status == 'false'}">
+                          <c:when test="${voucher.status == 'Expired'}">
                             <!-- Unlock Action -->
                             <form
                               action="/admin/voucher/${voucher.id}/unlock"
@@ -211,7 +221,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                               </button>
                             </form>
                           </c:when>
-                          <c:when test="${voucher.status == 'true'}">
+                          <c:when test="${voucher.status == 'Active'}">
                             <!-- Lock for Violation -->
                             <button
                               type="button"

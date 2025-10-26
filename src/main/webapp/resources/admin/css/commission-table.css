@@ -325,29 +325,66 @@
 /* Action Buttons */
 .action-buttons {
     display: flex;
-    gap: 5px;
+    gap: 8px;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .action-buttons .btn {
-    padding: 6px 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    min-width: 35px;
-    height: 35px;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 20px;
+    min-width: auto;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+    text-decoration: none;
 }
 
 .action-buttons .btn i {
-    margin: 0;
-    font-size: 16px;
+    margin-right: 4px;
+    font-size: 14px;
 }
 
 .action-buttons .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons .btn-success {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    color: white;
+}
+
+.action-buttons .btn-success:hover {
+    background: linear-gradient(135deg, #00a085 0%, #00b8b3 100%);
+    color: white;
+}
+
+.action-buttons .btn-primary {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: white;
+}
+
+.action-buttons .btn-primary:hover {
+    background: linear-gradient(135deg, #5f4fcf 0%, #9178e6 100%);
+    color: white;
+}
+
+.action-buttons .btn-info {
+    background: linear-gradient(135deg, #00b8d4 0%, #0288d1 100%);
+    color: white;
+}
+
+.action-buttons .btn-info:hover {
+    background: linear-gradient(135deg, #00a0b8 0%, #0277bd 100%);
+    color: white;
 }
 
 /* Result Info */
@@ -384,11 +421,19 @@
     
     .action-buttons {
         flex-direction: column;
+        gap: 4px;
     }
     
     .action-buttons .btn {
         width: 100%;
-        margin-bottom: 5px;
+        margin-bottom: 0;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .action-buttons .btn i {
+        margin-right: 3px;
+        font-size: 12px;
     }
     
     .revenue-amount, .commission-amount {
@@ -413,5 +458,10 @@
     .badge {
         font-size: 10px;
         padding: 4px 8px;
+    }
+    
+    .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 11px;
     }
 }

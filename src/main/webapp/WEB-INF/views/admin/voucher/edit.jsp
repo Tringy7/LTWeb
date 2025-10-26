@@ -29,19 +29,41 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     <div class="form-header">
       <div class="d-flex justify-content-between align-items-center">
         <div>
-          <h4 class="mb-1">
+          <h4 class="mb-1" style="color: #ffffff; font-weight: 600">
             <i class="typcn typcn-edit mr-2"></i>
             Chỉnh sửa Voucher
           </h4>
-          <p class="text-muted mb-0">
+          <p class="mb-0" style="color: #ffffff; opacity: 0.9">
             Cập nhật thông tin voucher #${voucher.id}
           </p>
         </div>
         <div>
-          <a href="/admin/voucher/${voucher.id}" class="btn btn-outline-info">
+          <a
+            href="/admin/voucher/${voucher.id}"
+            class="btn"
+            style="
+              color: #f2e3e3;
+              border: 2px solid #f2e3e3;
+              background: transparent;
+              font-weight: 600;
+              transition: 0.3s;
+              margin-right: 8px;
+            "
+          >
             <i class="typcn typcn-eye mr-1"></i> Xem chi tiết
           </a>
-          <a href="/admin/voucher" class="btn btn-outline-secondary">
+
+          <a
+            href="/admin/voucher"
+            class="btn"
+            style="
+              color: #f2e3e3;
+              border: 2px solid #f2e3e3;
+              background: transparent;
+              font-weight: 600;
+              transition: 0.3s;
+            "
+          >
             <i class="typcn typcn-arrow-left mr-1"></i> Quay lại
           </a>
         </div>
@@ -163,8 +185,8 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
               <div class="form-group">
                 <label for="status" class="form-label">Trạng thái</label>
                 <form:select path="status" cssClass="form-control" id="status">
-                  <form:option value="true">Hoạt động</form:option>
-                  <form:option value="false">Không hoạt động</form:option>
+                  <form:option value="Active">Hoạt động</form:option>
+                  <form:option value="Expired">Không hoạt động</form:option>
                 </form:select>
                 <form:errors path="status" cssClass="text-danger" />
               </div>

@@ -14,15 +14,15 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         <span class="page-title-icon bg-gradient-primary text-white me-2">
           <i class="mdi mdi-cash-multiple"></i>
         </span>
-        Commission Detail
+        Chi tiết Hoa hồng
       </h3>
       <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
           <li class="breadcrumb-item">
-            <a href="/admin/commission">Commissions</a>
+            <a href="/admin/commission">Hoa hồng</a>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">Detail</li>
+          <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
         </ul>
       </nav>
     </div>
@@ -32,35 +32,35 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       <div class="col-md-8">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Commission Information</h4>
+            <h4 class="card-title">Thông tin Hoa hồng</h4>
 
             <div class="row">
               <div class="col-md-6">
                 <div class="detail-group">
-                  <label class="detail-label">Commission ID</label>
+                  <label class="detail-label">ID Hoa hồng</label>
                   <div class="detail-value">#${commission.id}</div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Shop Name</label>
+                  <label class="detail-label">Tên cửa hàng</label>
                   <div class="detail-value">${commission.shopName}</div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Shop ID</label>
+                  <label class="detail-label">ID Cửa hàng</label>
                   <div class="detail-value">${commission.shopId}</div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Calculation Period</label>
+                  <label class="detail-label">Khoảng thời gian tính</label>
                   <div class="detail-value">
                     <fmt:formatDate
-                      value="${commission.fromDate}"
+                      value="${commission.fromDateAsDate}"
                       pattern="dd/MM/yyyy"
                     />
                     -
                     <fmt:formatDate
-                      value="${commission.toDate}"
+                      value="${commission.toDateAsDate}"
                       pattern="dd/MM/yyyy"
                     />
                   </div>
@@ -69,46 +69,57 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
               <div class="col-md-6">
                 <div class="detail-group">
-                  <label class="detail-label">Total Revenue</label>
+                  <label class="detail-label">Tổng doanh thu</label>
                   <div class="detail-value revenue-value">
                     <fmt:formatNumber
                       value="${commission.totalRevenue}"
                       type="currency"
-                      currencySymbol="$"
+                      currencySymbol="₫"
+                      maxFractionDigits="0"
                     />
                   </div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Commission Rate</label>
+                  <label class="detail-label">Tỷ lệ hoa hồng</label>
                   <div class="detail-value">
                     <fmt:formatNumber
-                      value="${commission.commissionRate}"
-                      type="percent"
-                    />
+                      value="${commission.commissionRate * 100}"
+                      pattern="#0.##"
+                    />%
                   </div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Commission Amount</label>
+                  <label class="detail-label">Số tiền hoa hồng</label>
                   <div class="detail-value commission-value">
                     <fmt:formatNumber
                       value="${commission.commissionAmount}"
                       type="currency"
-                      currencySymbol="$"
+                      currencySymbol="₫"
+                      maxFractionDigits="0"
                     />
                   </div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Status</label>
+                  <label class="detail-label">Trạng thái</label>
                   <div class="detail-value">
                     <c:choose>
-                      <c:when test="${commission.status == 'PENDING'}">
-                        <span class="badge badge-warning">Pending</span>
+                      <c:when
+                        test="${commission.status == 'PENDING' || commission.status == 'pending'}"
+                      >
+                        <span class="badge badge-warning">Chờ thu</span>
                       </c:when>
-                      <c:when test="${commission.status == 'COLLECTED'}">
-                        <span class="badge badge-success">Collected</span>
+                      <c:when
+                        test="${commission.status == 'COLLECTED' || commission.status == 'collected'}"
+                      >
+                        <span class="badge badge-success">Đã thu</span>
+                      </c:when>
+                      <c:when
+                        test="${commission.status == 'CALCULATED' || commission.status == 'calculated'}"
+                      >
+                        <span class="badge badge-info">Đã tính</span>
                       </c:when>
                       <c:otherwise>
                         <span class="badge badge-secondary"
@@ -126,20 +137,20 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <div class="row">
               <div class="col-md-6">
                 <div class="detail-group">
-                  <label class="detail-label">Calculation Date</label>
+                  <label class="detail-label">Ngày tính toán</label>
                   <div class="detail-value">
                     <fmt:formatDate
-                      value="${commission.calculationDate}"
+                      value="${commission.calculationDateAsDate}"
                       pattern="dd/MM/yyyy"
                     />
                   </div>
                 </div>
 
                 <div class="detail-group">
-                  <label class="detail-label">Created At</label>
+                  <label class="detail-label">Ngày tạo</label>
                   <div class="detail-value">
                     <fmt:formatDate
-                      value="${commission.createdAt}"
+                      value="${commission.createdAtAsDate}"
                       pattern="dd/MM/yyyy HH:mm:ss"
                     />
                   </div>
@@ -148,10 +159,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
               <div class="col-md-6">
                 <div class="detail-group">
-                  <label class="detail-label">Last Updated</label>
+                  <label class="detail-label">Cập nhật lần cuối</label>
                   <div class="detail-value">
                     <fmt:formatDate
-                      value="${commission.updatedAt}"
+                      value="${commission.updatedAtAsDate}"
                       pattern="dd/MM/yyyy HH:mm:ss"
                     />
                   </div>
@@ -166,7 +177,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       <div class="col-md-4">
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Actions</h4>
+            <h4 class="card-title">Thao tác</h4>
 
             <div class="action-buttons-vertical">
               <a
@@ -174,10 +185,12 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                 class="btn btn-outline-secondary btn-block"
               >
                 <i class="mdi mdi-arrow-left"></i>
-                Back to List
+                Quay lại danh sách
               </a>
 
-              <c:if test="${commission.status == 'PENDING'}">
+              <c:if
+                test="${commission.status == 'PENDING' || commission.status == 'pending' || commission.status == 'CALCULATED' || commission.status == 'calculated'}"
+              >
                 <form
                   method="POST"
                   action="/admin/commission/${commission.id}/mark-collected"
@@ -185,10 +198,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                   <button
                     type="submit"
                     class="btn btn-gradient-success btn-block"
-                    onclick="return confirm('Mark this commission as collected?')"
+                    onclick="return confirm('Xác nhận đã thu hoa hồng này?')"
                   >
                     <i class="mdi mdi-check-circle"></i>
-                    Mark as Collected
+                    Đánh dấu đã thu
                   </button>
                 </form>
               </c:if>
@@ -199,7 +212,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                 onclick="window.print()"
               >
                 <i class="mdi mdi-printer"></i>
-                Print Report
+                In báo cáo
               </button>
 
               <form
@@ -209,10 +222,10 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                 <button
                   type="submit"
                   class="btn btn-gradient-danger btn-block"
-                  onclick="return confirm('Are you sure you want to delete this commission record?')"
+                  onclick="return confirm('Bạn có chắc chắn muốn xóa bản ghi hoa hồng này?')"
                 >
                   <i class="mdi mdi-delete"></i>
-                  Delete Record
+                  Xóa bản ghi
                 </button>
               </form>
             </div>
@@ -222,50 +235,53 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         <!-- Calculation Breakdown -->
         <div class="card mt-3">
           <div class="card-body">
-            <h4 class="card-title">Calculation Breakdown</h4>
+            <h4 class="card-title">Chi tiết tính toán</h4>
 
             <div class="calculation-breakdown">
               <div class="calculation-row">
-                <span class="calc-label">Total Shop Revenue:</span>
+                <span class="calc-label">Tổng doanh thu cửa hàng:</span>
                 <span class="calc-value">
                   <fmt:formatNumber
                     value="${commission.totalRevenue}"
                     type="currency"
-                    currencySymbol="$"
+                    currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </span>
               </div>
 
               <div class="calculation-row">
-                <span class="calc-label">Commission Rate:</span>
+                <span class="calc-label">Tỷ lệ hoa hồng:</span>
                 <span class="calc-value">
                   <fmt:formatNumber
-                    value="${commission.commissionRate}"
-                    type="percent"
-                  />
+                    value="${commission.commissionRate * 100}"
+                    pattern="#0.##"
+                  />%
                 </span>
               </div>
 
               <hr class="calc-divider" />
 
               <div class="calculation-row total">
-                <span class="calc-label">Platform Commission:</span>
+                <span class="calc-label">Hoa hồng nền tảng:</span>
                 <span class="calc-value">
                   <fmt:formatNumber
                     value="${commission.commissionAmount}"
                     type="currency"
-                    currencySymbol="$"
+                    currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </span>
               </div>
 
               <div class="calculation-row">
-                <span class="calc-label">Shop Keeps:</span>
+                <span class="calc-label">Cửa hàng nhận:</span>
                 <span class="calc-value">
                   <fmt:formatNumber
                     value="${commission.totalRevenue - commission.commissionAmount}"
                     type="currency"
-                    currencySymbol="$"
+                    currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </span>
               </div>

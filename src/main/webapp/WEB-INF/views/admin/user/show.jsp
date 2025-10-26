@@ -39,6 +39,12 @@
                 Quản lý người dùng
             </h4>
             
+            <!-- Permission Notice -->
+            <div class="alert alert-info" role="alert">
+                <i class="typcn typcn-info mr-2"></i>
+                <strong>Quyền hạn:</strong> Bạn chỉ có thể chỉnh sửa tài khoản của chính mình. Đối với các tài khoản khác (vendor và user), bạn có quyền xem chi tiết và xóa.
+            </div>
+            
             <form:form method="GET" action="/admin/user" modelAttribute="searchForm" cssClass="search-form">
                 <div class="row align-items-end">
                     <div class="col-md-4">
@@ -139,7 +145,16 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty user.image}">
-                                                    <img src="/admin/images/users/${user.image}" alt="Avatar" class="user-avatar">
+                                                    <c:choose>
+                                                        <c:when test="${user.image.startsWith('/admin/images/user/')}">
+                                                            <!-- New format: Full path already included -->
+                                                            <img src="${user.image}" alt="Avatar" class="user-avatar">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <!-- Old format: Just filename, add path -->
+                                                            <img src="/admin/images/user/${user.image}" alt="Avatar" class="user-avatar">
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </c:when>
                                                 <c:otherwise>
                                                     <div class="user-avatar d-flex align-items-center justify-content-center" 
@@ -200,23 +215,27 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="action-buttons">
-                                                <!-- View User - Direct Link -->
+                                                <!-- View User - Always available -->
                                                 <a href="/admin/user/detail/${user.id}" class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                     <i class="typcn typcn-eye"></i>
                                                 </a>
                                                 
-                                                <!-- Edit User - Direct Link -->
-                                                <a href="/admin/user/edit/${user.id}" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
-                                                    <i class="typcn typcn-edit"></i>
-                                                </a>
+                                                <!-- Edit User - Only for admin's own account -->
+                                                <c:if test="${user.id == currentAdminId}">
+                                                    <a href="/admin/user/edit/${user.id}" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                                                        <i class="typcn typcn-edit"></i>
+                                                    </a>
+                                                </c:if>
                                                 
-                                                <!-- Delete User - Form Submission -->
-                                                <form action="/admin/user/delete/${user.id}" method="POST" style="display: inline;" 
-                                                      onsubmit="return confirmDelete('${user.fullName}')">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                                        <i class="typcn typcn-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Delete User - Available for all users except admin's own account -->
+                                                <c:if test="${user.id != currentAdminId}">
+                                                    <form action="/admin/user/delete/${user.id}" method="POST" style="display: inline;" 
+                                                          onsubmit="return confirmDelete('${user.fullName}')">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                            <i class="typcn typcn-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </tr>

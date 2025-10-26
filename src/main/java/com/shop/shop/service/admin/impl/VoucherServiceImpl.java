@@ -62,7 +62,7 @@ public class VoucherServiceImpl implements VoucherService {
 
         // Create voucher entity
         Voucher voucher = voucherMapper.toVoucherEntity(createDTO);
-        voucher.setShop(null); // System voucher
+        voucher.setShop(null); // System voucher with shop_id = null
 
         // Save the voucher
         Voucher savedVoucher = voucherRepository.save(voucher);
@@ -163,7 +163,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        voucher.setStatus("false");
+        voucher.setStatus("Expired");
         voucherRepository.save(voucher);
     }
 
@@ -172,7 +172,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        voucher.setStatus("true");
+        voucher.setStatus("Active");
         voucherRepository.save(voucher);
     }
 
@@ -181,7 +181,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        voucher.setStatus("true");
+        voucher.setStatus("Active");
         voucherRepository.save(voucher);
     }
 
@@ -190,7 +190,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        voucher.setStatus("false");
+        voucher.setStatus("Expired");
         voucherRepository.save(voucher);
     }
 
@@ -225,7 +225,7 @@ public class VoucherServiceImpl implements VoucherService {
         // Update calculated fields based on current time
         LocalDateTime now = LocalDateTime.now();
         dto.setExpired(dto.getEndDate().isBefore(now));
-        dto.setActive("true".equals(dto.getStatus()) &&
+        dto.setActive("Active".equals(dto.getStatus()) &&
                 dto.getStartDate().isBefore(now) &&
                 dto.getEndDate().isAfter(now));
     }
@@ -242,9 +242,10 @@ public class VoucherServiceImpl implements VoucherService {
         // Return shop vouchers that may need moderation
         // This could be based on various criteria like recent creation, suspicious
         // activity, etc.
-        // For now, returning all non-system vouchers with "true" status (active)
+        // For now, returning all non-system vouchers with "Active" status (shop_id !=
+        // null)
         return voucherRepository.findAll().stream()
-                .filter(v -> v.getShop() != null && "true".equals(v.getStatus()))
+                .filter(v -> v.getShop() != null && "Active".equals(v.getStatus()))
                 .toList();
     }
 
@@ -256,7 +257,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        // Only assign system vouchers (vouchers with no shop)
+        // Only assign system vouchers (vouchers with shop_id = null)
         if (voucher.getShop() != null) {
             throw new IllegalArgumentException("Only system vouchers can be automatically assigned to all users");
         }

@@ -1,0 +1,268 @@
+/* Commission Detail Page Styles */
+
+.detail-group {
+    margin-bottom: 20px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 16px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.revenue-value {
+    color: #00b894;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.commission-value {
+    color: #6c5ce7;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* Action Buttons Vertical */
+.action-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-buttons-vertical .btn {
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.action-buttons-vertical .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.action-buttons-vertical .btn i {
+    margin-right: 8px;
+}
+
+/* Calculation Breakdown */
+.calculation-breakdown {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.calculation-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 8px 0;
+}
+
+.calculation-row.total {
+    border-top: 2px solid #6c5ce7;
+    padding-top: 15px;
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.calc-label {
+    color: #495057;
+    font-weight: 500;
+}
+
+.calc-value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.calc-divider {
+    margin: 15px 0;
+    border-color: #dee2e6;
+}
+
+/* Status Badges */
+.badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+    color: #2d3436;
+}
+
+.badge-success {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    color: white;
+}
+
+.badge-info {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    color: white;
+}
+
+.badge-secondary {
+    background: linear-gradient(135deg, #636e72 0%, #b2bec3 100%);
+    color: white;
+}
+
+/* Gradient Buttons */
+.btn-gradient-success {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-success:hover {
+    background: linear-gradient(135deg, #00a085 0%, #00b8b3 100%);
+    color: white;
+}
+
+.btn-gradient-info {
+    background: linear-gradient(135deg, #00b8d4 0%, #0288d1 100%);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-info:hover {
+    background: linear-gradient(135deg, #00a0b8 0%, #0277bd 100%);
+    color: white;
+}
+
+.btn-gradient-danger {
+    background: linear-gradient(135deg, #e17055 0%, #fd79a8 100%);
+    border: none;
+    color: white;
+}
+
+.btn-gradient-danger:hover {
+    background: linear-gradient(135deg, #d63031 0%, #e84393 100%);
+    color: white;
+}
+
+/* Card Styling */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.card-title i {
+    margin-right: 10px;
+    color: #6c5ce7;
+}
+
+/* Page Header */
+.page-header h3 {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.page-title-icon {
+    padding: 10px;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb-item a {
+    color: #6c5ce7;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #5f4fcf;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .detail-group {
+        margin-bottom: 15px;
+    }
+    
+    .detail-label {
+        font-size: 12px;
+    }
+    
+    .detail-value {
+        font-size: 14px;
+    }
+    
+    .revenue-value,
+    .commission-value {
+        font-size: 16px;
+    }
+    
+    .action-buttons-vertical .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+    .calculation-breakdown {
+        padding: 15px;
+    }
+    
+    .calculation-row {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-header {
+        text-align: center;
+    }
+    
+    .detail-value {
+        font-size: 13px;
+    }
+    
+    .action-buttons-vertical .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .calculation-row {
+        font-size: 13px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .calc-value {
+        margin-top: 5px;
+    }
+}

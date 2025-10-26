@@ -33,7 +33,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     Optional<Voucher> findByCode(String code);
 
     // Find active vouchers (system-wide)
-    @Query("SELECT v FROM Voucher v WHERE v.shop IS NULL AND v.status = 'true' AND v.startDate <= :now AND v.endDate >= :now ORDER BY v.startDate DESC")
+    @Query("SELECT v FROM Voucher v WHERE v.shop IS NULL AND v.status = 'Active' AND v.startDate <= :now AND v.endDate >= :now ORDER BY v.startDate DESC")
     List<Voucher> findActiveSystemVouchers(@Param("now") LocalDateTime now);
 
     // Search vouchers by code or status
@@ -45,7 +45,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     long countSystemVouchers();
 
     // Count active system vouchers
-    @Query("SELECT COUNT(v) FROM Voucher v WHERE v.shop IS NULL AND v.status = 'true' AND v.startDate <= :now AND v.endDate >= :now")
+    @Query("SELECT COUNT(v) FROM Voucher v WHERE v.shop IS NULL AND v.status = 'Active' AND v.startDate <= :now AND v.endDate >= :now")
     long countActiveSystemVouchers(@Param("now") LocalDateTime now);
 
     // Check if code exists
