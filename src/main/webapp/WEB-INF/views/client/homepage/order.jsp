@@ -151,21 +151,23 @@
                                                     <td class="align-middle" rowspan="${fn:length(order.orderDetails)}">
                                                         <p class="mb-0">
                                                             <c:choose>
+                                                                <c:when test="${order.status == 'PENDING_PAYMENT'}">
+                                                                    <span class="text-info fw-bold">Đợi thanh
+                                                                        toán</span>
+                                                                </c:when>
                                                                 <c:when test="${order.status == 'PENDING'}">
                                                                     <span class="text-danger fw-bold">Đợi xác
                                                                         nhận</span>
                                                                 </c:when>
-                                                                <c:when test="${order.status == 'PENDING_PAYMENT'}">
-                                                                    <span class="text-info fw-bold">Chờ thanh
-                                                                        toán</span>
+                                                                <c:when test="${order.status == 'CONFIRMED'}">
+                                                                    <span class="text-primary fw-bold">Đã xác
+                                                                        nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${order.status == 'SHIPPING'}">
-                                                                    <span class="text-warning vfw-bold">Đang giao
-                                                                        hàng</span>
+                                                                    <span class="text-warning fw-bold">Đang giao</span>
                                                                 </c:when>
                                                                 <c:when test="${order.status == 'DELIVERED'}">
-                                                                    <span class="text-success fw-bold">Đã giao
-                                                                        hàng</span>
+                                                                    <span class="text-success fw-bold">Đã giao</span>
                                                                 </c:when>
                                                                 <c:when test="${order.status == 'RETURN_REQUESTED'}">
                                                                     <span class="text-warning fw-bold">Yêu cầu trả
@@ -175,43 +177,68 @@
                                                                     <span class="text-secondary fw-bold">Đã trả
                                                                         hàng</span>
                                                                 </c:when>
+                                                                <c:when test="${order.status == 'REJECTED'}">
+                                                                    <span class="text-danger fw-bold">Đơn hàng bị từ
+                                                                        chối</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'REJECTED_RETURN'}">
+                                                                    <span class="text-danger fw-bold">Yêu cầu trả hàng
+                                                                        bị từ chối</span>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'CANCELLED'}">
+                                                                    <span class="text-secondary fw-bold">Đã hủy</span>
+                                                                </c:when>
                                                                 <c:otherwise>${order.status}</c:otherwise>
                                                             </c:choose>
                                                         </p>
                                                     </td>
                                                     <td class="align-middle" rowspan="${fn:length(order.orderDetails)}">
                                                         <div class="d-flex flex-column gap-2">
-                                                            <c:if test="${order.status == 'PENDING_PAYMENT'}">
-                                                                <a href="/checkout?orderId=${order.id}"
-                                                                    class="btn btn-sm btn-primary">
-                                                                    <i class="fas fa-credit-card me-1"></i>Thanh toán
-                                                                </a>
-                                                                <form action="/order/cancel/${order.id}" method="post"
-                                                                    style="margin: 0;">
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-outline-danger w-100"
-                                                                        onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
-                                                                        <i class="fas fa-times me-1"></i>Hủy đơn
-                                                                    </button>
-                                                                </form>
-                                                            </c:if>
-                                                            <c:if test="${order.status == 'DELIVERED'}">
-                                                                <a href="/shop/product/${detail.product.id}"
-                                                                    class="btn btn-sm btn-outline-primary">
-                                                                    <i class="fas fa-comment me-1"></i>Đánh giá
-                                                                </a>
-                                                                <form action="/order/request" method="post"
-                                                                    style="margin: 0;">
-                                                                    <input type="hidden" name="orderId"
-                                                                        value="${order.id}" />
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-outline-warning w-100">
-                                                                        <i class="fas fa-undo me-1"></i>Trả hàng
-                                                                    </button>
-                                                                </form>
-                                                            </c:if>
-                                                            <c:if test="${order.status == 'PENDING'}">
-                                                            </c:if>
+                                                            <c:choose>
+                                                                <c:when test="${order.status == 'PENDING_PAYMENT'}">
+                                                                    <a href="/checkout?orderId=${order.id}"
+                                                                        class="btn btn-sm btn-primary">
+                                                                        <i class="fas fa-credit-card me-1"></i>Thanh
+                                                                        toán
+                                                                    </a>
+                                                                    <form action="/order/cancel/${order.id}"
+                                                                        method="post" style="margin: 0;">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-outline-danger w-100"
+                                                                            onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                                                            <i class="fas fa-times me-1"></i>Hủy đơn
+                                                                        </button>
+                                                                    </form>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'PENDING'}">
+                                                                    <form action="/order/cancel/${order.id}"
+                                                                        method="post" style="margin: 0;">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-outline-danger w-100"
+                                                                            onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?');">
+                                                                            <i class="fas fa-times me-1"></i>Hủy đơn
+                                                                        </button>
+                                                                    </form>
+                                                                </c:when>
+                                                                <c:when test="${order.status == 'DELIVERED'}">
+                                                                    <a href="/shop/product/${detail.product.id}"
+                                                                        class="btn btn-sm btn-outline-primary">
+                                                                        <i class="fas fa-comment me-1"></i>Đánh giá
+                                                                    </a>
+                                                                    <form action="/order/request" method="post"
+                                                                        style="margin: 0;">
+                                                                        <input type="hidden" name="orderId"
+                                                                            value="${order.id}" />
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-outline-warning w-100">
+                                                                            <i class="fas fa-undo me-1"></i>Trả hàng
+                                                                        </button>
+                                                                    </form>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <!-- No actions for other statuses (CONFIRMED, SHIPPING, RETURN_REQUESTED, RETURNED, REJECTED, REJECTED_RETURN, CANCELLED) -->
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </div>
                                                     </td>
                                                 </c:if>

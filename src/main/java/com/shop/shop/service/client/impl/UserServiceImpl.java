@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.Order;
+import com.shop.shop.domain.OrderDetail;
+import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.Shop;
 import com.shop.shop.domain.ShopSecurityInfo;
 import com.shop.shop.domain.User;
@@ -24,6 +26,7 @@ import com.shop.shop.domain.UserVoucher;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.repository.OrderDetailRepository;
 import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.ProductDetailRepository;
 import com.shop.shop.repository.ShopRepository;
 import com.shop.shop.repository.ShopSecurityInfoRepository;
 import com.shop.shop.repository.UserAddressRepository;
@@ -60,6 +63,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Override
     public UserAddress handlUserAddress(User user) {
@@ -227,21 +233,57 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean handleDeleteOrder(Long orderId) {
         try {
-            // Kiểm tra order có tồn tại không (chỉ cần check ID, không cần load toàn bộ entity)
-            if (!orderRepository.existsById(orderId)) {
+
+            Order order = orderRepository.findById(orderId).orElse(null);
+
+            if (order == null) {
                 return false; // Không tìm thấy order
             }
 
-            // Xóa order details trước (tránh foreign key constraint)
-            orderRepository.deleteOrderDetailsByOrderId(orderId);
+            String status = order.getStatus();
 
-            // Sau đó xóa order
-            orderRepository.deleteById(orderId);
+            if (status != null && "PENDING".equalsIgnoreCase(status)) {
+                // Restore stock: for each order detail, add back to ProductDetail.quantity and decrease sold
+                if (order.getOrderDetails() != null) {
+                    for (OrderDetail od : order.getOrderDetails()) {
+                        if (od == null || od.getProduct() == null) {
+                            continue;
+                        }
+                        try {
+                            ProductDetail pd = productDetailRepository.findByProductAndSize(od.getProduct(), od.getSize());
+                            if (pd != null) {
+                                Long currentQty = pd.getQuantity() == null ? 0L : pd.getQuantity();
+                                Long add = od.getQuantity() == null ? 0L : od.getQuantity();
+                                pd.setQuantity(currentQty + add);
 
-            // Flush để đảm bảo SQL được execute ngay
-            orderRepository.flush();
+                                Long sold = pd.getSold() == null ? 0L : pd.getSold();
+                                long newSold = sold - add;
+                                pd.setSold(newSold < 0 ? 0L : newSold);
 
-            return true; // Xóa thành công
+                                productDetailRepository.save(pd);
+                            }
+                        } catch (Exception ex) {
+                            // Log and continue
+                            System.err.println("Error restoring stock for orderDetail " + (od == null ? "null" : od.getId()) + ": " + ex.getMessage());
+                        }
+                    }
+                }
+                orderRepository.deleteById(orderId);
+                orderRepository.flush();
+
+                return true;
+            } else if (status != null && ("PENDING_PAYMENT".equalsIgnoreCase(status))) {
+                // Delete order details and order
+                orderRepository.deleteOrderDetailsByOrderId(orderId);
+                orderRepository.deleteById(orderId);
+                orderRepository.flush();
+
+                return true;
+            }
+
+            // Not allowed to delete in other statuses here
+            return false;
+
         } catch (Exception e) {
             // Log error nếu cần
             System.err.println("Error deleting order: " + e.getMessage());

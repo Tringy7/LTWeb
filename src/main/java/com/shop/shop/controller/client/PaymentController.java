@@ -151,7 +151,6 @@ public class PaymentController {
                     if (order != null) {
                         order.setPaymentStatus(true);
                         order.setPaymentMethod("Direct Bank Transfer");
-                        // order.setStatus("PENDING"); // Chuyển sang trạng thái chờ xác nhận
                         order.setTxnRef(txnRef);
                         orderRepository.save(order);
                         message = "Thanh toán thành công!";
