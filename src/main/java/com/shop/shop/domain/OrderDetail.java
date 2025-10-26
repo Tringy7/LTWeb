@@ -46,6 +46,8 @@ public class OrderDetail {
 
     private Double price;
 
+    private Double finalPrice;
+
     @Column(length = 50)
     private String status;
 

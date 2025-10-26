@@ -230,68 +230,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public boolean handleDeleteOrder(Long orderId) {
-        try {
-
-            Order order = orderRepository.findById(orderId).orElse(null);
-
-            if (order == null) {
-                return false; // Không tìm thấy order
-            }
-
-            String status = order.getStatus();
-
-            if (status != null && "PENDING".equalsIgnoreCase(status)) {
-                // Restore stock: for each order detail, add back to ProductDetail.quantity and decrease sold
-                if (order.getOrderDetails() != null) {
-                    for (OrderDetail od : order.getOrderDetails()) {
-                        if (od == null || od.getProduct() == null) {
-                            continue;
-                        }
-                        try {
-                            ProductDetail pd = productDetailRepository.findByProductAndSize(od.getProduct(), od.getSize());
-                            if (pd != null) {
-                                Long currentQty = pd.getQuantity() == null ? 0L : pd.getQuantity();
-                                Long add = od.getQuantity() == null ? 0L : od.getQuantity();
-                                pd.setQuantity(currentQty + add);
-
-                                Long sold = pd.getSold() == null ? 0L : pd.getSold();
-                                long newSold = sold - add;
-                                pd.setSold(newSold < 0 ? 0L : newSold);
-
-                                productDetailRepository.save(pd);
-                            }
-                        } catch (Exception ex) {
-                            // Log and continue
-                            System.err.println("Error restoring stock for orderDetail " + (od == null ? "null" : od.getId()) + ": " + ex.getMessage());
-                        }
-                    }
-                }
-                orderRepository.deleteById(orderId);
-                orderRepository.flush();
-
-                return true;
-            } else if (status != null && ("PENDING_PAYMENT".equalsIgnoreCase(status))) {
-                // Delete order details and order
-                orderRepository.deleteOrderDetailsByOrderId(orderId);
-                orderRepository.deleteById(orderId);
-                orderRepository.flush();
-
-                return true;
-            }
-
-            // Not allowed to delete in other statuses here
-            return false;
-
-        } catch (Exception e) {
-            // Log error nếu cần
-            System.err.println("Error deleting order: " + e.getMessage());
-            throw new RuntimeException("Không thể xóa đơn hàng: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
     public Order getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null) {
@@ -301,12 +239,56 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void requestOrder(Long orderId) {
-        Optional<Order> check = orderRepository.findById(orderId);
-        if (check.isPresent()) {
-            Order order = check.get();
-            order.setStatus("RETURN_REQUESTED");
-            orderRepository.save(order);
+    @Transactional
+    public boolean handleDeleteOrderDT(Long orderDTId) {
+        try {
+            OrderDetail orderDetail = orderDetailRepository.findById(orderDTId).orElse(null);
+            if (orderDetail == null) {
+                return false; // Không tìm thấy order detail
+            }
+
+            String status = orderDetail.getStatus();
+            Order order = orderDetail.getOrder();
+
+            order.getOrderDetails().remove(orderDetail);
+
+            if ("PENDING".equalsIgnoreCase(status)) {
+                ProductDetail pd = productDetailRepository.findByProductAndSize(orderDetail.getProduct(), orderDetail.getSize());
+                if (pd != null) {
+                    Long qtyToRestore = orderDetail.getQuantity() != null ? orderDetail.getQuantity() : 0L;
+                    pd.setQuantity((pd.getQuantity() == null ? 0L : pd.getQuantity()) + qtyToRestore);
+                    pd.setSold(Math.max(0L, (pd.getSold() == null ? 0L : pd.getSold()) - qtyToRestore));
+                    productDetailRepository.save(pd);
+                }
+            }
+
+            double detailPrice = orderDetail.getPrice() != null ? orderDetail.getPrice() : 0.0;
+            order.setTotalPrice(order.getTotalPrice() - detailPrice);
+
+            orderDetailRepository.delete(orderDetail);
+
+            if (order.getOrderDetails().isEmpty()) {
+                orderRepository.delete(order);
+            } else {
+                orderRepository.save(order);
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error deleting order detail: " + e.getMessage());
+            throw new RuntimeException("Không thể xóa chi tiết đơn hàng: " + e.getMessage(), e);
         }
     }
+
+    @Override
+    public void requestOrderDT(Long orderDTId) {
+        Optional<OrderDetail> check = orderDetailRepository.findById(orderDTId);
+        if (check.isPresent()) {
+            OrderDetail orderDT = check.get();
+            orderDT.setStatus("RETURN_REQUESTED");
+            orderDetailRepository.save(orderDT);
+        }
+    }
+
 }

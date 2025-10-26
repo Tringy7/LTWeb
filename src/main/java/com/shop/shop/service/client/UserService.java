@@ -26,9 +26,9 @@ public interface UserService {
 
     void handleVendorRegistration(Shop shop, User user);
 
-    boolean handleDeleteOrder(Long orderId);
-
     Order getOrderById(Long orderId);
 
-    void requestOrder(Long orderId);
+    boolean handleDeleteOrderDT(Long orderDTId);
+
+    void requestOrderDT(Long orderDTId);
 }

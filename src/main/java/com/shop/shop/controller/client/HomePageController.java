@@ -63,8 +63,14 @@ public class HomePageController {
     }
 
     @PostMapping("/order/cancel/{id}")
-    public String cancelOrder(@PathVariable("id") Long orderId) {
-        boolean check = userService.handleDeleteOrder(orderId);
+    public String cancelOrder(@PathVariable("id") Long orderDTId, RedirectAttributes redirectAttributes) {
+        boolean check = userService.handleDeleteOrderDT(orderDTId);
+        if (check) {
+            redirectAttributes.addFlashAttribute("successMessage", "Hủy sản phẩm khỏi đơn hàng thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Hủy sản phẩm thất bại. Có thể sản phẩm không còn ở trạng thái cho phép hủy.");
+        }
         return "redirect:/order";
     }
 
@@ -151,8 +157,9 @@ public class HomePageController {
     }
 
     @PostMapping("/order/request")
-    public String requestReturnOrder(@RequestParam("orderId") Long orderId) {
-        userService.requestOrder(orderId);
+    public String requestReturnOrder(@RequestParam("orderId") Long orderDTId) {
+        // userService.requestOrder(orderId);
+        userService.requestOrderDT(orderDTId);
         return "redirect:/order";
     }
 

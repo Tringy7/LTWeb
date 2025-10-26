@@ -105,6 +105,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Find the most recent order by user and status
     Order findTopByUserAndStatusOrderByCreatedAtDesc(User user, String status);
 
+    // Find the most recent order by user where any orderDetail has the given status
+    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderDetails od WHERE o.user = :user AND UPPER(od.status) = UPPER(:detailStatus) ORDER BY o.createdAt DESC")
+    Order findTopByUserAndOrderDetailStatusOrderByCreatedAtDesc(@Param("user") User user, @Param("detailStatus") String detailStatus);
+
+    // Find the most recent order by user and paymentStatus (e.g., pending payment = false)
+    Order findTopByUserAndPaymentStatusOrderByCreatedAtDesc(User user, Boolean paymentStatus);
+
     // Delete order using native query for better performance
     @org.springframework.data.jpa.repository.Modifying
     @Query(value = "DELETE FROM order_details WHERE order_id = :orderId", nativeQuery = true)

@@ -110,7 +110,7 @@ public class CartServiceImpl implements CartService {
             Order order = new Order();
             order.setUser(cartInDB.getUser());
             order.setTotalPrice(0.0); // Will calculate later
-            order.setStatus("PENDING_PAYMENT");
+            // order.setStatus("PENDING_PAYMENT");
             order.setPaymentStatus(false);
             order.setAddress(cartInDB.getUser().getReceiver());
 
@@ -137,9 +137,11 @@ public class CartServiceImpl implements CartService {
                     orderDetail.setOrder(order);
                     orderDetail.setProduct(cartDetailInDB.getProduct());
                     orderDetail.setPrice(newPrice);
+                    orderDetail.setFinalPrice(newPrice);
                     orderDetail.setQuantity(cartDetailInDB.getQuantity());
                     orderDetail.setShop(cartDetailInDB.getProduct().getShop());
                     orderDetail.setSize(cartDetailInDB.getSize());
+                    orderDetail.setStatus("PENDING_PAYMENT");
 
                     orderDetails.add(orderDetail);
                 }
@@ -166,22 +168,28 @@ public class CartServiceImpl implements CartService {
     public boolean handleCheckout(User user, String payment) {
         Cart cart = cartRepository.findByUser(user);
         try {
-            // Find the most recent order with PENDING_PAYMENT status for this user
-            Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
+            // Find the most recent order where paymentStatus is false (pending payment) for this user
+            Order order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
 
             if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
                 return false;
             }
 
-            // Update order status and payment info
+            // Update payment info on the order
             order.setPaymentMethod(payment);
 
             if ("Direct Bank Transfer".equals(payment)) {
                 order.setPaymentStatus(true);
-                order.setStatus("PENDING"); // Đợi xác nhận
             } else if ("Cash On Delivery".equals(payment)) {
-                order.setPaymentStatus(false);
-                order.setStatus("PENDING"); // Đợi xác nhận
+                order.setPaymentStatus(true);
+            }
+
+            // Set status on each order detail (per-item) instead of on the whole order
+            if (order.getOrderDetails() != null) {
+                for (OrderDetail orderDetail : order.getOrderDetails()) {
+                    // Move from PENDING_PAYMENT -> PENDING (waiting confirmation)
+                    orderDetail.setStatus("PENDING");
+                }
             }
 
             // Handle Voucher: set voucherCode and mark user's UserVoucher as used (status=false) when payment recorded
@@ -243,8 +251,8 @@ public class CartServiceImpl implements CartService {
             return null;
         }
 
-        // Find the most recent pending order for this user
-        Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
+        // Find the most recent pending order (by paymentStatus=false) for this user
+        Order order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
         if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
             return null;
         }
@@ -256,21 +264,29 @@ public class CartServiceImpl implements CartService {
         order.setVoucherCode(voucher.getCode());
 
         // Calculate total for the order applying voucher only at order-level.
+        // Also store per-orderDetail finalPrice so the discounted values are persisted.
         double total = 0.0;
         for (OrderDetail od : order.getOrderDetails()) {
             double basePrice = od.getProduct().getPrice() * od.getQuantity();
-            if (od.getProduct() != null && od.getProduct().getShop() != null
+            boolean eligible = od.getProduct() != null && od.getProduct().getShop() != null
                     && voucher.getShop() != null
-                    && Objects.equals(od.getProduct().getShop().getId(), voucher.getShop().getId())) {
+                    && Objects.equals(od.getProduct().getShop().getId(), voucher.getShop().getId());
+
+            if (eligible) {
                 Double discountPercent = voucher.getDiscountPercent();
+                double discounted = basePrice;
                 if (discountPercent != null) {
-                    total += basePrice * (1 - discountPercent / 100);
-                } else {
-                    total += basePrice;
+                    discounted = basePrice * (1 - discountPercent / 100);
                 }
+                od.setFinalPrice(discounted);
+                // keep od.price as the original/base price for reference
+                od.setPrice(basePrice);
+                total += discounted;
                 applied = true;
             } else {
-                // Non-eligible items keep their base price (OrderDetail.price remains unchanged)
+                // Non-eligible items keep their base price
+                od.setFinalPrice(basePrice);
+                od.setPrice(basePrice);
                 total += basePrice;
             }
         }
@@ -294,23 +310,24 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Order handleRemoveVoucherFromOrder(User user) {
-        // Find the most recent pending order for this user
-        Order order = orderRepository.findTopByUserAndStatusOrderByCreatedAtDesc(user, "PENDING_PAYMENT");
+        // Find the most recent pending order (by paymentStatus=false) for this user
+        Order order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
         if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
             return null;
         }
-        // Remove voucher from the order and reset all orderDetail prices to base prices
+        // Remove voucher from the order and reset all orderDetail prices/finalPrices to base prices
         order.setVoucher(null);
         order.setVoucherCode(null);
 
         for (OrderDetail od : order.getOrderDetails()) {
             double basePrice = od.getProduct().getPrice() * od.getQuantity();
             od.setPrice(basePrice);
+            od.setFinalPrice(basePrice);
         }
 
         double total = 0.0;
         for (OrderDetail od : order.getOrderDetails()) {
-            total += od.getPrice();
+            total += od.getFinalPrice() != null ? od.getFinalPrice() : od.getPrice();
         }
         order.setTotalPrice(total);
         orderRepository.save(order);
