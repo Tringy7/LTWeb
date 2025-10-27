@@ -95,6 +95,12 @@
                             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                         }
 
+                        /* Disabled link style for back button until "Áp dụng" is clicked */
+                        .disabled-link {
+                            pointer-events: none;
+                            opacity: 0.65;
+                        }
+
                         .edit-status {
                             cursor: pointer;
                             margin-left: 6px;
@@ -166,6 +172,7 @@
                                                     <th>Số lượng</th>
                                                     <th>Giá (VND)</th>
                                                     <th>Trạng thái</th>
+                                                    <th>Thực hiện</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -187,7 +194,8 @@
                                                                 value="${d.status != null ? fn:toUpperCase(d.status) : ''}" />
                                                             <c:choose>
                                                                 <c:when test="${statusUpper == 'PENDING'}">
-                                                                    <span class="badge badge-danger">Đơn hàng mới</span>
+                                                                    <span class="badge badge-danger">Chưa xác
+                                                                        nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'CONFIRMED'}">
                                                                     <span class="badge badge-warning">Đã xác nhận</span>
@@ -198,8 +206,14 @@
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <span class="badge badge-success">Đã giao</span>
                                                                 </c:when>
-                                                                <c:when test="${statusUpper == 'CANCELLED'}">
-                                                                    <span class="badge badge-secondary">Hủy</span>
+                                                                <c:when test="${statusUpper == 'RETURN_REQUESTED'}">
+                                                                    <span class="badge badge-secondary">Yêu cầu trả
+                                                                        hàng</span>
+                                                                    <!-- Nút xác nhận xử lý yêu cầu trả hàng -->
+                                                                </c:when>
+                                                                <c:when test="${statusUpper == 'REJECTED_RETURN'}">
+                                                                    <span class="badge badge-secondary">Từ chối yêu cầu
+                                                                        trả hàng</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <span class="badge"
@@ -211,8 +225,29 @@
                                                             <i class="bi bi-pencil edit-status" data-detail-id="${d.id}"
                                                                 data-status="${d.status}"
                                                                 title="Cập nhật trạng thái"></i>
-
-
+                                                        </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${statusUpper == 'RETURNED'}">
+                                                                    <form
+                                                                        action="${pageContext.request.contextPath}/vendor/order/detail/${d.id}/returned"
+                                                                        method="post">
+                                                                        <button type="submit"
+                                                                            class="btn btn-warning apply-btn"
+                                                                            title="Cập nhật trạng thái">
+                                                                            <i class="fas fa-sync-alt me-1"></i> Áp dụng
+                                                                        </button>
+                                                                    </form>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <!-- chỉ hiển thị nút, không submit nếu không phải RETURNED -->
+                                                                    <button type="button"
+                                                                        class="btn btn-warning apply-btn"
+                                                                        title="Áp dụng (chỉ hiển thị)">
+                                                                        <i class="fas fa-sync-alt me-1"></i> Áp dụng
+                                                                    </button>
+                                                                </c:otherwise>
+                                                            </c:choose>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>
@@ -225,8 +260,9 @@
 
                             <!-- Nút quay lại dưới cùng -->
                             <div class="card-footer card-footer-custom text-center">
-                                <a href="${pageContext.request.contextPath}/vendor/order"
-                                    class="btn btn-primary btn-sm px-4 py-2 btn-lift">
+                                <a href="${pageContext.request.contextPath}/vendor/order" id="backLink"
+                                    class="btn btn-primary btn-sm px-4 py-2 btn-lift disabled-link" aria-disabled="true"
+                                    title="Vui lòng bấm 'Áp dụng' trước khi quay lại">
                                     <i class="fas fa-arrow-left me-1"></i> Quay lại
                                 </a>
                             </div>
@@ -257,11 +293,12 @@
                                             </label>
                                             <select id="statusUpdate" name="status"
                                                 class="form-select form-select-lg border-2 rounded-pill shadow-sm p-3 status-select">
-                                                <option value="PENDING">Đơn hàng mới</option>
+                                                <option value="PENDING">Chưa xác nhận</option>
                                                 <option value="CONFIRMED">Đã xác nhận</option>
                                                 <option value="SHIPPING">Đang giao</option>
                                                 <option value="DELIVERED">Đã giao</option>
-                                                <option value="CANCELLED">Hủy</option>
+                                                <option value="RETURN_REQUESTED">Yêu cầu trả hàng</option>
+                                                <option value="REJECTED_RETURN">Từ chối yêu cầu trả hàng</option>
                                                 <option value="RETURNED">Trả hàng - Hoàn tiền</option>
                                             </select>
 
@@ -288,12 +325,41 @@
 
                     <script>
                         $(document).ready(function () {
+                            // Track whether the user has clicked an "Áp dụng" action
+                            let hasApplied = false;
+
+                            function enableBack() {
+                                $("#backLink").removeClass("disabled-link").removeAttr("aria-disabled");
+                            }
+
+                            function requireApplyAlert() {
+                                alert("Vui lòng bấm 'Áp dụng' trước khi thực hiện thao tác này.");
+                            }
+
+                            // Open modal when clicking the edit icon (existing behavior)
                             $(document).on("click", ".edit-status", function () {
                                 const detailId = $(this).data("detail-id");
                                 const currentStatus = $(this).data("status");
                                 $("#orderIdUpdate").val(detailId);
                                 $("#statusUpdate").val(currentStatus);
                                 $("#updateStatusModal").modal("show");
+                            });
+
+                            // Intercept clicks on the back link: block until applied
+                            $(document).on("click", "#backLink", function (e) {
+                                if ($(this).hasClass("disabled-link")) {
+                                    e.preventDefault();
+                                    requireApplyAlert();
+                                    return false;
+                                }
+                                // otherwise allow navigation
+                            });
+
+                            // When any apply button is clicked (form submit or confirm), mark as applied
+                            $(document).on("click", ".apply-btn", function () {
+                                hasApplied = true;
+                                enableBack();
+                                // let the form submission proceed
                             });
 
                             $("#saveStatusBtn").click(function () {
@@ -311,6 +377,9 @@
                                     data: { detailId: detailId, status: status },
                                     success: function (response) {
                                         if (response.status === "success") {
+                                            // mark applied and enable back link
+                                            hasApplied = true;
+                                            enableBack();
                                             alert(response.message);
                                             location.reload();
                                         } else {

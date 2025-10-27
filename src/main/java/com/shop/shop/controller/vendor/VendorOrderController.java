@@ -3,14 +3,21 @@ package com.shop.shop.controller.vendor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shop.shop.domain.Order;
 import com.shop.shop.domain.Shop;
@@ -148,7 +155,6 @@ public class VendorOrderController {
 
             // // Vì Order không có field status → ta cập nhật trạng thái qua OrderDetail
             // boolean updated = orderService.updateOrderStatusByDetails(orderId, status);
-
             // if (updated) {
             // response.put("status", "success");
             // response.put("message", "Cập nhật trạng thái đơn hàng thành công!");
@@ -156,7 +162,6 @@ public class VendorOrderController {
             // response.put("status", "error");
             // response.put("message", "Không tìm thấy đơn hàng cần cập nhật!");
             // }
-
         } catch (Exception e) {
             response.put("status", "error");
             response.put("message", "Lỗi: " + e.getMessage());
@@ -199,4 +204,9 @@ public class VendorOrderController {
         return response;
     }
 
+    @PostMapping("/detail/{detailId}/returned")
+    public String handleReturnConfirmation(@PathVariable("detailId") Long detailId, Model model) {
+        orderDetailService.returnedOrderDTToProduct(detailId);
+        return "redirect:/vendor/order/detail/" + detailId;
+    }
 }

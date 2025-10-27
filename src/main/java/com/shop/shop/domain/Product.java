@@ -57,9 +57,8 @@ public class Product {
     private String category;
 
     @Column(length = 50)
-    private String gender; // Nam, Nữ, Unisex, ...
+    private String gender;
 
-    // Thêm liên kết với ProductDetail
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductDetail> productDetails;
 

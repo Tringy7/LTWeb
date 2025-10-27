@@ -229,8 +229,8 @@
 
                                 <!-- Nút bên phải -->
                                 <div class="d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift"
-                                        onclick="location.reload()">
+                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift" style="
+    margin-right: 14px;" onclick=" location.reload()">
                                         <i class="fas fa-rotate-right me-1"></i> Refresh
                                     </button>
                                     <button type="button" class="btn btn-outline-info btn-sm btn-lift"
@@ -253,7 +253,6 @@
                                                     <th>Người đặt</th>
                                                     <th>Phương thức thanh toán</th>
                                                     <th>Tổng tiền</th>
-                                                    <th>Trạng thái</th>
                                                     <th>Hành động</th>
                                                 </tr>
                                             </thead>
@@ -262,42 +261,22 @@
                                                     <tr>
                                                         <td>#${order.id}</td>
                                                         <td>${order.user.fullName}</td>
-                                                        <td>${order.paymentMethod}</td>
-                                                        <td>${order.totalPrice}</td>
                                                         <td>
-                                                            <c:set var="statusUpper"
-                                                                value="${fn:toUpperCase(fn:trim(order.status))}" />
                                                             <c:choose>
                                                                 <c:when
-                                                                    test="${statusUpper == 'PENDING' || statusUpper == 'NEW'}">
-                                                                    <span class="badge badge-danger">Đơn hàng mới</span>
+                                                                    test="${order.paymentMethod == 'Cash On Delivery'}">
+                                                                    Thanh toán khi nhận hàng
                                                                 </c:when>
-                                                                <c:when test="${statusUpper == 'PROCESSING'}">
-                                                                    <span class="badge badge-warning">Đang xử lý</span>
+                                                                <c:when
+                                                                    test="${order.paymentMethod == 'Direct Bank Transfer'}">
+                                                                    Thanh toán trực tuyến
                                                                 </c:when>
-                                                                <c:when test="${statusUpper == 'CONFIRMED'}">
-                                                                    <span class="badge badge-info">Đã xác nhận</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge badge-primary">Đang giao</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'DELIVERED'}">
-                                                                    <span class="badge badge-success">Đã giao</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'CANCELLED'}">
-                                                                    <span class="badge badge-secondary">Hủy</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'RETURNED'}">
-                                                                    <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">Trả
-                                                                        hàng - Hoàn tiền</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="badge bg-dark">Không xác định
-                                                                        (${order.status})</span>
-                                                                </c:otherwise>
+                                                                <c:otherwise>${order.paymentMethod}</c:otherwise>
                                                             </c:choose>
-
+                                                        </td>
+                                                        <td>
+                                                            <fmt:formatNumber type="number"
+                                                                value="${order.totalPrice}" /> VND
                                                         </td>
                                                         <td>
                                                             <a href="${pageContext.request.contextPath}/vendor/order/detail/${order.id}"
@@ -316,48 +295,6 @@
                         </div>
                     </div>
                 </div>
-
-
-                <!-- <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="filterModalLabel">Bộ lọc đơn hàng</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <form action="/vendor/order" method="get">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="status">Trạng thái đơn hàng</label>
-                                        <select class="form-control" name="status" id="status">
-                                            <option value="">-- Tất cả Trạng thái --</option>
-                                            <option value="PENDING" ${status=='PENDING' ? 'selected' : '' }>Đơn hàng mới
-                                            </option>
-                                            <option value="CONFIRMED" ${status=='CONFIRMED' ? 'selected' : '' }>Đã xác
-                                                nhận</option>
-                                            <option value="SHIPPING" ${status=='SHIPPING' ? 'selected' : '' }>Đang giao
-                                            </option>
-                                            <option value="Đã giao" ${status=='DELIVERED' ? 'selected' : '' }>Đã giao
-                                            </option>
-                                            <option value="CANCELLED" ${status=='CANCELLED' ? 'selected' : '' }>Hủy
-                                            </option>
-                                            <option value="RETURNED" ${status=='RETURNED' ? 'selected' : '' }>Trả hàng -
-                                                Hoàn tiền</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Áp dụng</button>
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Đóng</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div> -->
-
 
                 <!-- Modal xác nhận xuất -->
                 <div class="modal fade" id="confirmExportModal" tabindex="-1" role="dialog"

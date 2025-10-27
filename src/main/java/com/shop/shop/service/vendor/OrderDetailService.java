@@ -3,24 +3,36 @@ package com.shop.shop.service.vendor;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shop.shop.domain.OrderDetail;
+import com.shop.shop.domain.Product;
+import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.repository.OrderDetailRepository;
+import com.shop.shop.repository.ProductDetailRepository;
+import com.shop.shop.repository.ProductRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service("vendorOrderDetailService")
 public class OrderDetailService {
 
+    private final ProductDetailRepository productDetailRepository;
+
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private OrderStatusService orderStatusService;
+
+    OrderDetailService(ProductDetailRepository productDetailRepository) {
+        this.productDetailRepository = productDetailRepository;
+    }
 
     public List<OrderDetail> getOrderDetailsByOrderId(Long orderId) {
         return orderDetailRepository.findByOrder_Id(orderId);
@@ -78,4 +90,25 @@ public class OrderDetailService {
                 .orElse(false);
     }
 
+    @Transactional
+    public void returnedOrderDTToProduct(Long orderId) {
+        OrderDetail orderDetails = orderDetailRepository.findById(orderId).get();
+        if (orderDetails != null) {
+            String size = orderDetails.getSize();
+            Long quantity = orderDetails.getQuantity();
+            Product product = orderDetails.getProduct();
+            List<ProductDetail> pd = product.getProductDetails();
+            for (ProductDetail p : pd) {
+                if (p.getSize().equals(size)) {
+                    p.setQuantity(p.getQuantity() + quantity);
+                    p.setSold(p.getSold() - quantity);
+                    productDetailRepository.save(p);
+                }
+            }
+            orderDetails.setQuantity(0L);
+            orderDetails.setPrice(0D);
+            orderDetails.setFinalPrice(0D);
+            orderDetailRepository.save(orderDetails);
+        }
+    }
 }
