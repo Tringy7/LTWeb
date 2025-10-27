@@ -5,9 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,17 +14,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.Shop;
 import com.shop.shop.dto.ProductResponseDTO;
-import com.shop.shop.dto.ProductUpdateDTO;
 import com.shop.shop.dto.ShopResponseDTO;
 import com.shop.shop.mapper.ProductMapper;
 import com.shop.shop.mapper.ShopMapper;
 import com.shop.shop.service.admin.ProductService;
 import com.shop.shop.service.admin.ShopService;
 
-import jakarta.validation.Valid;
-
 //Admin Product Controller for managing products by shop
-
 @Controller
 public class AdminProductController {
 
@@ -44,7 +38,6 @@ public class AdminProductController {
     }
 
     // Display list of all shops for product management
-
     @GetMapping("/admin/product")
     public String showShops(@RequestParam(defaultValue = "") String keyword, Model model) {
         List<Shop> shops = shopService.searchShops(keyword);
@@ -64,7 +57,6 @@ public class AdminProductController {
     }
 
     // Display products for a specific shop
-
     @GetMapping("/admin/product/shop/{shopId}")
     public String showProductsByShop(@PathVariable Long shopId,
             @RequestParam(defaultValue = "") String keyword,
@@ -88,7 +80,6 @@ public class AdminProductController {
     }
 
     // Display product details
-
     @GetMapping("/admin/product/{id}")
     public String showProductDetail(@PathVariable Long id, Model model) {
         Optional<Product> productOpt = productService.getProductById(id);
@@ -105,7 +96,6 @@ public class AdminProductController {
     }
 
     // Admin product moderation actions
-
     @PostMapping("/admin/product/{id}/hide")
     public String hideProduct(@PathVariable Long id,
             @RequestParam String violationType,
