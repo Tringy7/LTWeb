@@ -178,6 +178,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                     value="${summary.totalRevenue}"
                     type="currency"
                     currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </div>
               </div>
@@ -190,6 +191,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                     value="${summary.totalCommissionAmount}"
                     type="currency"
                     currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </div>
               </div>
@@ -208,6 +210,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                     value="${summary.averageCommissionPerShop}"
                     type="currency"
                     currencySymbol="₫"
+                    maxFractionDigits="0"
                   />
                 </div>
               </div>
@@ -274,6 +277,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                             value="${commission.totalRevenue}"
                             type="currency"
                             currencySymbol="₫"
+                            maxFractionDigits="0"
                           />
                         </span>
                       </td>
@@ -291,6 +295,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                             value="${commission.commissionAmount}"
                             type="currency"
                             currencySymbol="₫"
+                            maxFractionDigits="0"
                           />
                         </span>
                       </td>
@@ -317,11 +322,20 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                       </td>
                       <td>
                         <c:choose>
-                          <c:when test="${commission.status == 'PENDING'}">
+                          <c:when
+                            test="${commission.status == 'pending' || commission.status == 'PENDING'}"
+                          >
                             <span class="badge badge-warning">Chờ thu</span>
                           </c:when>
-                          <c:when test="${commission.status == 'COLLECTED'}">
+                          <c:when
+                            test="${commission.status == 'collected' || commission.status == 'COLLECTED'}"
+                          >
                             <span class="badge badge-success">Đã thu</span>
+                          </c:when>
+                          <c:when
+                            test="${commission.status == 'calculated' || commission.status == 'CALCULATED'}"
+                          >
+                            <span class="badge badge-info">Đã tính</span>
                           </c:when>
                           <c:otherwise>
                             <span class="badge badge-secondary"
@@ -332,7 +346,9 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                       </td>
                       <td>
                         <div class="action-buttons">
-                          <c:if test="${commission.status == 'PENDING'}">
+                          <c:if
+                            test="${commission.status == 'pending' || commission.status == 'PENDING' || commission.status == 'calculated' || commission.status == 'CALCULATED'}"
+                          >
                             <form
                               method="POST"
                               action="/admin/commission/${commission.id}/mark-collected"
@@ -341,19 +357,29 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
                             >
                               <button
                                 type="submit"
-                                class="btn btn-sm btn-success"
+                                class="btn btn-sm btn-success rounded-pill"
                                 title="Đánh dấu đã thu"
                               >
-                                <i class="mdi mdi-check"></i>
+                                <i class="mdi mdi-check-circle me-1"></i>
+                                Thu
                               </button>
                             </form>
                           </c:if>
                           <a
+                            href="/admin/commission/${commission.id}"
+                            class="btn btn-sm btn-primary rounded-pill"
+                            title="Xem chi tiết hoa hồng"
+                          >
+                            <i class="mdi mdi-file-document-outline me-1"></i>
+                            Chi tiết
+                          </a>
+                          <a
                             href="/admin/commission/shop/${commission.shopId}"
-                            class="btn btn-sm btn-info"
+                            class="btn btn-sm btn-info rounded-pill"
                             title="Xem chi tiết cửa hàng"
                           >
-                            <i class="mdi mdi-eye"></i>
+                            <i class="mdi mdi-store me-1"></i>
+                            Cửa hàng
                           </a>
                         </div>
                       </td>

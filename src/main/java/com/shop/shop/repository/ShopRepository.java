@@ -58,6 +58,11 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     // Count shops by date range
     Long countByCreatedAtBetween(LocalDateTime fromDate, LocalDateTime toDate);
 
+        // Vendor approval related methods
+        List<Shop> findBySecurityInfo_VerificationStatus(String status);
+
+        long countBySecurityInfo_VerificationStatus(String verificationStatus);
+
     Optional<Shop> findFirstByUserId(Long userId);
 
     Shop findByUser(User user);

@@ -1,9 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/admin/css/dashboard.css">
+
 
 <div class="main-panel">
     <div class="content-wrapper">
@@ -116,9 +118,10 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-9">
-                                <div class="d-flex align-items-center align-self-start">
-                                    <h3 class="mb-0">
-                                        <fmt:formatNumber value="${dashboardStats.totalRevenue}" type="currency" currencySymbol="₫"/>
+                                <div class="align-items-center align-self-start revenue-container">
+                                    <h3 class="mb-0 revenue-amount">
+                                        <fmt:formatNumber value="${dashboardStats.totalRevenue}" type="currency"
+                                         currencySymbol="₫" maxFractionDigits="0"/>
                                     </h3>
                                     <c:if test="${dashboardStats.revenueGrowthPercent >= 0}">
                                         <p class="text-success ml-2 mb-0 font-weight-medium">+${dashboardStats.revenueGrowthPercent}%</p>
@@ -174,15 +177,25 @@
                                                         <small class="text-muted d-block">${order.user.email}</small>
                                                     </div>
                                                 </td>
-                                                <td>${order.shop.shopName}</td>
+                                                <td>
+                                                    <c:set var="shopNames" value="" />
+                                                    <c:forEach items="${order.orderDetails}" var="detail" varStatus="status">
+                                                        <c:set var="shopNames" value="${shopNames}${detail.shop.shopName}" />
+                                                        <c:if test="${!status.last}">
+                                                            <c:set var="shopNames" value="${shopNames}, " />
+                                                        </c:if>
+                                                    </c:forEach>
+                                                    <span title="${shopNames}">${fn:length(shopNames) > 30 ? fn:substring(shopNames, 0, 30).concat('...') : shopNames}</span>
+                                                </td>
                                                 <td>
                                                     <span class="font-weight-bold text-success">
-                                                        <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="₫"/>
+                                                        <fmt:formatNumber value="${order.totalPrice}" type="currency"
+                                                         currencySymbol="₫" maxFractionDigits="0"/>
                                                     </span>
                                                 </td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${order.status == 'New'}">
+                                                        <c:when test="${order.status == 'NEW'}">
                                                             <span class="badge badge-warning">Mới</span>
                                                         </c:when>
                                                         <c:when test="${order.status == 'PROCESSING'}">
@@ -232,24 +245,8 @@
             <div class="col-lg-4 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-3">Thao Tác Nhanh</h4>
-                        
-                        <div class="d-grid gap-2 mb-4">
-                            <a href="/admin/user/add" class="btn btn-outline-primary">
-                                <i class="typcn typcn-user-add mr-2"></i>Thêm Người Dùng
-                            </a>
-                            <a href="/admin/product/add" class="btn btn-outline-success">
-                                <i class="typcn typcn-plus mr-2"></i>Thêm Sản Phẩm
-                            </a>
-                            <a href="/admin/commission/calculate-this-month" class="btn btn-outline-info">
-                                <i class="typcn typcn-calculator mr-2"></i>Tính Hoa Hồng
-                            </a>
-                        </div>
+                        <h4 class="card-title mb-3">Thống Kê Chi Tiết</h4>
 
-                        <hr>
-
-                        <h6 class="mb-3">Thống Kê Chi Tiết</h6>
-                        
                         <!-- Order Status Distribution -->
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
@@ -341,7 +338,8 @@
                                                 <td>${product.shop.shopName}</td>
                                                 <td>
                                                     <span class="font-weight-bold text-primary">
-                                                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="₫"/>
+                                                        <fmt:formatNumber value="${product.price}" type="currency" 
+                                                        currencySymbol="₫" maxFractionDigits="0"/>
                                                     </span>
                                                 </td>
                                                 <td>
@@ -386,7 +384,8 @@
                             <div class="col-md-3">
                                 <div class="commission-stat">
                                     <div class="stat-value text-primary">
-                                        <fmt:formatNumber value="${commissionStats.totalCommissionAmount}" type="currency" currencySymbol="₫"/>
+                                        <fmt:formatNumber value="${commissionStats.totalCommissionAmount}" 
+                                        type="currency" currencySymbol="₫" maxFractionDigits="0"/>
                                     </div>
                                     <div class="stat-label">Tổng Hoa Hồng</div>
                                 </div>
@@ -394,7 +393,8 @@
                             <div class="col-md-3">
                                 <div class="commission-stat">
                                     <div class="stat-value text-success">
-                                        <fmt:formatNumber value="${commissionStats.collectedAmount}" type="currency" currencySymbol="₫"/>
+                                        <fmt:formatNumber value="${commissionStats.collectedAmount}"
+                                         type="currency" currencySymbol="₫" maxFractionDigits="0"/>
                                     </div>
                                     <div class="stat-label">Đã Thu</div>
                                 </div>
@@ -402,7 +402,8 @@
                             <div class="col-md-3">
                                 <div class="commission-stat">
                                     <div class="stat-value text-warning">
-                                        <fmt:formatNumber value="${commissionStats.pendingAmount}" type="currency" currencySymbol="₫"/>
+                                        <fmt:formatNumber value="${commissionStats.pendingAmount}" type="currency"
+                                         currencySymbol="₫" maxFractionDigits="0"/>
                                     </div>
                                     <div class="stat-label">Chờ Thu</div>
                                 </div>

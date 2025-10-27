@@ -42,13 +42,13 @@ public class Commission {
     @Column(name = "period_end", nullable = false)
     private LocalDate periodEnd;
 
-    @Column(name = "total_revenue", precision = 15, scale = 2, nullable = false)
+    @Column(name = "total_revenue", precision = 15, nullable = false)
     private BigDecimal totalRevenue;
 
     @Column(name = "percent", precision = 5, scale = 2)
     private BigDecimal percent = BigDecimal.valueOf(5.00); // Mặc định 5%
 
-    @Column(name = "amount", precision = 15, scale = 2, nullable = false)
+    @Column(name = "amount", precision = 15, nullable = false)
     private BigDecimal amount; // totalRevenue * percent / 100
 
     @Column(name = "status", length = 50)

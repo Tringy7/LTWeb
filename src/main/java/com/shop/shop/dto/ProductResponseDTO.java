@@ -32,6 +32,12 @@ public class ProductResponseDTO {
     private Long totalSold;
     private Boolean hasVoucher;
 
+    // Admin control fields
+    private String status; // ACTIVE, HIDDEN, LOCKED
+    private String violationType; // COPYRIGHT, PROHIBITED, MISLEADING, etc.
+    private String adminNotes; // Admin notes about violations or actions
+    private java.time.LocalDateTime lastModifiedByAdmin;
+
     @Override
     public String toString() {
         return "ProductResponseDTO{" +

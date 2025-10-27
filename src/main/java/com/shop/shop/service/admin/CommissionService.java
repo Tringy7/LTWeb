@@ -16,9 +16,6 @@ public interface CommissionService {
     // Calculate this month's commissions
     List<CommissionResponseDTO> calculateThisMonthCommissions();
 
-    // Calculate commissions up to now
-    List<CommissionResponseDTO> calculateCommissionsUpToNow();
-
     // Get all commissions
     List<CommissionResponseDTO> getAllCommissions();
 

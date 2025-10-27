@@ -33,6 +33,11 @@ public class DashboardStatsDTO {
     private Long ordersThisMonth;
     private BigDecimal revenueThisMonth;
 
+    // Commission metrics
+    private BigDecimal totalCommissionThisMonth;
+    private BigDecimal totalCommissionLastMonth;
+    private Double commissionGrowthPercent;
+
     // Helper methods for display
     public String getFormattedTotalRevenue() {
         return totalRevenue != null ? String.format("%,.0f₫", totalRevenue) : "0₫";
@@ -64,5 +69,15 @@ public class DashboardStatsDTO {
         if (revenueGrowthPercent == null)
             return "0%";
         return String.format("%.1f%%", revenueGrowthPercent);
+    }
+
+    public String getFormattedTotalCommissionThisMonth() {
+        return totalCommissionThisMonth != null ? String.format("%,.0f₫", totalCommissionThisMonth) : "0₫";
+    }
+
+    public String getCommissionGrowthDisplay() {
+        if (commissionGrowthPercent == null)
+            return "0%";
+        return String.format("%.1f%%", commissionGrowthPercent);
     }
 }

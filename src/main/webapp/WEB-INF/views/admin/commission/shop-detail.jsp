@@ -76,6 +76,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                         value="${totalCommission}"
                         type="currency"
                         currencySymbol="₫"
+                        maxFractionDigits="0"
                       />
                     </h4>
                     <small>Tổng hoa hồng</small>
@@ -97,6 +98,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                         value="${totalRevenue}"
                         type="currency"
                         currencySymbol="₫"
+                        maxFractionDigits="0"
                       />
                     </h4>
                     <small>Tổng doanh thu</small>
@@ -183,6 +185,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                             value="${commission.totalRevenue}"
                             type="currency"
                             currencySymbol="₫"
+                            maxFractionDigits="0"
                           />
                         </span>
                       </td>
@@ -200,6 +203,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
                             value="${commission.commissionAmount}"
                             type="currency"
                             currencySymbol="₫"
+                            maxFractionDigits="0"
                           />
                         </span>
                       </td>

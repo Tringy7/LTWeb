@@ -183,9 +183,160 @@
         </div>
       </div>
 
+<<<<<<< HEAD
       <!-- Include Base Scripts -->
       <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
       <script src="/admin/js/off-canvas.js"></script>
       <script src="/admin/js/hoverable-collapse.js"></script>
       <script src="/admin/js/template.js"></script>
       <script src="/admin/js/todolist.js"></script>
+=======
+    <!-- Search Result Info -->
+    <c:if test="${not empty keyword}">
+      <div class="search-result-info">
+        <i class="typcn typcn-info mr-1"></i>
+        Tìm thấy ${shops.size()} cửa hàng với từ khóa
+        "<strong>${keyword}</strong>"
+      </div>
+    </c:if>
+
+    <!-- Shops Table -->
+    <div class="table-container">
+      <c:choose>
+        <c:when test="${not empty shops}">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tên cửa hàng</th>
+                  <th>Mô tả</th>
+                  <th>Chủ cửa hàng</th>
+                  <th>Trạng thái</th>
+                  <th>Số sản phẩm</th>
+                  <th>Ngày tạo</th>
+                  <th class="text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="shop" items="${shops}" varStatus="status">
+                  <tr>
+                    <td><strong>#${shop.id}</strong></td>
+                    <td>
+                      <div class="font-weight-bold">${shop.shopName}</div>
+                    </td>
+                    <td>
+                      <c:choose>
+                        <c:when test="${not empty shop.description}">
+                          <span title="${shop.description}">
+                            ${shop.description.length() > 50 ?
+                            shop.description.substring(0, 50).concat('...') :
+                            shop.description}
+                          </span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="text-muted">Chưa có mô tả</span>
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                    <td>
+                      <div>
+                        <div class="font-weight-bold">${shop.ownerName}</div>
+                        <small class="text-muted">${shop.ownerEmail}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <c:choose>
+                        <c:when test="${shop.status == 'Active'}">
+                          <span class="badge badge-success">Hoạt động</span>
+                        </c:when>
+                        <c:otherwise>
+                          <span class="badge badge-secondary"
+                            >${shop.status}</span
+                          >
+                        </c:otherwise>
+                      </c:choose>
+                    </td>
+                    <td>
+                      <span class="badge badge-info"
+                        >${shop.totalProducts} sản phẩm</span
+                      >
+                    </td>
+                    <td>
+                      <c:set var="dateTime" value="${shop.createdAt}" />
+                      <c:if test="${not empty dateTime}">
+                        ${dateTime.dayOfMonth}/${dateTime.monthValue}/${dateTime.year}
+                        ${dateTime.hour}:${dateTime.minute < 10 ? '0' : ''
+                        }${dateTime.minute}
+                      </c:if>
+                    </td>
+                    <td class="text-center">
+                      <div class="action-buttons">
+                        <a
+                          href="/admin/product/shop/${shop.id}"
+                          class="btn btn-sm btn-outline-primary"
+                          title="Xem sản phẩm"
+                        >
+                          <i class="typcn typcn-shopping-bag"></i> Sản phẩm
+                        </a>
+                        
+                        <!-- Shop Status Controls -->
+                        <c:choose>
+                          <c:when test="${shop.status == 'Active'}">
+                            <form action="/admin/shop/${shop.id}/status" method="POST" style="display: inline;" 
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn tạm ngưng cửa hàng này?')">
+                              <input type="hidden" name="status" value="Inactive">
+                              <button type="submit" class="btn btn-sm btn-outline-warning" title="Tạm ngưng">
+                                <i class="typcn typcn-media-pause"></i>
+                              </button>
+                            </form>
+                          </c:when>
+                          <c:otherwise>
+                            <form action="/admin/shop/${shop.id}/status" method="POST" style="display: inline;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn kích hoạt lại cửa hàng này?')">
+                              <input type="hidden" name="status" value="Active">
+                              <button type="submit" class="btn btn-sm btn-outline-success" title="Kích hoạt">
+                                <i class="typcn typcn-media-play"></i>
+                              </button>
+                            </form>
+                          </c:otherwise>
+                        </c:choose>
+                      </div>
+                    </td>
+                  </tr>
+                </c:forEach>
+              </tbody>
+            </table>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <div class="no-results">
+            <i class="typcn typcn-shopping-bag"></i>
+            <h5>Không tìm thấy cửa hàng nào</h5>
+            <p class="text-muted">
+              <c:choose>
+                <c:when test="${not empty keyword}">
+                  Thử thay đổi từ khóa tìm kiếm.
+                </c:when>
+                <c:otherwise>
+                  Chưa có cửa hàng nào trong hệ thống.
+                </c:otherwise>
+              </c:choose>
+            </p>
+            <a href="/admin/product" class="btn btn-outline-primary">
+              <i class="typcn typcn-refresh mr-1"></i> Làm mới
+            </a>
+          </div>
+        </c:otherwise>
+      </c:choose>
+    </div>
+  </div>
+</div>
+
+<!-- Include Base Scripts -->
+<script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+<script src="/admin/js/off-canvas.js"></script>
+<script src="/admin/js/hoverable-collapse.js"></script>
+<script src="/admin/js/template.js"></script>
+<script src="/admin/js/todolist.js"></script>
+>>>>>>> anhvuDev

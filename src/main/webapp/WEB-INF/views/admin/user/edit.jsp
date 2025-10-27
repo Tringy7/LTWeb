@@ -94,6 +94,7 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
         action="/admin/user/edit/${userUpdateDTO.id}"
         modelAttribute="userUpdateDTO"
         cssClass="user-form"
+        enctype="multipart/form-data"
       >
         <!-- Display validation errors from backend -->
         <c:if test="${not empty bindingResult and bindingResult.hasErrors()}">
@@ -183,13 +184,46 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
             </div>
 
             <div class="form-group">
-              <label for="image"> Hình đại diện (URL) </label>
-              <form:input
-                path="image"
-                cssClass="form-control"
-                placeholder="https://example.com/avatar.jpg"
-                id="image"
-              />
+              <label for="image"> Hình đại diện </label>
+              <!-- Current image preview -->
+              <c:if test="${not empty userUpdateDTO.image}">
+                <div class="current-image mb-2">
+                  <c:choose>
+                    <c:when test="${userUpdateDTO.image.startsWith('/admin/images/user/')}">
+                      <!-- New format: Full path already included -->
+                      <img src="${userUpdateDTO.image}" alt="Ảnh hiện tại" 
+                           style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd;">
+                    </c:when>
+                    <c:otherwise>
+                      <!-- Old format: Just filename, add path -->
+                      <img src="/admin/images/user/${userUpdateDTO.image}" alt="Ảnh hiện tại" 
+                           style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd;">
+                    </c:otherwise>
+                  </c:choose>
+                  <p class="small text-muted mt-1">Ảnh hiện tại</p>
+                </div>
+              </c:if>
+              
+              <!-- File upload input -->
+              <input type="file" name="imageFile" id="imageFile" 
+                     class="form-control-file mb-2" 
+                     accept="image/*"
+                     onchange="previewImage(this)">
+              <form:errors path="imageFile" cssClass="text-danger small" />
+              
+              <!-- Image preview -->
+              <div id="imagePreview" style="display: none;" class="mt-2">
+                <img id="preview" alt="Xem trước" 
+                     style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #28a745;">
+                <p class="small text-success mt-1">Ảnh mới sẽ được cập nhật</p>
+              </div>
+              
+              <small class="form-text text-muted">
+                Chọn file ảnh từ máy tính (JPG, PNG, GIF). Tối đa 5MB.
+              </small>
+              
+              <!-- Hidden field to keep existing image URL if no new file uploaded -->
+              <form:hidden path="image" />
             </div>
           </div>
         </div>
@@ -216,5 +250,26 @@ uri="http://www.springframework.org/tags/form" prefix="form" %>
 <script src="/admin/js/hoverable-collapse.js"></script>
 <script src="/admin/js/template.js"></script>
 <script src="/admin/js/todolist.js"></script>
+
+<!-- Image Preview Script -->
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('preview');
+    const previewContainer = document.getElementById('imagePreview');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        previewContainer.style.display = 'none';
+    }
+}
+</script>
 
 <!-- Pure Spring Boot MVC - No client-side validation, all handled by backend -->

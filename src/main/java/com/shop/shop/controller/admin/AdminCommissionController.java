@@ -91,7 +91,12 @@ public class AdminCommissionController {
     @PostMapping("/admin/commission/calculate-up-to-now")
     public String calculateCommissionsUpToNow(RedirectAttributes redirectAttributes) {
         try {
-            List<CommissionResponseDTO> calculatedCommissions = commissionService.calculateCommissionsUpToNow();
+            // Create a request to calculate commissions from January 2020 to now
+            LocalDate startDate = LocalDate.of(2020, 1, 1);
+            LocalDate endDate = LocalDate.now();
+            CommissionCalculationRequestDTO request = new CommissionCalculationRequestDTO(startDate, endDate, true);
+
+            List<CommissionResponseDTO> calculatedCommissions = commissionService.calculateCommissions(request);
 
             if (calculatedCommissions.isEmpty()) {
                 redirectAttributes.addFlashAttribute("warningMessage",
@@ -137,6 +142,32 @@ public class AdminCommissionController {
             CommissionResponseDTO commission = commissionService.markAsCollected(id);
             redirectAttributes.addFlashAttribute("successMessage",
                     "Đã đánh dấu thu thập hoa hồng cho cửa hàng " + commission.getShopName());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
+        }
+
+        return "redirect:/admin/commission";
+    }
+
+    @GetMapping("/admin/commission/{id}")
+    public String viewCommissionDetail(@PathVariable Long id, Model model) {
+        try {
+            CommissionResponseDTO commission = commissionService.getCommissionById(id)
+                    .orElseThrow(() -> new RuntimeException("Commission not found with id: " + id));
+
+            model.addAttribute("commission", commission);
+            return "admin/commission/detail";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
+            return "redirect:/admin/commission";
+        }
+    }
+
+    @PostMapping("/admin/commission/{id}/delete")
+    public String deleteCommission(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            commissionService.deleteCommission(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Đã xóa hoa hồng thành công");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }

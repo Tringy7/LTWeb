@@ -1,0 +1,178 @@
+/* Voucher Table Specific Styles */
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    padding: 18px 12px;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Voucher Code Styling */
+.voucher-code {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+/* Discount Percentage */
+.discount-percent {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+/* Status Badges in Table */
+.table .status-badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.table .type-badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Action Buttons in Table */
+.table .action-buttons {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.table .action-buttons .btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+.table .action-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Date Formatting */
+.table td small {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+/* Special Row States */
+.table tbody tr.expired {
+    background-color: #fff3cd;
+}
+
+.table tbody tr.locked {
+    background-color: #f8d7da;
+}
+
+.table tbody tr.inactive {
+    background-color: #e2e3e5;
+}
+
+/* Badge Combinations */
+.condition-badges {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.condition-badges .badge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .action-buttons .btn {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .voucher-code {
+        font-size: 0.75rem;
+        padding: 2px 6px;
+    }
+    
+    .discount-percent {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+}
+
+/* Loading State */
+.table tbody tr.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.table tbody tr.loading td {
+    position: relative;
+}
+
+.table tbody tr.loading td::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

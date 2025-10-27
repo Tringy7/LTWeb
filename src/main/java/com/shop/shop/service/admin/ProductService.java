@@ -52,4 +52,11 @@ public interface ProductService {
 
     // Enrich ProductResponseDTO with calculated fields
     void enrichProductResponseDTO(com.shop.shop.dto.ProductResponseDTO dto);
+
+    // Admin moderation methods
+    void hideProductForViolation(Long productId, String violationType, String adminNotes);
+
+    void lockProductForViolation(Long productId, String violationType, String adminNotes);
+
+    void activateProduct(Long productId);
 }
