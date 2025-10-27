@@ -199,27 +199,33 @@
                             <div class="card-body d-flex justify-content-between align-items-center flex-wrap py-3"
                                 style="background-color: #fff; border-top: 1px solid #eee;">
                                 <!-- Bộ lọc -->
-                                <form action="/vendor/order/filter" method="get"
+                                <form action="${pageContext.request.contextPath}/vendor/order/filter" method="get"
                                     class="d-flex align-items-center mb-2 mb-sm-0">
+
                                     <input type="hidden" name="shop_id" value="${shop.id}">
+
                                     <select name="status" id="statusFilter"
                                         class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
                                         onchange="this.form.submit()">
                                         <option value="">-- Tất cả Trạng thái --</option>
-                                        <option value="PENDING" ${status=='PENDING' ? 'selected' : '' }>Đơn hàng mới
-                                        </option>
-                                        <option value="CONFIRMED" ${status=='CONFIRMED' ? 'selected' : '' }>Đã xác nhận
-                                        </option>
-                                        <option value="SHIPPING" ${status=='SHIPPING' ? 'selected' : '' }>Đang giao
-                                        </option>
-                                        <option value="DELIVERED" ${status=='DELIVERED' ? 'selected' : '' }>Đã giao
-                                        </option>
-                                        <option value="CANCELLED" ${status=='CANCELLED' ? 'selected' : '' }>Hủy</option>
-                                        <option value="RETURNED" ${status=='RETURNED' ? 'selected' : '' }>Trả hàng -
-                                            Hoàn tiền</option>
+                                        <c:forEach var="st"
+                                            items="${['PENDING','CONFIRMED','PROCESSING','SHIPPING','DELIVERED','CANCELLED','RETURNED']}">
+                                            <option value="${st}" <c:if test="${status eq st}">selected</c:if>>
+                                                <c:choose>
+                                                    <c:when test="${st eq 'PENDING'}">Đơn hàng mới</c:when>
+                                                    <c:when test="${st eq 'CONFIRMED'}">Đã xác nhận</c:when>
+                                                    <c:when test="${st eq 'PROCESSING'}">Đang xử lý</c:when>
+                                                    <c:when test="${st eq 'SHIPPING'}">Đang giao</c:when>
+                                                    <c:when test="${st eq 'DELIVERED'}">Đã giao</c:when>
+                                                    <c:when test="${st eq 'CANCELLED'}">Hủy</c:when>
+                                                    <c:when test="${st eq 'RETURNED'}">Trả hàng - Hoàn tiền</c:when>
+                                                </c:choose>
+                                            </option>
+                                        </c:forEach>
                                     </select>
-
                                 </form>
+
+
 
                                 <!-- Nút bên phải -->
                                 <div class="d-flex align-items-center">
@@ -260,17 +266,20 @@
                                                         <td>${order.totalPrice}</td>
                                                         <td>
                                                             <c:set var="statusUpper"
-                                                                value="${fn:toUpperCase(order.status)}" />
-
+                                                                value="${fn:toUpperCase(fn:trim(order.status))}" />
                                                             <c:choose>
-                                                                <c:when test="${statusUpper == 'PENDING'}">
+                                                                <c:when
+                                                                    test="${statusUpper == 'PENDING' || statusUpper == 'NEW'}">
                                                                     <span class="badge badge-danger">Đơn hàng mới</span>
                                                                 </c:when>
+                                                                <c:when test="${statusUpper == 'PROCESSING'}">
+                                                                    <span class="badge badge-warning">Đang xử lý</span>
+                                                                </c:when>
                                                                 <c:when test="${statusUpper == 'CONFIRMED'}">
-                                                                    <span class="badge badge-warning">Đã xác nhận</span>
+                                                                    <span class="badge badge-info">Đã xác nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge badge-info">Đang giao</span>
+                                                                    <span class="badge badge-primary">Đang giao</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <span class="badge badge-success">Đã giao</span>
@@ -283,7 +292,12 @@
                                                                         style="background-color:#6f42c1;color:white;">Trả
                                                                         hàng - Hoàn tiền</span>
                                                                 </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="badge bg-dark">Không xác định
+                                                                        (${order.status})</span>
+                                                                </c:otherwise>
                                                             </c:choose>
+
                                                         </td>
                                                         <td>
                                                             <a href="${pageContext.request.contextPath}/vendor/order/detail/${order.id}"
@@ -304,7 +318,7 @@
                 </div>
 
 
-                <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
+                <!-- <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -342,7 +356,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
 
                 <!-- Modal xác nhận xuất -->

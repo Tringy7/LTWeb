@@ -18,4 +18,9 @@ public class ShopService {
     public Optional<Shop> getShopByUserId(Long userId) {
         return shopRepository.findFirstByUserId(userId);
     }
+
+    public Shop findById(Long id) {
+        Optional<Shop> shop = shopRepository.findById(id);
+        return shop.orElse(null);
+    }
 }

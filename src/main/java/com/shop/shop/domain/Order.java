@@ -1,5 +1,6 @@
 package com.shop.shop.domain;
 
+import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -65,45 +66,55 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails;
 
-    // Helper method to get overall order status based on order details
+    @Transient
     public String getStatus() {
         if (orderDetails == null || orderDetails.isEmpty()) {
             return "NEW";
         }
 
-        // Get unique statuses from order details
         List<String> statuses = orderDetails.stream()
-                .map(OrderDetail::getStatus)
-                .filter(status -> status != null)
+                .map(d -> d.getStatus() == null ? "" : d.getStatus().trim().toUpperCase())
                 .distinct()
                 .toList();
 
-        // If all order details are delivered, order is delivered
-        if (statuses.size() == 1 && "DELIVERED".equals(statuses.get(0))) {
-            return "DELIVERED";
-        }
+        boolean allCancelled = statuses.size() == 1 && statuses.contains("CANCELLED");
+        boolean allReturned = statuses.size() == 1 && statuses.contains("RETURNED");
+        boolean allDelivered = statuses.size() == 1 && statuses.contains("DELIVERED");
+        boolean allConfirmed = statuses.size() == 1 && statuses.contains("CONFIRMED");
 
-        // If all order details are cancelled, order is cancelled
-        if (statuses.size() == 1 && "CANCELLED".equals(statuses.get(0))) {
+        boolean anyReturned = statuses.contains("RETURNED");
+        boolean anyCancelled = statuses.contains("CANCELLED");
+        boolean anyDelivered = statuses.contains("DELIVERED");
+        boolean anyShipping = statuses.contains("SHIPPING");
+        boolean anyConfirmed = statuses.contains("CONFIRMED");
+        boolean anyProcessing = statuses.contains("PROCESSING");
+        boolean anyPending = statuses.contains("PENDING");
+
+        // 🔹 Ưu tiên theo mức độ hoàn tất cao nhất trước
+        if (allReturned)
+            return "RETURNED";
+        if (allCancelled)
             return "CANCELLED";
-        }
-
-        // If any order detail is delivered, order is partially delivered
-        if (statuses.contains("DELIVERED")) {
-            return "PROCESSING"; // Partially delivered, still processing
-        }
-
-        // If any order detail is cancelled but not all, still processing
-        if (statuses.contains("CANCELLED")) {
+        if (allDelivered)
+            return "DELIVERED";
+        if (anyReturned)
+            return "RETURNED";
+        if (anyCancelled)
+            return "CANCELLED";
+        if (anyDelivered)
+            return "DELIVERED";
+        if (anyShipping)
+            return "SHIPPING";
+        if (allConfirmed)
+            return "CONFIRMED";
+        if (anyConfirmed && !anyShipping && !anyDelivered)
+            return "CONFIRMED";
+        if (anyProcessing)
             return "PROCESSING";
-        }
+        if (anyPending && statuses.size() == 1)
+            return "PENDING";
 
-        // If all are pending/processing, order is processing
-        if (statuses.stream().allMatch(status -> "PENDING".equals(status) || "PROCESSING".equals(status))) {
-            return "PROCESSING";
-        }
-
-        // Default to processing for any other combination
         return "PROCESSING";
     }
+
 }

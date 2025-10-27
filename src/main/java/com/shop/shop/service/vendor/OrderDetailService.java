@@ -68,17 +68,14 @@ public class OrderDetailService {
         return orderDetailRepository.findDistinctOrderIdsByShopId(shopId);
     }
 
-    @Transactional
-    public boolean updateOrderDetailStatus(Long detailId, String newStatus) {
-        OrderDetail detail = orderDetailRepository.findById(detailId).orElse(null);
-        if (detail == null)
-            return false;
-
-        detail.setStatus(newStatus.toUpperCase());
-        orderDetailRepository.save(detail);
-
-        orderStatusService.updateOrderStatusFromDetails(detail.getOrder().getId());
-        return true;
+    public boolean updateOrderDetailStatus(Long detailId, String status) {
+        return orderDetailRepository.findById(detailId)
+                .map(detail -> {
+                    detail.setStatus(status);
+                    orderDetailRepository.save(detail);
+                    return true;
+                })
+                .orElse(false);
     }
 
 }

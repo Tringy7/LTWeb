@@ -43,6 +43,7 @@ public class VendorOrderController {
         throw new RuntimeException("User not authenticated");
     }
 
+    // --- Hiển thị danh sách đơn hàng ---
     @GetMapping
     public String getOrderList(
             @RequestParam(required = false) String status,
@@ -55,35 +56,35 @@ public class VendorOrderController {
         LocalDateTime startDateTime = (fromDate != null) ? fromDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
-        // List<Order> orders = orderService.filterOrdersByShop(shopId, status,
-        // startDateTime, endDateTime);
-        List<Order> orders = orderService.getOrdersByShopThroughDetails(shopId);
+        // Lọc đơn hàng theo chi tiết (vì Order không có cột status)
+        List<Order> orders = orderService.getOrdersByShopThroughDetails(shopId, status, startDateTime, endDateTime);
 
         model.addAttribute("orders", orders);
         model.addAttribute("status", status);
+        model.addAttribute("fromDate", fromDate);
         model.addAttribute("toDate", toDate);
+        model.addAttribute("shop", shopService.findById(shopId));
         return "vendor/order/show";
     }
 
+    // --- Lọc theo trạng thái ---
     @GetMapping("/filter")
-    public String filterOrdersByStatus(
-            @RequestParam(value = "status", required = false) String status,
+    public String filterOrders(@RequestParam(required = false) String status,
+            @RequestParam("shop_id") Long shopId,
             Model model) {
-
-        Long shopId = getCurrentShopId();
         List<Order> orders;
-
         if (status == null || status.isEmpty()) {
-            orders = orderService.getOrdersByShopId(shopId);
+            orders = orderService.findByShopId(shopId);
         } else {
-            orders = orderService.getOrdersByShopIdAndStatus(shopId, status.toUpperCase());
+            orders = orderService.findByShopIdAndStatus(shopId, status);
         }
-
         model.addAttribute("orders", orders);
         model.addAttribute("status", status);
+        model.addAttribute("shop", shopService.findById(shopId));
         return "vendor/order/show";
     }
 
+    // --- Trang chi tiết đơn hàng ---
     @GetMapping("/detail/{orderId}")
     public String showOrderDetailPage(@PathVariable Long orderId, Model model) {
         Long shopId = getCurrentShopId();
@@ -101,6 +102,7 @@ public class VendorOrderController {
         return "vendor/order/order-detail";
     }
 
+    // --- Xuất PDF ---
     @GetMapping("/export")
     @ResponseBody
     public Map<String, String> exportFilteredOrdersToPDF(
@@ -115,7 +117,8 @@ public class VendorOrderController {
             LocalDateTime startDateTime = (fromDate != null) ? fromDate.atStartOfDay() : null;
             LocalDateTime endDateTime = (toDate != null) ? toDate.atTime(LocalTime.MAX) : null;
 
-            List<Order> orders = orderService.filterOrdersByShop(shopId, status, startDateTime, endDateTime);
+            // Lọc đơn qua orderDetails
+            List<Order> orders = orderService.getOrdersByShopThroughDetails(shopId, status, startDateTime, endDateTime);
             String filePath = orderService.exportOrdersToPDF(orders);
 
             response.put("status", "success");
@@ -127,6 +130,7 @@ public class VendorOrderController {
         return response;
     }
 
+    // --- Cập nhật trạng thái đơn hàng ---
     @PostMapping("/update-status")
     @ResponseBody
     public Map<String, Object> updateOrderStatus(
@@ -142,15 +146,16 @@ public class VendorOrderController {
                 return response;
             }
 
-            boolean updated = orderService.updateOrderStatus(orderId, status);
+            // // Vì Order không có field status → ta cập nhật trạng thái qua OrderDetail
+            // boolean updated = orderService.updateOrderStatusByDetails(orderId, status);
 
-            if (updated) {
-                response.put("status", "success");
-                response.put("message", "Cập nhật trạng thái thành công!");
-            } else {
-                response.put("status", "error");
-                response.put("message", "Không tìm thấy đơn hàng cần cập nhật!");
-            }
+            // if (updated) {
+            // response.put("status", "success");
+            // response.put("message", "Cập nhật trạng thái đơn hàng thành công!");
+            // } else {
+            // response.put("status", "error");
+            // response.put("message", "Không tìm thấy đơn hàng cần cập nhật!");
+            // }
 
         } catch (Exception e) {
             response.put("status", "error");
@@ -160,6 +165,7 @@ public class VendorOrderController {
         return response;
     }
 
+    // --- Cập nhật trạng thái chi tiết đơn hàng ---
     @PostMapping("/order-detail/update-status")
     @ResponseBody
     public Map<String, Object> updateOrderDetailStatus(

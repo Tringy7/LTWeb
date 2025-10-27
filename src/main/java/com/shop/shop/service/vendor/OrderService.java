@@ -44,17 +44,34 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public List<Order> filterOrders(String status, LocalDate fromDate, LocalDate toDate) {
-        LocalDateTime start = (fromDate != null) ? fromDate.atStartOfDay() : null;
-        LocalDateTime end = (toDate != null) ? toDate.atTime(23, 59, 59) : null;
+    // public List<Order> filterOrders(String status, LocalDate fromDate, LocalDate
+    // toDate) {
+    // LocalDateTime start = (fromDate != null) ? fromDate.atStartOfDay() : null;
+    // LocalDateTime end = (toDate != null) ? toDate.atTime(23, 59, 59) : null;
 
-        return orderRepository.filterOrders(status, start, end);
-    }
-
-    // public List<Order> filterOrdersByShop(Long shopId, String status,
-    // LocalDateTime start, LocalDateTime end) {
-    // return orderRepository.filterOrdersByShop(shopId, status, start, end);
+    // return orderRepository.filterOrders(status, start, end);
     // }
+
+    public List<Order> filterOrdersByShop(Long shopId, String status, LocalDateTime start, LocalDateTime end) {
+        List<Long> orderIds = (status == null || status.isBlank())
+                ? orderDetailRepository.findDistinctOrderIdsByShopId(shopId)
+                : orderDetailRepository.findDistinctOrderIdsByShopIdAndStatus(shopId, status.toUpperCase());
+
+        if (orderIds.isEmpty())
+            return Collections.emptyList();
+
+        List<Order> orders = orderRepository.findAllById(orderIds);
+
+        // Lọc theo thời gian (nếu có)
+        if (start != null || end != null) {
+            orders.removeIf(o -> {
+                LocalDateTime createdAt = o.getCreatedAt();
+                return (start != null && createdAt.isBefore(start)) || (end != null && createdAt.isAfter(end));
+            });
+        }
+
+        return orders;
+    }
 
     public Order save(Order order) {
         return orderRepository.save(order);
@@ -150,18 +167,13 @@ public class OrderService {
         return false;
     }
 
-    public List<Order> getOrdersByStatus(String status) {
-        return orderRepository.findByStatus(status);
-    }
+    // public List<Order> getOrdersByStatus(String status) {
+    // return orderRepository.findByStatus(status);
+    // }
 
-    public List<Order> getOrdersByShopIdAndStatus(Long shopId, String status) {
-        return orderRepository.findByShopIdAndStatus(shopId, status);
-    }
-
-    public List<Order> filterOrdersByShop(Long shopId, String shopStatus, LocalDateTime start, LocalDateTime end) {
-        String statusParam = (shopStatus == null || shopStatus.isBlank()) ? null : shopStatus.toUpperCase();
-        return orderRepository.findOrdersByShop(shopId, statusParam, start, end);
-    }
+    // public List<Order> getOrdersByShopIdAndStatus(Long shopId, String status) {
+    // return orderRepository.findByShopIdAndStatus(shopId, status);
+    // }
 
     public List<Order> getOrdersByShopId(Long shopId) {
         return orderRepository.findByShopId(shopId);
@@ -256,46 +268,30 @@ public class OrderService {
         }
     }
 
-    public List<Order> getOrdersByShopThroughDetails(Long shopId) {
-        List<Long> orderIds = orderDetailService.getOrderIdsByShopId(shopId);
+    public List<Order> getOrdersByShopThroughDetails(Long shopId, String status, LocalDateTime start,
+            LocalDateTime end) {
+        // Lấy danh sách orderId có liên quan đến shop (theo chi tiết)
+        List<Long> orderIds = orderDetailRepository.findDistinctOrderIdsByShopId(shopId);
         if (orderIds.isEmpty())
             return Collections.emptyList();
 
-        List<Order> orders = orderRepository.findAllById(orderIds);
+        // Lấy toàn bộ đơn theo id
+        List<Order> orders = orderRepository.findAllWithDetailsByIdIn(orderIds);
 
-        // 🔹 Cập nhật trạng thái đơn hàng dựa theo chi tiết
-        for (Order order : orders) {
-            List<OrderDetail> details = orderDetailRepository.findByOrder_Id(order.getId());
-            if (details == null || details.isEmpty())
-                continue;
+        // Lọc theo thời gian
+        if (start != null || end != null) {
+            orders.removeIf(o -> {
+                LocalDateTime createdAt = o.getCreatedAt();
+                return (start != null && createdAt.isBefore(start)) || (end != null && createdAt.isAfter(end));
+            });
+        }
 
-            boolean allReturned = details.stream().allMatch(d -> "RETURNED".equalsIgnoreCase(d.getStatus()));
-            boolean allCancelled = details.stream().allMatch(d -> "CANCELLED".equalsIgnoreCase(d.getStatus()));
-            boolean allDelivered = details.stream().allMatch(d -> "DELIVERED".equalsIgnoreCase(d.getStatus()));
-            boolean anyShipping = details.stream().anyMatch(d -> "SHIPPING".equalsIgnoreCase(d.getStatus()));
-            boolean anyConfirmed = details.stream().anyMatch(d -> "CONFIRMED".equalsIgnoreCase(d.getStatus()));
-            boolean anyPending = details.stream().anyMatch(d -> "PENDING".equalsIgnoreCase(d.getStatus()));
-
-            String newStatus;
-            if (allReturned)
-                newStatus = "RETURNED";
-            else if (allCancelled)
-                newStatus = "CANCELLED";
-            else if (allDelivered)
-                newStatus = "DELIVERED";
-            else if (anyShipping)
-                newStatus = "SHIPPING";
-            else if (anyConfirmed)
-                newStatus = "CONFIRMED";
-            else if (anyPending)
-                newStatus = "PENDING";
-            else
-                newStatus = "PENDING";
-
-            if (!newStatus.equals(order.getStatus())) {
-                // order.setStatus(newStatus);
-                orderRepository.save(order);
-            }
+        // Nếu có filter theo trạng thái
+        if (status != null && !status.isBlank()) {
+            String filterStatus = status.trim().toUpperCase();
+            orders = orders.stream()
+                    .filter(o -> filterStatus.equalsIgnoreCase(o.getStatus()))
+                    .toList();
         }
 
         return orders;
@@ -336,6 +332,17 @@ public class OrderService {
             // order.setStatus(newStatus);
             orderRepository.save(order);
         }
+    }
+
+    public List<Order> findByShopId(Long shopId) {
+        return orderRepository.findByShopId(shopId);
+    }
+
+    public List<Order> findByShopIdAndStatus(Long shopId, String status) {
+        List<Order> orders = orderRepository.findByShopId(shopId);
+        return orders.stream()
+                .filter(o -> o.getStatus().equalsIgnoreCase(status))
+                .toList();
     }
 
 }
