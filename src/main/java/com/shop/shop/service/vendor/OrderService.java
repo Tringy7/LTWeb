@@ -12,7 +12,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.itextpdf.awt.geom.Rectangle;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
@@ -28,8 +27,6 @@ import com.shop.shop.domain.Order;
 import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.repository.OrderDetailRepository;
 import com.shop.shop.repository.OrderRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service("vendorOrderService")
 public class OrderService {
@@ -67,7 +64,7 @@ public class OrderService {
         Order order = getOrderById(orderId);
         if (order == null)
             return false;
-        order.setStatus(newStatus);
+        // order.setStatus(newStatus);
         orderRepository.save(order);
         return true;
     }
@@ -146,7 +143,7 @@ public class OrderService {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
-            order.setStatus(status);
+            // order.setStatus(status);
             orderRepository.save(order);
             return true;
         }
@@ -296,7 +293,7 @@ public class OrderService {
                 newStatus = "PENDING";
 
             if (!newStatus.equals(order.getStatus())) {
-                order.setStatus(newStatus);
+                // order.setStatus(newStatus);
                 orderRepository.save(order);
             }
         }
@@ -336,7 +333,7 @@ public class OrderService {
 
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null && !newStatus.equals(order.getStatus())) {
-            order.setStatus(newStatus);
+            // order.setStatus(newStatus);
             orderRepository.save(order);
         }
     }

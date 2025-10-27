@@ -48,7 +48,7 @@ public class OrderStatusService {
 
         Order order = orderRepository.findById(orderId).orElse(null);
         if (order != null && !newStatus.equals(order.getStatus())) {
-            order.setStatus(newStatus);
+            // order.setStatus(newStatus);
             orderRepository.save(order);
         }
     }

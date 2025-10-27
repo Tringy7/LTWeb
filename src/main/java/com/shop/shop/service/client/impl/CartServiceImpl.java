@@ -235,7 +235,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public Order handleApplyVoucherToOrder(String code, User user) {
         // Find the voucher
-        Voucher voucher = voucherRepository.findByCode(code);
+        Voucher voucher = voucherRepository.findByCode(code).get();
         if (voucher == null) {
             return null;
         }

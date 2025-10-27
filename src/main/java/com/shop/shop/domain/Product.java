@@ -59,19 +59,6 @@ public class Product {
     @Column(length = 50)
     private String gender; // Nam, Nữ, Unisex, ...
 
-    // Admin control fields
-    @Column(length = 20)
-    private String status = "ACTIVE";
-
-    @Column(length = 50)
-    private String violationType;
-
-    @Column(length = 1000)
-    private String adminNotes;
-
-    @Column
-    private LocalDateTime lastModifiedByAdmin;
-
     // Thêm liên kết với ProductDetail
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductDetail> productDetails;
