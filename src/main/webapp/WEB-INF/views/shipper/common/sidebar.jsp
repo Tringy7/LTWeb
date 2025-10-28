@@ -37,7 +37,7 @@
                     <!-- Dashboard -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
-                            onclick="location.href='/vendor'">
+                            onclick="location.href='/shipper'">
                             <i class="typcn typcn-device-desktop menu-icon"></i>
                             <span class="menu-title">Dashboard</span>
                             <i class="typcn typcn-chevron-right menu-arrow"></i>
@@ -46,32 +46,21 @@
 
                     <p class="sidebar-menu-title">Website Management</p>
 
-                    <!-- Product -->
+                    <!-- Order -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
-                            onclick="location.href='/vendor/product'">
-                            <i class="typcn typcn-briefcase menu-icon"></i>
-                            <span class="menu-title">Product</span>
-                            <i class="typcn typcn-chevron-right menu-arrow"></i>
-                        </button>
-                    </li>
-
-                    <!-- Event -->
-                    <li class="nav-item">
-                        <button class="nav-link btn btn-link w-100 text-left" type="button"
-                            onclick="location.href='/vendor/event'">
-                            <i class="typcn typcn-film menu-icon"></i>
-                            <span class="menu-title">Voucher</span>
+                            onclick="location.href='/shipper/order'">
+                            <i class="typcn typcn-th-small-outline menu-icon"></i>
+                            <span class="menu-title">Orders</span>
                             <i class="menu-arrow"></i>
                         </button>
                     </li>
 
-                    <!-- Order -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
-                            onclick="location.href='/vendor/order'">
-                            <i class="typcn typcn-th-small-outline menu-icon"></i>
-                            <span class="menu-title">Order</span>
+                            onclick="location.href='/shipper/information'">
+                            <i class="typcn typcn-user-outline menu-icon"></i>
+                            <span class="menu-title">Profile</span>
                             <i class="menu-arrow"></i>
                         </button>
                     </li>

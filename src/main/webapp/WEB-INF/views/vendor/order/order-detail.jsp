@@ -204,7 +204,7 @@
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <span class="badge"
                                                                         style="background-color:#6f42c1;color:white;">Trả
-                                                                        hàng - Hoàn tiền</span>
+                                                                        hàng</span>
                                                                 </c:when>
                                                             </c:choose>
 
@@ -261,8 +261,7 @@
                                                 <option value="CONFIRMED">Đã xác nhận</option>
                                                 <option value="SHIPPING">Đang giao</option>
                                                 <option value="DELIVERED">Đã giao</option>
-                                                <option value="CANCELLED">Hủy</option>
-                                                <option value="RETURNED">Trả hàng - Hoàn tiền</option>
+                                                <option value="RETURNED">Trả hàng</option>
                                             </select>
 
 

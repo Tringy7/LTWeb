@@ -58,4 +58,13 @@ public class OrderDetail {
             status = status.toUpperCase();
         }
     }
+
+    @ManyToOne
+    @JoinColumn(name = "shipper_id")
+    private Shipper shipper;
+
+    @ManyToOne
+    @JoinColumn(name = "carrier_id")
+    private Carrier carrier;
 }
+

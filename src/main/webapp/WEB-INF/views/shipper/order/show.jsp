@@ -178,6 +178,66 @@
                     #statusFilter:hover {
                         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
                     }
+
+                    /* Nút theo màu trạng thái */
+                    .btn-status {
+                        border: 1px solid transparent;
+                        transition: all 0.3s ease;
+                        font-weight: 500;
+                    }
+
+                    /* Đã xác nhận (info - xanh ngọc) */
+                    .btn-status-confirmed {
+                        color: #0dcaf0;
+                        border-color: #0dcaf0;
+                        background-color: white;
+                    }
+
+                    .btn-status-confirmed:hover {
+                        background-color: #0dcaf0;
+                        color: white;
+                    }
+
+                    /* Đang giao (primary - xanh dương) */
+                    .btn-status-shipping {
+                        color: #0d6efd;
+                        border-color: #0d6efd;
+                        background-color: white;
+                    }
+
+                    .btn-status-shipping:hover {
+                        background-color: #0d6efd;
+                        color: white;
+                    }
+
+                    /* Đã giao (success - xanh lá) */
+                    .btn-status-delivered {
+                        color: #198754;
+                        border-color: #198754;
+                        background-color: white;
+                    }
+
+                    .btn-status-delivered:hover {
+                        background-color: #198754;
+                        color: white;
+                    }
+
+                    /* Trả hàng (tím) */
+                    .btn-status-returned {
+                        color: #6f42c1;
+                        border-color: #6f42c1;
+                        background-color: white;
+                    }
+
+                    .btn-status-returned:hover {
+                        background-color: #6f42c1;
+                        color: white;
+                    }
+
+                    /* Nút chung */
+                    .btn-status:focus {
+                        box-shadow: 0 0 0 0.15rem rgba(0, 0, 0, 0.1);
+                    }
                 </style>
 
                 <div class="main-panel">
@@ -196,49 +256,73 @@
                             </div>
 
                             <!-- Thanh hành động -->
-                            <div class="card-body d-flex justify-content-between align-items-center flex-wrap py-3"
-                                style="background-color: #fff; border-top: 1px solid #eee;">
+                            <div class="card-body py-4" style="background-color: #fff; border-top: 1px solid #eee;">
+
                                 <!-- Bộ lọc -->
-                                <form action="${pageContext.request.contextPath}/vendor/order/filter" method="get"
-                                    class="d-flex align-items-center mb-2 mb-sm-0">
+                                <form class="d-flex justify-content-evenly align-items-end flex-wrap gap-4">
 
-                                    <input type="hidden" name="shop_id" value="${shop.id}">
+                                    <!-- Lọc theo trạng thái -->
+                                    <div class="d-flex flex-column align-items-start text-center">
+                                        <label for="statusFilter" class="fw-bold mb-2 text-dark"
+                                            style="font-size: 15px;">
+                                            Trạng thái
+                                        </label>
+                                        <select id="statusFilter"
+                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
+                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
+                                            <option value="">-- Tất cả --</option>
+                                            <option value="CONFIRMED">Đã xác nhận</option>
+                                            <option value="SHIPPING">Đang giao</option>
+                                            <option value="DELIVERED">Đã giao</option>
+                                            <option value="CANCELLED">Hủy</option>
+                                            <option value="RETURNED">Hoàn hàng</option>
+                                        </select>
+                                    </div>
 
-                                    <select name="status" id="statusFilter"
-                                        class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
-                                        onchange="this.form.submit()">
-                                        <option value="">-- Tất cả Trạng thái --</option>
-                                        <c:forEach var="st"
-                                            items="${['PENDING','CONFIRMED','PROCESSING','SHIPPING','DELIVERED','RETURNED']}">
-                                            <option value="${st}" <c:if test="${status eq st}">selected</c:if>>
-                                                <c:choose>
-                                                    <c:when test="${st eq 'PENDING'}">Đơn hàng mới</c:when>
-                                                    <c:when test="${st eq 'CONFIRMED'}">Đã xác nhận</c:when>
-                                                    <c:when test="${st eq 'PROCESSING'}">Đang xử lý</c:when>
-                                                    <c:when test="${st eq 'SHIPPING'}">Đang giao</c:when>
-                                                    <c:when test="${st eq 'DELIVERED'}">Đã giao</c:when>
-                                                    <c:when test="${st eq 'RETURNED'}">Trả hàng</c:when>
-                                                </c:choose>
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <!-- Lọc theo mốc thời gian giao hàng -->
+                                    <div class="d-flex flex-column align-items-start text-center">
+                                        <label for="deliveryDateFilter" class="fw-bold mb-2 text-dark"
+                                            style="font-size: 15px;">
+                                            Thời gian giao hàng
+                                        </label>
+                                        <select id="deliveryDateFilter"
+                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
+                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
+                                            <option value="">-- Tất cả --</option>
+                                            <option value="3days">3 ngày trước</option>
+                                            <option value="1week">1 tuần trước</option>
+                                            <option value="1month">1 tháng trước</option>
+                                            <option value="3months">3 tháng trước</option>
+                                            <option value="6months">6 tháng trước</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Lọc theo khu vực -->
+                                    <div class="d-flex flex-column align-items-start text-center">
+                                        <label for="areaFilter" class="fw-bold mb-2 text-dark" style="font-size: 15px;">
+                                            Khu vực
+                                        </label>
+                                        <select id="areaFilter"
+                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
+                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
+                                            <option value="">-- Tất cả --</option>
+                                            <option value="Quan1">Quận 1</option>
+                                            <option value="Quan3">Quận 3</option>
+                                            <option value="Quan5">Quận 5</option>
+                                            <option value="Quan7">Quận 7</option>
+                                            <option value="Quan10">Quận 10</option>
+                                            <option value="QuanBinhThanh">Bình Thạnh</option>
+                                            <option value="QuanGoVap">Gò Vấp</option>
+                                            <option value="QuanPhuNhuan">Phú Nhuận</option>
+                                            <option value="ThuDuc">Thủ Đức</option>
+                                        </select>
+                                    </div>
+
                                 </form>
-
-
-
-                                <!-- Nút bên phải -->
-                                <div class="d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift"
-                                        onclick="location.reload()">
-                                        <i class="fas fa-rotate-right me-1"></i> Refresh
-                                    </button>
-                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift"
-                                        onclick="confirmExport()">
-                                        <i class="fas fa-download me-1"></i> Export
-                                    </button>
-                                </div>
                             </div>
                         </div>
+
+
 
                         <!-- Card chứa bảng -->
                         <div class="card card-custom border-0 shadow-sm" style="border-radius: 15px;">
@@ -248,60 +332,129 @@
                                         <table class="table table-hover table-custom align-middle text-center">
                                             <thead>
                                                 <tr>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Người đặt</th>
-                                                    <th>Phương thức thanh toán</th>
-                                                    <th>Tổng tiền</th>
-                                                    <th>Trạng thái</th>
-                                                    <th>Hành động</th>
+                                                    <th style="width: 12%;">Mã đơn</th>
+                                                    <th style="width: 30%;">Địa chỉ</th>
+                                                    <th style="width: 15%;">Tổng tiền</th>
+                                                    <th style="width: 15%;">Phương thức</th>
+                                                    <th style="width: 15%;">Trạng thái</th>
+                                                    <th style="width: 13%;">Hành động</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <c:forEach var="order" items="${orders}">
+                                                <c:forEach var="orderDetail" items="${orders}">
                                                     <tr>
-                                                        <td>#${order.id}</td>
-                                                        <td>${order.user.fullName}</td>
-                                                        <td>${order.paymentMethod}</td>
-                                                        <td>${order.totalPrice}</td>
+                                                        <!-- Mã đơn -->
+                                                        <td>
+                                                            <a href="${pageContext.request.contextPath}/shipper/order/detail/${orderDetail.order.id}"
+                                                                class="text-decoration-none fw-bold text-primary">
+                                                                #${orderDetail.order.id}
+                                                            </a>
+                                                        </td>
+
+                                                        <!-- Địa chỉ -->
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${not empty orderDetail.order.address}">
+                                                                    ${orderDetail.order.address.receiverAddress}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <em>Không có địa chỉ</em>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
+                                                        <!-- Tổng tiền -->
+                                                        <td>${orderDetail.order.totalPrice}</td>
+
+                                                        <!-- Phương thức -->
+                                                        <td>
+                                                            <c:out value="${orderDetail.order.paymentMethod}"
+                                                                default="Chưa có" />
+                                                        </td>
+
+                                                        <!-- Trạng thái -->
                                                         <td>
                                                             <c:set var="statusUpper"
-                                                                value="${fn:toUpperCase(fn:trim(order.status))}" />
+                                                                value="${fn:toUpperCase(fn:trim(orderDetail.status))}" />
                                                             <c:choose>
-                                                                <c:when
-                                                                    test="${statusUpper == 'PENDING' || statusUpper == 'NEW'}">
-                                                                    <span class="badge badge-danger">Đơn hàng mới</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'PROCESSING'}">
-                                                                    <span class="badge badge-warning">Đang xử lý</span>
-                                                                </c:when>
                                                                 <c:when test="${statusUpper == 'CONFIRMED'}">
-                                                                    <span class="badge badge-info">Đã xác nhận</span>
+                                                                    <span class="badge bg-info text-white">Đã xác
+                                                                        nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge badge-primary">Đang giao</span>
+                                                                    <span class="badge bg-primary text-white">Đang
+                                                                        giao</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
-                                                                    <span class="badge badge-success">Đã giao</span>
+                                                                    <span class="badge bg-success text-white">Đã
+                                                                        giao</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">Trả
-                                                                        hàng</span>
+                                                                        style="background-color:#6f42c1;color:white;">
+                                                                        Trả hàng
+                                                                    </span>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <span class="badge bg-dark">Không xác định
-                                                                        (${order.status})</span>
+                                                                    <span class="badge bg-dark">Không xác định</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${statusUpper == 'CONFIRMED'}">
+                                                                    <button type="button"
+                                                                        class="btn btn-status btn-sm btn-status-confirmed"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Bắt đầu giao hàng"
+                                                                        data-bs-target="#confirmModal"
+                                                                        data-action-url="${pageContext.request.contextPath}/shipper/order/start/${orderDetail.id}"
+                                                                        data-action-text="Bạn có chắc muốn bắt đầu giao hàng cho đơn này?">
+                                                                        <i class="fas fa-truck-loading"></i>
+                                                                    </button>
+                                                                </c:when>
+
+                                                                <c:when test="${statusUpper == 'SHIPPING'}">
+                                                                    <button type="button"
+                                                                        class="btn btn-status btn-sm btn-status-shipping"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Xác nhận thành công"
+                                                                        data-bs-target="#confirmModal"
+                                                                        data-action-url="${pageContext.request.contextPath}/shipper/order/complete/${orderDetail.id}"
+                                                                        data-action-text="Xác nhận đơn này đã giao thành công?">
+                                                                        <i class="fas fa-check-circle"></i>
+                                                                    </button>
+                                                                </c:when>
+
+                                                                <c:when test="${statusUpper == 'DELIVERED'}">
+                                                                    <button type="button"
+                                                                        class="btn btn-status btn-sm btn-status-delivered"
+                                                                        data-bs-toggle="tooltip" title="Hoàn đơn"
+                                                                        data-bs-target="#confirmModal"
+                                                                        data-action-url="${pageContext.request.contextPath}/shipper/order/finish/${orderDetail.id}"
+                                                                        data-action-text="Xác nhận hoàn đơn này?">
+                                                                        <i class="fas fa-undo"></i>
+                                                                    </button>
+                                                                </c:when>
+
+                                                                <c:when test="${statusUpper == 'RETURNED'}">
+                                                                    <button type="button"
+                                                                        class="btn btn-status btn-sm btn-status-returned"
+                                                                        data-bs-toggle="tooltip" title="Xem lý do"
+                                                                        onclick="window.location.href='${pageContext.request.contextPath}/shipper/order/return-reason/${orderDetail.id}'">
+                                                                        <i class="fas fa-info-circle"></i>
+                                                                    </button>
+                                                                </c:when>
+
+                                                                <c:otherwise>
+                                                                    <span class="text-muted" title="Không có hành động">
+                                                                        <i class="fas fa-ban"></i>
+                                                                    </span>
                                                                 </c:otherwise>
                                                             </c:choose>
 
                                                         </td>
-                                                        <td>
-                                                            <a href="${pageContext.request.contextPath}/vendor/order/detail/${order.id}"
-                                                                class="btn action-btn action-btn-primary"
-                                                                data-bs-toggle="tooltip" title="Xem chi tiết">
-                                                                <i class="fas fa-eye"></i>
-                                                            </a>
-                                                        </td>
+
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -314,176 +467,27 @@
                 </div>
 
 
-                <!-- <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
-                    aria-hidden="true">
+                <!-- Modal xác nhận -->
+                <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="filterModalLabel">Bộ lọc đơn hàng</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <form action="/vendor/order" method="get">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="status">Trạng thái đơn hàng</label>
-                                        <select class="form-control" name="status" id="status">
-                                            <option value="">-- Tất cả Trạng thái --</option>
-                                            <option value="PENDING" ${status=='PENDING' ? 'selected' : '' }>Đơn hàng mới
-                                            </option>
-                                            <option value="CONFIRMED" ${status=='CONFIRMED' ? 'selected' : '' }>Đã xác
-                                                nhận</option>
-                                            <option value="SHIPPING" ${status=='SHIPPING' ? 'selected' : '' }>Đang giao
-                                            </option>
-                                            <option value="Đã giao" ${status=='DELIVERED' ? 'selected' : '' }>Đã giao
-                                            </option>
-                                            <option value="CANCELLED" ${status=='CANCELLED' ? 'selected' : '' }>Hủy
-                                            </option>
-                                            <option value="RETURNED" ${status=='RETURNED' ? 'selected' : '' }>Trả hàng -
-                                                Hoàn tiền</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Áp dụng</button>
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Đóng</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div> -->
-
-
-                <!-- Modal xác nhận xuất -->
-                <div class="modal fade" id="confirmExportModal" tabindex="-1" role="dialog"
-                    aria-labelledby="confirmExportLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content border-info">
-                            <div class="modal-header bg-info text-white">
-                                <h5 class="modal-title" id="confirmExportLabel"><i
-                                        class="fa-solid fa-circle-info mr-2"></i>
-                                    Xác nhận
-                                </h5>
-                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body text-center">Bạn có chắc muốn xuất danh sách đơn hàng
-                                không?</div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-info" onclick="doExport()">Xác nhận</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal kết quả -->
-                <div class="modal fade" id="exportResultModal" tabindex="-1" role="dialog"
-                    aria-labelledby="exportResultLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content border-success">
-                            <div class="modal-header bg-success text-white">
-                                <h5 class="modal-title" id="exportResultLabel">
-                                    <i class="fa-solid fa-circle-check mr-2"></i> Thông báo
-                                </h5>
-                                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body text-center" id="exportMessage"
-                                style="font-size: 18px; font-weight: 500;"></div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-success" data-dismiss="modal">Đóng</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <style>
-                    .status-select {
-                        font-size: 1.15rem;
-                        background: linear-gradient(135deg, #f8faff 0%, #eef3ff 100%);
-                        border-color: #b3c7ff;
-                        transition: all 0.3s ease;
-                        color: #212529;
-                    }
-
-                    .status-select:hover {
-                        border-color: #0d6efd;
-                        background: linear-gradient(135deg, #ffffff 0%, #e9f1ff 100%);
-                        box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
-                    }
-
-                    .status-select:focus {
-                        outline: none;
-                        border-color: #0d6efd;
-                        box-shadow: 0 0 12px rgba(13, 110, 253, 0.5);
-                        background: #fff;
-                    }
-
-                    /* Tùy chỉnh option trong dropdown */
-                    select.status-select option {
-                        border-radius: 10px;
-                        padding: 10px;
-                        background-color: #fff;
-                        transition: background-color 0.2s ease;
-                    }
-
-                    select.status-select option:hover {
-                        background-color: #dce6ff;
-                    }
-                </style>
-
-                <!-- Modal cập nhật trạng thái -->
-                <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content shadow-lg border-0 rounded-4">
-                            <div class="modal-header bg-primary text-white rounded-top-4">
-                                <h5 class="modal-title fw-bold" id="updateStatusLabel">
-                                    <i class="bi bi-arrow-repeat me-2"></i> Cập nhật trạng thái đơn hàng
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Xác nhận hành
+                                    động</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Đóng"></button>
                             </div>
-
-                            <div class="modal-body px-4 py-4">
-                                <form id="updateStatusForm">
-                                    <input type="hidden" id="orderIdUpdate" name="orderId">
-
-                                    <div class="mb-4">
-                                        <label for="statusUpdate" class="form-label fw-bold fs-5">
-                                            <i class="bi bi-list-check me-2"></i> Chọn trạng thái mới:
-                                        </label>
-                                        <select id="statusUpdate" name="status"
-                                            class="form-select form-select-lg border-2 rounded-pill shadow-sm p-3 status-select">
-                                            <option value="PENDING">Đơn hàng mới</option>
-                                            <option value="CONFIRMED">Đã xác nhận</option>
-                                            <option value="SHIPPING">Đang giao</option>
-                                            <option value="DELIVERED">Đã giao</option>
-                                            <option value="CANCELLED">Hủy</option>
-                                            <option value="RETURNED">Trả hàng - Hoàn tiền</option>
-                                        </select>
-
-
-                                    </div>
-                                </form>
+                            <div class="modal-body">
+                                <p id="confirmMessage">Bạn có chắc muốn thực hiện hành động này?</p>
                             </div>
-
-                            <div class="modal-footer ">
-                                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">
-                                    Hủy
-                                </button>
-                                <button type="button" id="saveStatusBtn" class="btn btn-primary rounded-3 px-4">
-                                    Lưu thay đổi
-                                </button>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <a id="confirmAction" href="#" class="btn btn-warning text-white">Xác nhận</a>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- content-wrapper ends -->
                 <!-- partial:partials/_footer.html -->
@@ -687,4 +691,26 @@
                         });
                     });
 
+                </script>
+
+                <script>
+                    // Bật tooltip Bootstrap
+                    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+                    [...tooltipTriggerList].map(el => new bootstrap.Tooltip(el));
+
+                    // Khi click nút => cập nhật nội dung modal
+                    document.addEventListener('click', function (e) {
+                        if (e.target.closest('[data-bs-target="#confirmModal"]')) {
+                            const btn = e.target.closest('button');
+                            const modal = document.getElementById('confirmModal');
+                            const confirmMessage = modal.querySelector('#confirmMessage');
+                            const confirmAction = modal.querySelector('#confirmAction');
+
+                            confirmMessage.textContent = btn.getAttribute('data-action-text');
+                            confirmAction.href = btn.getAttribute('data-action-url');
+
+                            const bootstrapModal = new bootstrap.Modal(modal);
+                            bootstrapModal.show();
+                        }
+                    });
                 </script>

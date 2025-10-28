@@ -79,11 +79,12 @@
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
                             onclick="location.href='/vendor/chat'">
-                            <i class="typcn typcn-th-small-outline menu-icon"></i>
+                            <i class="typcn typcn-messages menu-icon"></i>
                             <span class="menu-title">Chat</span>
                             <i class="menu-arrow"></i>
                         </button>
                     </li>
+
 
                 </ul>
             </nav>
