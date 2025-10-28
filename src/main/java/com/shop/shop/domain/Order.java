@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.shop.shop.domain.Carrier;
 
 @Entity
 @Table(name = "Orders")
@@ -51,6 +52,8 @@ public class Order {
     private Boolean paymentStatus;
 
     private Double totalPrice;
+
+    private Double shippingFee;
 
     @Column(length = 50)
     private String voucherCode;
@@ -91,28 +94,39 @@ public class Order {
         boolean anyPending = statuses.contains("PENDING");
 
         // 🔹 Ưu tiên theo mức độ hoàn tất cao nhất trước
-        if (allReturned)
+        if (allReturned) {
             return "RETURNED";
-        if (allCancelled)
+        }
+        if (allCancelled) {
             return "CANCELLED";
-        if (allDelivered)
+        }
+        if (allDelivered) {
             return "DELIVERED";
-        if (anyReturned)
+        }
+        if (anyReturned) {
             return "RETURNED";
-        if (anyCancelled)
+        }
+        if (anyCancelled) {
             return "CANCELLED";
-        if (anyDelivered)
+        }
+        if (anyDelivered) {
             return "DELIVERED";
-        if (anyShipping)
+        }
+        if (anyShipping) {
             return "SHIPPING";
-        if (allConfirmed)
+        }
+        if (allConfirmed) {
             return "CONFIRMED";
-        if (anyConfirmed && !anyShipping && !anyDelivered)
+        }
+        if (anyConfirmed && !anyShipping && !anyDelivered) {
             return "CONFIRMED";
-        if (anyProcessing)
+        }
+        if (anyProcessing) {
             return "PROCESSING";
-        if (anyPending && statuses.size() == 1)
+        }
+        if (anyPending && statuses.size() == 1) {
             return "PENDING";
+        }
 
         return "PROCESSING";
     }

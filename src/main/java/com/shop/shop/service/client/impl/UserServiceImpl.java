@@ -291,4 +291,27 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void handleCheckoutUpdateUser(User user) {
+        Long id = user.getId();
+        User userGet = userRepository.findById(id).orElse(null);
+        UserAddress existing = userGet.getReceiver();
+        UserAddress receiver = user.getReceiver();
+        if (existing != null) {
+            if (receiver != null) {
+                existing.setReceiverAddress(receiver.getReceiverAddress());
+                existing.setReceiverName(receiver.getReceiverName());
+                existing.setReceiverPhone(receiver.getReceiverPhone());
+                existing.setNote(receiver.getNote());
+                existing.setReceiverDistrict(receiver.getReceiverDistrict());
+            }
+            userAddressRepository.save(existing);
+        } else {
+            if (receiver != null) {
+                receiver.setUser(user);
+                userAddressRepository.save(receiver);
+            }
+        }
+    }
+
 }

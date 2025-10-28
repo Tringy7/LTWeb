@@ -59,6 +59,10 @@ public class OrderDetail {
     @JoinColumn(name = "carrier_id")
     private Carrier carrier;
 
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private UserAddress address;
+
     @PrePersist
     @PreUpdate
     public void normalizeStatus() {

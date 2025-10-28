@@ -110,6 +110,13 @@
                             <div class="container py-5">
                                 <h1 class="mb-4 wow fadeInUp" data-wow-delay="0.1s">Thông tin nhận hàng</h1>
                                 <form:form action="/checkout" method="post" modelAttribute="user">
+                                    <!-- Ensure User id is submitted so controller receives user.id on update-receiver -->
+                                    <form:hidden path="id" />
+                                    <!-- Hidden fields: base total (order items), shipping fee and orderId -->
+                                    <input type="hidden" id="baseTotal" name="baseTotal" value="${order.totalPrice}" />
+                                    <input type="hidden" id="shippingFeeInput" name="shippingFee"
+                                        value="${shippingFee}" />
+                                    <input type="hidden" name="orderId" value="${order.id}" />
 
                                     <div class="row g-5">
 
@@ -125,10 +132,89 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-item">
-                                                <label class="form-label my-3">Địa chỉ người nhận <sup>*</sup></label>
-                                                <form:input path="receiver.receiverAddress" type="text"
-                                                    class="form-control" />
+                                            <div class="row">
+                                                <div class="col-md-7">
+                                                    <div class="form-item">
+                                                        <label class="form-label my-3">Địa chỉ <sup>*</sup></label>
+                                                        <form:input path="receiver.receiverAddress" type="text"
+                                                            class="form-control" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="form-item">
+                                                        <label class="form-label my-3">Tỉnh/Thành <sup>*</sup></label>
+                                                        <form:select path="receiver.receiverDistrict"
+                                                            cssClass="form-control" required="required">
+                                                            <form:option value="">-- Chọn tỉnh/thành --</form:option>
+                                                            <form:option value="An Giang">An Giang</form:option>
+                                                            <form:option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu
+                                                            </form:option>
+                                                            <form:option value="Bạc Liêu">Bạc Liêu</form:option>
+                                                            <form:option value="Bắc Giang">Bắc Giang</form:option>
+                                                            <form:option value="Bắc Ninh">Bắc Ninh</form:option>
+                                                            <form:option value="Bắc Kạn">Bắc Kạn</form:option>
+                                                            <form:option value="Bến Tre">Bến Tre</form:option>
+                                                            <form:option value="Bình Dương">Bình Dương</form:option>
+                                                            <form:option value="Bình Định">Bình Định</form:option>
+                                                            <form:option value="Bình Phước">Bình Phước</form:option>
+                                                            <form:option value="Bình Thuận">Bình Thuận</form:option>
+                                                            <form:option value="Cà Mau">Cà Mau</form:option>
+                                                            <form:option value="Cao Bằng">Cao Bằng</form:option>
+                                                            <form:option value="Đắk Lắk">Đắk Lắk</form:option>
+                                                            <form:option value="Đắk Nông">Đắk Nông</form:option>
+                                                            <form:option value="Điện Biên">Điện Biên</form:option>
+                                                            <form:option value="Đồng Nai">Đồng Nai</form:option>
+                                                            <form:option value="Đồng Tháp">Đồng Tháp</form:option>
+                                                            <form:option value="Gia Lai">Gia Lai</form:option>
+                                                            <form:option value="Hà Giang">Hà Giang</form:option>
+                                                            <form:option value="Hà Nam">Hà Nam</form:option>
+                                                            <form:option value="Hà Nội">Hà Nội</form:option>
+                                                            <form:option value="Hà Tĩnh">Hà Tĩnh</form:option>
+                                                            <form:option value="Hải Dương">Hải Dương</form:option>
+                                                            <form:option value="Hải Phòng">Hải Phòng</form:option>
+                                                            <form:option value="Hậu Giang">Hậu Giang</form:option>
+                                                            <form:option value="Hòa Bình">Hòa Bình</form:option>
+                                                            <form:option value="Hưng Yên">Hưng Yên</form:option>
+                                                            <form:option value="Khánh Hòa">Khánh Hòa</form:option>
+                                                            <form:option value="Kiên Giang">Kiên Giang</form:option>
+                                                            <form:option value="Kon Tum">Kon Tum</form:option>
+                                                            <form:option value="Lai Châu">Lai Châu</form:option>
+                                                            <form:option value="Lâm Đồng">Lâm Đồng</form:option>
+                                                            <form:option value="Lạng Sơn">Lạng Sơn</form:option>
+                                                            <form:option value="Lào Cai">Lào Cai</form:option>
+                                                            <form:option value="Long An">Long An</form:option>
+                                                            <form:option value="Nam Định">Nam Định</form:option>
+                                                            <form:option value="Nghệ An">Nghệ An</form:option>
+                                                            <form:option value="Ninh Bình">Ninh Bình</form:option>
+                                                            <form:option value="Ninh Thuận">Ninh Thuận</form:option>
+                                                            <form:option value="Phú Thọ">Phú Thọ</form:option>
+                                                            <form:option value="Phú Yên">Phú Yên</form:option>
+                                                            <form:option value="Quảng Bình">Quảng Bình</form:option>
+                                                            <form:option value="Quảng Nam">Quảng Nam</form:option>
+                                                            <form:option value="Quảng Ngãi">Quảng Ngãi</form:option>
+                                                            <form:option value="Quảng Ninh">Quảng Ninh</form:option>
+                                                            <form:option value="Quảng Trị">Quảng Trị</form:option>
+                                                            <form:option value="Sóc Trăng">Sóc Trăng</form:option>
+                                                            <form:option value="Sơn La">Sơn La</form:option>
+                                                            <form:option value="Tây Ninh">Tây Ninh</form:option>
+                                                            <form:option value="Thái Bình">Thái Bình</form:option>
+                                                            <form:option value="Thái Nguyên">Thái Nguyên</form:option>
+                                                            <form:option value="Thanh Hóa">Thanh Hóa</form:option>
+                                                            <form:option value="Thừa Thiên - Huế">Thừa Thiên - Huế
+                                                            </form:option>
+                                                            <form:option value="Tiền Giang">Tiền Giang</form:option>
+                                                            <form:option value="Trà Vinh">Trà Vinh</form:option>
+                                                            <form:option value="Tuyên Quang">Tuyên Quang</form:option>
+                                                            <form:option value="Vĩnh Long">Vĩnh Long</form:option>
+                                                            <form:option value="Vĩnh Phúc">Vĩnh Phúc</form:option>
+                                                            <form:option value="Yên Bái">Yên Bái</form:option>
+                                                            <form:option value="Thành phố Hồ Chí Minh">Thành phố Hồ Chí
+                                                                Minh</form:option>
+                                                            <form:option value="Cần Thơ">Cần Thơ</form:option>
+                                                            <form:option value="Đà Nẵng">Đà Nẵng</form:option>
+                                                        </form:select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="form-item">
                                                 <label class="form-label my-3">Số điện thoại người nhận
@@ -141,6 +227,7 @@
                                                 <form:textarea path="receiver.note" name="text" class="form-control"
                                                     spellcheck="false" cols="30" rows="11" placeholder="Ghi chú" />
                                             </div>
+
 
                                         </div>
                                         <div class="col-md-12 col-lg-6 col-xl-6 wow fadeInUp" data-wow-delay="0.3s">
@@ -336,6 +423,46 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- Shipping fee selection -->
+                                                <div class="w-100 mt-3">
+                                                    <div class="card border-0 shadow-sm p-3 bg-white">
+                                                        <div class="d-flex align-items-start">
+                                                            <div class="me-3">
+                                                                <i class="fa fa-truck fa-2x text-primary"
+                                                                    aria-hidden="true"></i>
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="mb-2">Vận chuyển</h6>
+                                                                <p class="mb-2 small text-muted">Phí vận chuyển sẽ được
+                                                                    cộng vào tổng đơn.</p>
+                                                                <div class="d-flex gap-3 flex-column flex-sm-column">
+                                                                    <!-- Each option shows a small editable fee input on the right. -->
+                                                                    <label
+                                                                        class="form-check d-flex align-items-center p-2 rounded border">
+                                                                        <div class="me-2">
+                                                                            <div class="form-check-label fw-semibold">
+                                                                                Phí vận chuyển</div>
+                                                                            <div class="small text-muted">Thời gian: 4-5
+                                                                                ngày</div>
+                                                                        </div>
+                                                                        <div class="ms-auto" style="max-width:150px;">
+                                                                            <div class="input-group input-group-sm">
+                                                                                <!-- Visible, formatted, readonly display (text) -->
+                                                                                <input type="text"
+                                                                                    class="form-control form-control-lg shipping-fee-field text-end fw-bold fs-5 bg-warning bg-opacity-10 text-dark"
+                                                                                    value="<fmt:formatNumber value='${shippingFee}' type='number' groupingUsed='true' minFractionDigits='0' maxFractionDigits='0' />"
+                                                                                    aria-label="fee" readonly
+                                                                                    aria-readonly="true">
+                                                                                <span
+                                                                                    class="input-group-text">VND</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div class="d-flex justify-content-end align-items-center">
@@ -344,7 +471,11 @@
                                                 </div>
                                                 <div
                                                     class="px-3 py-2 bg-primary text-white rounded shadow d-flex align-items-center">
-                                                    <span class="h4 mb-0 fw-bold">
+                                                    <!-- store base total for client-side updates -->
+                                                    <input type="hidden" id="baseTotal" value="${order.totalPrice}" />
+                                                    <input type="hidden" name="shippingFee" id="shippingFeeInput"
+                                                        value="${shippingFee}" />
+                                                    <span id="displayTotal" class="h4 mb-0 fw-bold">
                                                         <fmt:formatNumber value="${order.totalPrice}" type="currency"
                                                             currencySymbol="" minFractionDigits="0"
                                                             maxFractionDigits="0" />
@@ -467,6 +598,7 @@
                                     const requiredFields = [
                                         { selector: 'input[name="receiver.receiverName"]', message: 'Tên người nhận là bắt buộc.' },
                                         { selector: 'input[name="receiver.receiverAddress"]', message: 'Địa chỉ người nhận là bắt buộc.' },
+                                        { selector: 'select[name="receiver.receiverDistrict"]', message: 'Vui lòng chọn tỉnh/thành.' },
                                         { selector: 'input[name="receiver.receiverPhone"]', message: 'Số điện thoại người nhận là bắt buộc.' }
                                     ];
 
@@ -532,6 +664,89 @@
                                     onlinePaymentTypeRadios.forEach(radio => {
                                         radio.addEventListener('change', toggleQRCode);
                                     });
+
+                                    // Shipping fee selection logic
+                                    const baseTotalInput = document.getElementById('baseTotal');
+                                    const displayTotal = document.getElementById('displayTotal');
+                                    const shippingFeeInput = document.getElementById('shippingFeeInput');
+                                    const shippingRadios = document.querySelectorAll('input[name="shippingOption"]');
+                                    const vnFormatter = new Intl.NumberFormat('vi-VN');
+
+                                    const getBaseTotal = () => {
+                                        if (!baseTotalInput) return 0;
+                                        const v = parseFloat(baseTotalInput.value);
+                                        return isNaN(v) ? 0 : v;
+                                    };
+
+                                    // When the province select changes, submit the form to update receiver on server
+                                    const provinceSelect = document.querySelector('select[name="receiver.receiverDistrict"]');
+                                    if (provinceSelect) {
+                                        provinceSelect.addEventListener('change', function () {
+                                            const mainForm = document.querySelector('form');
+                                            if (!mainForm) return;
+                                            // Temporarily set action to update endpoint and submit
+                                            const previousAction = mainForm.getAttribute('action');
+                                            mainForm.setAttribute('action', '/checkout/update-receiver');
+                                            mainForm.submit();
+                                            // action will be reset on page reload after redirect
+                                        });
+                                    }
+
+                                    function parseFeeFromRadio(radio) {
+                                        if (!radio) return 0;
+                                        // Try to read the nearby fee input first
+                                        const label = radio.closest('label');
+                                        if (label) {
+                                            const feeInput = label.querySelector('.shipping-fee-field');
+                                            if (feeInput && feeInput.value !== '') {
+                                                const parsed = parseFloat(feeInput.value.replace(/,/g, ''));
+                                                if (!isNaN(parsed)) return parsed;
+                                            }
+                                        }
+                                        // fallback to data-fee
+                                        return parseFloat(radio.dataset.fee || 0) || 0;
+                                    }
+
+                                    function updateTotalForFee(fee) {
+                                        const base = getBaseTotal();
+                                        const total = base + (Number(fee) || 0);
+                                        if (displayTotal) displayTotal.textContent = vnFormatter.format(total) + ' VND';
+                                        if (shippingFeeInput) shippingFeeInput.value = fee;
+                                        // Update visible fee inputs (read-only) so UI reflects current selection
+                                        document.querySelectorAll('.shipping-fee-field').forEach(function (el) {
+                                            try {
+                                                // show localized formatted value (e.g. 15.000)
+                                                el.value = vnFormatter.format(Number(fee) || 0);
+                                            } catch (e) { }
+                                        });
+                                    }
+
+                                    shippingRadios.forEach(r => {
+                                        // when radio selected
+                                        r.addEventListener('change', function (e) {
+                                            const fee = parseFeeFromRadio(this);
+                                            updateTotalForFee(fee);
+                                        });
+                                        // when fee input changes, ensure radio is selected and update total
+                                        const lbl = r.closest('label');
+                                        if (lbl) {
+                                            const feeInput = lbl.querySelector('.shipping-fee-field');
+                                            if (feeInput) {
+                                                feeInput.addEventListener('input', function (e) {
+                                                    // ensure radio is checked when editing its fee
+                                                    r.checked = true;
+                                                    const val = parseFloat(this.value || 0) || 0;
+                                                    updateTotalForFee(val);
+                                                });
+                                            }
+                                        }
+                                    });
+
+                                    // initialize shipping selection
+                                    const initialShipping = document.querySelector('input[name="shippingOption"]:checked');
+                                    if (initialShipping) {
+                                        updateTotalForFee(parseFeeFromRadio(initialShipping));
+                                    }
 
                                     // Initial check on page load
                                     togglePaymentOptions();

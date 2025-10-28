@@ -31,4 +31,6 @@ public interface UserService {
     boolean handleDeleteOrderDT(Long orderDTId);
 
     void requestOrderDT(Long orderDTId);
+
+    void handleCheckoutUpdateUser(User user);
 }

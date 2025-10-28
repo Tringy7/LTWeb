@@ -118,6 +118,18 @@ public class CartController {
         model.addAttribute("order", order);
         model.addAttribute("user", user);
 
+        // Provide explicit totals for the view
+        Double baseTotal = order.getTotalPrice() != null ? order.getTotalPrice() : 0.0;
+        Double shippingFee = order.getShippingFee();
+        if (shippingFee == null && order != null) {
+            shippingFee = order.getShippingFee();
+        }
+        if (shippingFee == null) {
+            shippingFee = 0.0;
+        }
+        model.addAttribute("baseTotal", baseTotal);
+        model.addAttribute("shippingFee", shippingFee);
+
         // Kiểm tra xem đơn hàng đã thanh toán chưa
         if (order.getPaymentStatus()) {
             model.addAttribute("isPaid", true);
@@ -127,19 +139,55 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public String handleCheckout(@RequestParam("paymentMethod") String payment, RedirectAttributes redirectAttributes, @ModelAttribute("user") User user) {
+    public String handleCheckout(@RequestParam("paymentMethod") String payment,
+            @RequestParam(value = "shippingFee", required = false) Double shippingFee,
+            @RequestParam(value = "orderId", required = false) Long orderId,
+            RedirectAttributes redirectAttributes,
+            @ModelAttribute("user") User user) {
         User currentUser = userAfterLogin.getUser();
         if (currentUser == null) {
             return "redirect:/login";
         }
-        boolean isSuccess = cartService.handleCheckout(currentUser, payment);
+        // First persist receiver updates (if user edited address on the checkout form),
+        // so shipping / carrier logic can rely on the saved receiver information.
         UserAddress receicer = user.getReceiver();
         userService.handleReceiverUser(currentUser, receicer);
+        boolean isSuccess = cartService.handleCheckout(currentUser, payment, shippingFee, orderId);
         if (isSuccess) {
             return "client/cart/success";
         }
         redirectAttributes.addFlashAttribute("error", "Thanh toán không thành công, vui lòng thử lại!");
-        return "redirect:/checkout";
+        return "redirect:/checkout?orderId=" + (orderId != null ? orderId : "");
+    }
+
+    @PostMapping("/checkout/update-receiver")
+    public String handleUpdateReceiver(@ModelAttribute("user") User user,
+            @RequestParam(value = "orderId", required = false) Long orderId,
+            RedirectAttributes redirectAttributes) {
+        User currentUser = userAfterLogin.getUser();
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        UserAddress receiver = user.getReceiver();
+        userService.handleCheckoutUpdateUser(user);
+
+        try {
+            userService.handleReceiverUser(currentUser, receiver);
+            // Refresh the user stored in session/security context so subsequent requests
+            // see the updated receiver information immediately.
+            try {
+                userAfterLogin.updateUserInSession(currentUser.getId());
+            } catch (Exception e) {
+                // Non-fatal: if session update fails, log and continue
+                System.err.println("Failed to refresh session user: " + e.getMessage());
+            }
+            // After saving receiver, update order shipping/carrier and fee
+            cartService.updateOrderShipping(currentUser, orderId);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật địa chỉ nhận hàng thành công.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", "Không thể cập nhật địa chỉ: " + ex.getMessage());
+        }
+        return "redirect:/checkout?orderId=" + (orderId != null ? orderId : "");
     }
 
     @GetMapping("/success")

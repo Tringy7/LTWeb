@@ -15,15 +15,26 @@ import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.domain.User;
+import com.shop.shop.domain.UserAddress;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.dto.ProductDTO;
 import com.shop.shop.repository.CartDetailRepository;
 import com.shop.shop.repository.CartRepository;
 import com.shop.shop.repository.OrderRepository;
+import com.shop.shop.repository.UserRepository;
 import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
+import com.shop.shop.repository.CarrierRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductDetailService;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+import com.shop.shop.domain.Carrier;
+import com.shop.shop.util.ProvinceUtils;
 import com.shop.shop.service.client.ProductService;
 
 import jakarta.transaction.Transactional;
@@ -48,6 +59,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private VoucherRepository voucherRepository;
+
+    @Autowired
+    private CarrierRepository carrierRepository;
 
     @Autowired
     private UserVoucherRepository userVoucherRepository;
@@ -114,6 +128,19 @@ public class CartServiceImpl implements CartService {
             order.setPaymentStatus(false);
             order.setAddress(cartInDB.getUser().getReceiver());
 
+            // Determine and set carrier based on receiver province (receiverDistrict)
+            String province = null;
+            if (cartInDB.getUser() != null && cartInDB.getUser().getReceiver() != null) {
+                province = cartInDB.getUser().getReceiver().getReceiverDistrict();
+            }
+
+            Long carrierId = determineCarrierIdByProvince(province);
+            if (carrierId != null) {
+                Carrier carrier = carrierRepository.findById(carrierId).orElse(null);
+                order.setShippingFee(carrier.getDeliveryFee());
+                newTotalCartPrice += carrier.getDeliveryFee();
+            }
+
             // Create OrderDetail list
             List<OrderDetail> orderDetails = new ArrayList<>();
 
@@ -142,6 +169,10 @@ public class CartServiceImpl implements CartService {
                     orderDetail.setShop(cartDetailInDB.getProduct().getShop());
                     orderDetail.setSize(cartDetailInDB.getSize());
                     orderDetail.setStatus("PENDING_PAYMENT");
+                    if (carrierId != null) {
+                        Carrier carrier = carrierRepository.findById(carrierId).orElse(null);
+                        orderDetail.setCarrier(carrier);
+                    }
 
                     orderDetails.add(orderDetail);
                 }
@@ -165,11 +196,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public boolean handleCheckout(User user, String payment) {
+    public boolean handleCheckout(User user, String payment, Double shippingFee, Long orderId) {
         Cart cart = cartRepository.findByUser(user);
         try {
-            // Find the most recent order where paymentStatus is false (pending payment) for this user
-            Order order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
+            // Find the order: prefer provided orderId, otherwise the most recent pending order
+            Order order = null;
+            if (orderId != null) {
+                order = orderRepository.findById(orderId).orElse(null);
+            }
+            if (order == null) {
+                order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
+            }
 
             if (order == null || order.getOrderDetails() == null || order.getOrderDetails().isEmpty()) {
                 return false;
@@ -203,6 +240,14 @@ public class CartServiceImpl implements CartService {
                         });
             }
 
+            // Apply shipping fee if provided
+            if (shippingFee != null) {
+                Double current = order.getShippingFee() != null ? order.getShippingFee() : 0.0;
+                order.setShippingFee(current + shippingFee);
+                Double total = order.getTotalPrice() != null ? order.getTotalPrice() : 0.0;
+                order.setTotalPrice(total + shippingFee);
+            }
+
             orderRepository.save(order);
 
             // Update product quantity in stock based on ORDER DETAILS (not cart)
@@ -229,6 +274,12 @@ public class CartServiceImpl implements CartService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Backwards-compatible convenience method
+    @Transactional
+    public boolean handleCheckout(User user, String payment) {
+        return handleCheckout(user, payment, null, null);
     }
 
     @Override
@@ -333,5 +384,129 @@ public class CartServiceImpl implements CartService {
         order.setTotalPrice(total);
         orderRepository.save(order);
         return order;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateOrderShipping(User user, Long orderId) {
+        if (user == null) {
+            return false;
+        }
+        // Find the order: prefer provided orderId, otherwise most recent pending
+        Order order = null;
+        if (orderId != null) {
+            order = orderRepository.findById(orderId).orElse(null);
+        }
+        if (order == null) {
+            order = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
+        }
+        if (order == null) {
+            return false;
+        }
+
+        // Determine province from user's receiver
+        String province = null;
+        if (user.getReceiver() != null) {
+            province = user.getReceiver().getReceiverDistrict();
+        }
+
+        Long carrierId = determineCarrierIdByProvince(province);
+        Carrier carrier = null;
+        Double shippingFee = 0.0;
+        if (carrierId != null) {
+            carrier = carrierRepository.findById(carrierId).orElse(null);
+            if (carrier != null) {
+                shippingFee = carrier.getDeliveryFee() != null ? carrier.getDeliveryFee() : 0.0;
+                order.setShippingFee(shippingFee);
+            }
+        } else {
+            // no carrier found -> clear shipping fee
+            order.setShippingFee(0.0);
+            shippingFee = 0.0;
+        }
+
+        // Update each orderDetail carrier if available
+        double itemsTotal = 0.0;
+        if (order.getOrderDetails() != null) {
+            for (OrderDetail od : order.getOrderDetails()) {
+                if (carrier != null) {
+                    od.setCarrier(carrier);
+                } else {
+                    od.setCarrier(null);
+                }
+                // prefer finalPrice (after voucher) if present
+                Double fp = od.getFinalPrice() != null ? od.getFinalPrice() : od.getPrice();
+                itemsTotal += fp != null ? fp : 0.0;
+            }
+        }
+
+        // Total price = items total + shippingFee
+        order.setTotalPrice(itemsTotal + (shippingFee != null ? shippingFee : 0.0));
+
+        orderRepository.save(order);
+        return true;
+    }
+
+    /**
+     * Map province name to carrier id: Bắc -> 1, Trung -> 2, Nam -> 3. Uses
+     * simple normalized string matching against known province names.
+     */
+    private Long determineCarrierIdByProvince(String province) {
+        if (province == null) {
+            return null;
+        }
+        String p = ProvinceUtils.normalizeProvince(province);
+        if (p.isEmpty()) {
+            return null;
+        }
+
+        // North provinces (Bắc)
+        Set<String> north = new HashSet<>(Arrays.asList(
+                "ha noi", "ha giang", "cao bang", "bac kan", "lang son", "tuyen quang", "thai nguyen",
+                "lao cai", "yen bai", "son la", "dien bien", "lai chau", "phu tho", "vinh phuc", "bac giang",
+                "bac ninh", "hoa binh", "hai duong", "hai phong", "hung yen", "nam dinh", "ninh binh", "thai binh",
+                "quang ninh"
+        ));
+
+        // Central provinces (Trung)
+        Set<String> central = new HashSet<>(Arrays.asList(
+                "thanh hoa", "nghe an", "ha tinh", "quang binh", "quang tri", "thua thien hue", "da nang",
+                "quang nam", "quang ngai", "binh dinh", "phu yen", "khanh hoa", "ninh thuan", "binh thuan"
+        ));
+
+        // South provinces (Nam)
+        Set<String> south = new HashSet<>(Arrays.asList(
+                "kon tum", "gia lai", "dak lak", "dak nong", "lam dong", "binh phuoc", "tay ninh", "binh duong",
+                "dong nai", "ba ria vung tau", "tp ho chi minh", "ho chi minh", "long an", "tien giang", "ben tre",
+                "tra vinh", "vinh long", "can tho", "hau giang", "soc trang", "bac lieu", "ca mau", "an giang",
+                "kien giang"
+        ));
+
+        // Try exact contains match
+        for (String n : north) {
+            if (p.contains(n)) {
+                return 1L;
+            }
+        }
+        for (String c : central) {
+            if (p.contains(c)) {
+                return 2L;
+            }
+        }
+        for (String s2 : south) {
+            if (p.contains(s2)) {
+                return 3L;
+            }
+        }
+
+        // Fallback: try to guess by keywords
+        if (p.contains("hue") || p.contains("da nang") || p.contains("quang")) {
+            return 2L;
+        }
+        if (p.contains("ho chi minh") || p.contains("tp hcm") || p.contains("hcm")) {
+            return 3L;
+        }
+
+        return null;
     }
 }
