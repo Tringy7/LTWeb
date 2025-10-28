@@ -1,6 +1,8 @@
 package com.shop.shop.service.shipper;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.shop.shop.domain.OrderDetail;
@@ -16,11 +18,15 @@ public class ShipperOrderService {
         return orderDetailRepository.findByShipper_Id(shipperId);
     }
 
-    public void updateOrderStatus(Long orderDetailId, String newStatus) {
-        OrderDetail orderDetail = orderDetailRepository.findById(orderDetailId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy OrderDetail với ID: " + orderDetailId));
-        orderDetail.setStatus(newStatus);
-        orderDetailRepository.save(orderDetail);
+    public void updateOrderStatus(Long id, String status) {
+        OrderDetail detail = orderDetailRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Chi tiết đơn hàng không tồn tại"));
+        detail.setStatus(status.toUpperCase());
+        orderDetailRepository.save(detail);
+    }
+
+    public Optional<OrderDetail> getOrderDetailById(Long id) {
+        return orderDetailRepository.findById(id);
     }
 
 }

@@ -15,45 +15,43 @@
                 <div class="container my-5">
 
                     <!-- Tiêu đề -->
-                    <h2 class="mb-4 text-center text-primary">Chi tiết đơn hàng #${order.id}</h2>
+                    <h2 class="mb-4 text-center text-primary">Chi tiết sản phẩm #${detail.id}</h2>
 
-                    <!-- Thông tin khách hàng -->
+                    <!-- Card thông tin tổng hợp -->
                     <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-primary text-white">Thông tin khách hàng</div>
+                        <div class="card-header bg-info text-white">Thông tin đơn hàng & sản phẩm</div>
                         <div class="card-body">
-                            <p><strong>Tên:</strong> ${order.user.fullName}</p>
-                            <p><strong>SĐT:</strong> ${order.user.phone}</p>
-                            <p><strong>Địa chỉ:</strong>
-                                <c:choose>
-                                    <c:when test="${not empty order.address}">
-                                        ${order.address.receiverAddress}
-                                    </c:when>
-                                    <c:otherwise>
-                                        <em>Không có địa chỉ</em>
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                        </div>
-                    </div>
 
-                    <!-- Thông tin đơn -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-success text-white">Thông tin đơn hàng</div>
-                        <div class="card-body">
-                            <p><strong>Shop gửi:</strong> ${order.shop.shopName}</p>
+                            <!-- Khách hàng & địa chỉ -->
+                            <div class="mb-3">
+                                <h5 class="text-primary">Thông tin khách hàng</h5>
+                                <p><strong>Tên:</strong> ${detail.order.user.fullName}</p>
+                                <p><strong>SĐT:</strong> ${detail.order.user.phone}</p>
+                                <p><strong>Địa chỉ:</strong>
+                                    <c:choose>
+                                        <c:when test="${not empty detail.order.address}">
+                                            ${detail.order.address.receiverAddress}
+                                        </c:when>
+                                        <c:otherwise>
+                                            <em>Không có địa chỉ</em>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p>
+                            </div>
 
-                            <!-- Danh sách sản phẩm -->
-                            <table class="table table-bordered text-center align-middle mt-3">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Sản phẩm</th>
-                                        <th>Số lượng</th>
-                                        <th>Giá</th>
-                                        <th>Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="detail" items="${orderDetails}">
+                            <!-- Shop & sản phẩm -->
+                            <div class="mb-3">
+                                <p><strong>Cửa hàng:</strong> ${detail.order.shop.shopName}</p>
+                                <table class="table table-bordered text-center align-middle mt-2 mb-2">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         <tr>
                                             <td>${detail.product.name}</td>
                                             <td>${detail.quantity}</td>
@@ -66,18 +64,18 @@
                                                     type="currency" currencySymbol="₫" />
                                             </td>
                                         </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
 
-                            <!-- Tổng tiền -->
-                            <div class="text-end mt-3">
-                                <p><strong>Phương thức thanh toán:</strong> ${order.paymentMethod}</p>
-                                <p class="fs-5 fw-bold text-danger">
-                                    Tổng tiền:
-                                    <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="₫" />
+                                <p class="text-end"><strong>Phương thức thanh toán:</strong>
+                                    ${detail.order.paymentMethod}</p>
+                                <p class="fs-5 fw-bold text-danger text-end">
+                                    Thành tiền:
+                                    <fmt:formatNumber value="${detail.price * detail.quantity}" type="currency"
+                                        currencySymbol="₫" />
                                 </p>
                             </div>
+
                         </div>
                     </div>
 
@@ -87,6 +85,8 @@
                     </div>
 
                 </div>
+
+
 
             </body>
 

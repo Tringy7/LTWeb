@@ -50,11 +50,10 @@ public class ShipperOrderController {
 
     @GetMapping("/shipper/order/detail/{id}")
     public String viewOrderDetail(@PathVariable("id") Long id, Model model) {
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng có ID = " + id));
+        OrderDetail detail = shipperOrderService.getOrderDetailById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết đơn hàng có ID = " + id));
 
-        model.addAttribute("order", order);
-        model.addAttribute("orderDetails", order.getOrderDetails());
+        model.addAttribute("detail", detail);
         return "shipper/order/order-detail";
     }
 

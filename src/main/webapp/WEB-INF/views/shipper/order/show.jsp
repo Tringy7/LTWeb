@@ -86,7 +86,7 @@
                     }
 
                     .badge-secondary {
-                        background-color: #f3303d;
+                        background-color: #0d6efd;
                         color: #fff;
                     }
 
@@ -186,7 +186,6 @@
                         font-weight: 500;
                     }
 
-                    /* Đã xác nhận (info - xanh ngọc) */
                     .btn-status-confirmed {
                         color: #0dcaf0;
                         border-color: #0dcaf0;
@@ -334,7 +333,7 @@
                                                 <tr>
                                                     <th style="width: 12%;">Mã đơn</th>
                                                     <th style="width: 30%;">Địa chỉ</th>
-                                                    <th style="width: 15%;">Tổng tiền</th>
+                                                    <th style="width: 15%;">Số tiền</th>
                                                     <th style="width: 15%;">Phương thức</th>
                                                     <th style="width: 15%;">Trạng thái</th>
                                                     <th style="width: 13%;">Hành động</th>
@@ -364,7 +363,7 @@
                                                         </td>
 
                                                         <!-- Tổng tiền -->
-                                                        <td>${orderDetail.order.totalPrice}</td>
+                                                        <td>${orderDetail.finalPrice}</td>
 
                                                         <!-- Phương thức -->
                                                         <td>
@@ -382,9 +381,11 @@
                                                                         nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge bg-primary text-white">Đang
+                                                                    <span class="badge"
+                                                                        style="background-color: #fee20d; color: white;">Đang
                                                                         giao</span>
                                                                 </c:when>
+
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <span class="badge bg-success text-white">Đã
                                                                         giao</span>
