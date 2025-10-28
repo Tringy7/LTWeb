@@ -51,6 +51,14 @@ public class OrderDetail {
     @Column(length = 50)
     private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "shipper_id")
+    private Shipper shipper;
+
+    @ManyToOne
+    @JoinColumn(name = "carrier_id")
+    private Carrier carrier;
+
     @PrePersist
     @PreUpdate
     public void normalizeStatus() {

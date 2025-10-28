@@ -47,6 +47,9 @@ public class ShopController {
     private ReviewService reviewService;
 
     @Autowired
+    private com.shop.shop.service.client.FavoriteService favoriteService;
+
+    @Autowired
     private UserAfterLogin userAfterLogin;
 
     @Autowired
@@ -81,7 +84,7 @@ public class ShopController {
                 java.util.List<Product> favoriteProducts = new java.util.ArrayList<>();
 
                 for (Product product : allProducts.getContent()) {
-                    boolean isFav = reviewService.isFavorite(currentUser, product);
+                    boolean isFav = favoriteService.isFavorite(currentUser, product);
                     if (isFav) {
                         favoriteProducts.add(product);
                         favoriteMapTemp.put(product.getId(), true);
@@ -131,7 +134,7 @@ public class ShopController {
         java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
         if (currentUser != null) {
             for (Product product : productPage.getContent()) {
-                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+                favoriteMap.put(product.getId(), favoriteService.isFavorite(currentUser, product));
             }
         }
 
@@ -217,7 +220,7 @@ public class ShopController {
         java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
         if (currentUser != null) {
             for (Product product : products) {
-                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+                favoriteMap.put(product.getId(), favoriteService.isFavorite(currentUser, product));
             }
         }
 
@@ -242,7 +245,7 @@ public class ShopController {
         java.util.Map<Long, Boolean> favoriteMap = new java.util.HashMap<>();
         if (currentUser != null) {
             for (Product product : filteredProducts) {
-                favoriteMap.put(product.getId(), reviewService.isFavorite(currentUser, product));
+                favoriteMap.put(product.getId(), favoriteService.isFavorite(currentUser, product));
             }
         }
 
@@ -346,7 +349,7 @@ public class ShopController {
                 return response;
             }
 
-            boolean isFavorite = reviewService.toggleFavorite(currentUser, product);
+            boolean isFavorite = favoriteService.toggleFavorite(currentUser, product);
             response.put("success", true);
             response.put("isFavorite", isFavorite);
             response.put("message", isFavorite ? "Đã thêm vào yêu thích" : "Đã xóa khỏi yêu thích");

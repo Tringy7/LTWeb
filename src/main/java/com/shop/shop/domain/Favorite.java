@@ -2,7 +2,6 @@ package com.shop.shop.domain;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,30 +15,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Reviews")
+@Table(name = "favorites")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Favorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
-
-    @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
 
-    @Column(length = 50)
-    private String message;
-
-    private String image;
-    private Integer rating;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "productId")
+    private Product product;
 }
