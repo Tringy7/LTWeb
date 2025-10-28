@@ -315,6 +315,25 @@
                                                                             </c:forEach>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <c:if test="${not empty review.image}">
+                                                                            <c:choose>
+                                                                                <c:when
+                                                                                    test="${fn:endsWith(review.image,'.mp4') or fn:endsWith(review.image,'.webm') or fn:endsWith(review.image,'.ogg')}">
+                                                                                    <video src="/admin/images/reviews/${review.image}"
+                                                                                        controls
+                                                                                        style="max-width:320px; max-height:240px; display:block;"
+                                                                                        class="mt-2"></video>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <img src="/admin/images/reviews/${review.image}"
+                                                                                        class="img-fluid rounded mt-2"
+                                                                                        style="max-width:220px; max-height:160px;"
+                                                                                        alt="review-media" />
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+                                                                        </c:if>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </c:forEach>
@@ -322,8 +341,8 @@
                                                 </div>
                                             </div>
                                             <form:form method="POST" action="/shop/product/${product.id}/review"
-                                                modelAttribute="review">
-                                                <h4 class="mb-5 fw-bold">Leave a Reply</h4>
+                                                modelAttribute="review" enctype="multipart/form-data">
+                                                <h4 class="mb-5 fw-bold">Đánh giá sản phẩm</h4>
                                                 <div class="row g-4">
                                                     <div class="col-lg-6">
                                                         <div class="border-bottom rounded">
@@ -346,15 +365,33 @@
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="border-bottom rounded my-4">
-                                                            <form:textarea path="message" class="form-control border-0"
-                                                                cols="30" rows="8" placeholder="Your Review *"
-                                                                spellcheck="false" />
+                                                            <form:textarea id="review-message" path="message"
+                                                                class="form-control border-0" cols="30" rows="8"
+                                                                placeholder="Đánh giá *" spellcheck="false"
+                                                                maxlength="50" />
+                                                            <div class="d-flex justify-content-between mt-2">
+                                                                <small id="review-error" class="text-danger"
+                                                                    style="display:none;">Nội dung không được vượt quá
+                                                                    50 kí tự.</small>
+                                                            </div>
+
+                                                            <!-- Media upload: image or video -->
+                                                            <div class="mt-3">
+                                                                <label for="review-media"
+                                                                    class="form-label small text-primary">Đính
+                                                                    kèm ảnh hoặc video (tùy chọn)</label>
+                                                                <input type="file" id="review-media" name="media"
+                                                                    accept="image/*,video/*" class="form-control" />
+                                                                <small id="review-media-error" class="text-danger"
+                                                                    style="display:none;"></small>
+                                                                <div id="review-media-preview" class="mt-2"></div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="d-flex justify-content-between py-3 mb-5">
                                                             <div class="d-flex align-items-center">
-                                                                <p class="mb-0 me-3">Please rate:</p>
+                                                                <p class="mb-0 me-3">Đánh giá:</p>
                                                             </div>
                                                             <div class="d-flex align-items-center">
                                                                 <div id="rating-stars"
@@ -373,9 +410,9 @@
                                                                 </div>
                                                                 <form:input type="hidden" path="rating"
                                                                     id="rating-value" />
-                                                                <button type="submit"
+                                                                <button type="submit" id="postCommentBtn"
                                                                     class="btn btn-primary border border-secondary text-primary rounded-pill px-4 py-3">
-                                                                    Post Comment
+                                                                    Đăng đánh giá
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -514,6 +551,103 @@
                                             ratingInput.value = currentRating;
                                         });
                                     });
+
+                                    // Review message length validation (max 50 characters)
+                                    const reviewTextarea = document.getElementById('review-message');
+                                    const reviewError = document.getElementById('review-error');
+                                    const reviewCount = document.getElementById('review-count');
+                                    const postCommentBtn = document.getElementById('postCommentBtn');
+
+                                    // Media upload elements
+                                    const reviewMediaInput = document.getElementById('review-media');
+                                    const reviewMediaError = document.getElementById('review-media-error');
+                                    const reviewMediaPreview = document.getElementById('review-media-preview');
+
+                                    // Validation limits
+                                    const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+                                    const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20MB
+
+                                    function resetMediaPreview() {
+                                        if (reviewMediaPreview) {
+                                            reviewMediaPreview.innerHTML = '';
+                                        }
+                                    }
+
+                                    function validateMediaFile(file) {
+                                        if (!file) return { ok: true };
+                                        const type = file.type || '';
+                                        const size = file.size || 0;
+                                        if (type.startsWith('image/')) {
+                                            if (size > MAX_IMAGE_SIZE) {
+                                                return { ok: false, message: 'Ảnh quá lớn. Tối đa 5MB.' };
+                                            }
+                                            return { ok: true };
+                                        } else if (type.startsWith('video/')) {
+                                            if (size > MAX_VIDEO_SIZE) {
+                                                return { ok: false, message: 'Video quá lớn. Tối đa 20MB.' };
+                                            }
+                                            return { ok: true };
+                                        }
+                                        return { ok: false, message: 'Chỉ chấp nhận ảnh hoặc video.' };
+                                    }
+
+                                    if (reviewMediaInput) {
+                                        reviewMediaInput.addEventListener('change', function (e) {
+                                            reviewMediaError.style.display = 'none';
+                                            resetMediaPreview();
+                                            const file = this.files && this.files[0];
+                                            const check = validateMediaFile(file);
+                                            if (!check.ok) {
+                                                reviewMediaError.textContent = check.message;
+                                                reviewMediaError.style.display = 'block';
+                                                postCommentBtn.disabled = true;
+                                                return;
+                                            }
+                                            // show preview
+                                            if (file) {
+                                                const url = URL.createObjectURL(file);
+                                                if (file.type.startsWith('image/')) {
+                                                    const img = document.createElement('img');
+                                                    img.src = url;
+                                                    img.style.maxWidth = '220px';
+                                                    img.style.maxHeight = '160px';
+                                                    img.className = 'img-fluid rounded border';
+                                                    reviewMediaPreview.appendChild(img);
+                                                } else if (file.type.startsWith('video/')) {
+                                                    const video = document.createElement('video');
+                                                    video.src = url;
+                                                    video.controls = true;
+                                                    video.style.maxWidth = '320px';
+                                                    video.style.maxHeight = '240px';
+                                                    reviewMediaPreview.appendChild(video);
+                                                }
+                                                // revoke object URL when not needed
+                                                // note: revoke after a short delay to ensure rendering
+                                                setTimeout(() => URL.revokeObjectURL(url), 10000);
+                                            }
+                                            // re-check review length to set post button state
+                                            updateReviewState();
+                                        });
+                                    }
+
+                                    function updateReviewState() {
+                                        if (!reviewTextarea) return;
+                                        const len = reviewTextarea.value.length;
+                                        reviewCount.textContent = `${len}/50`;
+                                        if (len > 50) {
+                                            reviewError.style.display = 'block';
+                                            postCommentBtn.disabled = true;
+                                        } else {
+                                            reviewError.style.display = 'none';
+                                            postCommentBtn.disabled = false;
+                                        }
+                                    }
+
+                                    if (reviewTextarea) {
+                                        // initialize
+                                        updateReviewState();
+                                        reviewTextarea.addEventListener('input', updateReviewState);
+                                    }
                                 });
 
                                 // Toast logic

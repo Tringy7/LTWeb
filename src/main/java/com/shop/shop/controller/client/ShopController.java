@@ -1,7 +1,14 @@
 package com.shop.shop.controller.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.shop.domain.Cart;
@@ -251,9 +259,70 @@ public class ShopController {
     }
 
     @PostMapping("/shop/product/{id}/review")
-    public String handleReviewProduct(@PathVariable("id") Long id, @ModelAttribute("review") Review review) {
+    public String handleReviewProduct(@PathVariable("id") Long id,
+            @ModelAttribute("review") Review review,
+            @RequestParam(value = "media", required = false) MultipartFile media,
+            RedirectAttributes redirectAttributes) {
+
+        if (review.getMessage() != null && review.getMessage().length() > 50) {
+            redirectAttributes.addFlashAttribute("reviewError", "Nội dung bình luận phải tối đa 50 kí tự.");
+            return "redirect:/shop/product/{id}";
+        }
+
+        // Attach product and user explicitly to ensure correct associations
+        Product product = productService.getProductById(id);
+        User user = userAfterLogin.getUser();
+        review.setProduct(product);
+        review.setUser(user);
         review.setId(null);
+
+        // Handle media upload if present
+        if (media != null && !media.isEmpty()) {
+            String contentType = media.getContentType() == null ? "" : media.getContentType();
+            long size = media.getSize();
+
+            // Validate type
+            if (!(contentType.startsWith("image/") || contentType.startsWith("video/"))) {
+                redirectAttributes.addFlashAttribute("reviewMediaError", "Chỉ chấp nhận ảnh hoặc video.");
+                return "redirect:/shop/product/{id}";
+            }
+
+            // Validate size
+            if (contentType.startsWith("image/") && size > 5L * 1024 * 1024) {
+                redirectAttributes.addFlashAttribute("reviewMediaError", "Ảnh quá lớn. Tối đa 5MB.");
+                return "redirect:/shop/product/{id}";
+            }
+            if (contentType.startsWith("video/") && size > 20L * 1024 * 1024) {
+                redirectAttributes.addFlashAttribute("reviewMediaError", "Video quá lớn. Tối đa 20MB.");
+                return "redirect:/shop/product/{id}";
+            }
+
+            // Save file to web resources so it can be served statically
+            try {
+                String original = media.getOriginalFilename() == null ? "file" : media.getOriginalFilename();
+                String ext = "";
+                int idx = original.lastIndexOf('.');
+                if (idx >= 0) {
+                    ext = original.substring(idx);
+                }
+                String filename = System.currentTimeMillis() + "_" + UUID.randomUUID().toString() + ext;
+
+                Path uploadDir = Paths.get("src/main/webapp/resources/admin/images/reviews/");
+                Files.createDirectories(uploadDir);
+                Path target = uploadDir.resolve(filename);
+                try (InputStream in = media.getInputStream()) {
+                    Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+                }
+                review.setImage(filename);
+            } catch (IOException e) {
+                redirectAttributes.addFlashAttribute("reviewMediaError", "Lưu file thất bại. Vui lòng thử lại.");
+                return "redirect:/shop/product/{id}";
+            }
+        }
+
+        // Save review
         reviewService.saveReview(review);
+        redirectAttributes.addFlashAttribute("reviewSuccess", "Cảm ơn đánh giá của bạn!");
         return "redirect:/shop/product/{id}";
     }
 

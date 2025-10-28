@@ -35,8 +35,10 @@ public class Review {
     @JoinColumn(name = "userId")
     private User user;
 
-    @Column(length = 1000)
+    @Column(length = 50)
     private String message;
+
+    private String image;
 
     private Boolean favorite = false;
 
