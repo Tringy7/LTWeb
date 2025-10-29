@@ -37,6 +37,6 @@ public class Shipper {
     private List<OrderDetail> orders;
 
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JoinColumn(name = "userId", nullable = true, unique = true)
     private User user;
 }
