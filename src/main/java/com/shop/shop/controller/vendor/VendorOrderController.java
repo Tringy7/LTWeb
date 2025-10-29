@@ -204,9 +204,10 @@ public class VendorOrderController {
         return response;
     }
 
-    @PostMapping("/detail/{detailId}/returned")
-    public String handleReturnConfirmation(@PathVariable("detailId") Long detailId, Model model) {
-        orderDetailService.returnedOrderDTToProduct(detailId);
-        return "redirect:/vendor/order/detail/" + detailId;
+    @PostMapping("/{id}/returned")
+    public String handleReturnConfirmation(@PathVariable("id") Long orderId, Model model) {
+        orderDetailService.returnedOrderToProduct(orderId);
+        return "redirect:/vendor/order";
     }
+
 }

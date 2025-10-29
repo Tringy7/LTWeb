@@ -13,7 +13,7 @@ public interface CartService {
 
     void deleteCartDetail(Long cartDetailId);
 
-    Long updateCart(Cart cartFromForm);
+    Long updateCart(Cart cartFromForm, User user);
 
     /**
      * Finalize checkout. If orderId is provided, the specific order will be

@@ -46,7 +46,8 @@ public class CartController {
 
     @PostMapping("/cart")
     public String handleUpdateCart(@ModelAttribute("cart") Cart cartFromForm) {
-        Long orderId = cartService.updateCart(cartFromForm);
+        User user = userAfterLogin.getUser();
+        Long orderId = cartService.updateCart(cartFromForm, user);
         return "redirect:/checkout?orderId=" + orderId;
     }
 

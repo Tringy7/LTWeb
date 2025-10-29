@@ -2,12 +2,16 @@ package com.shop.shop.service.client.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shop.shop.domain.Carrier;
 import com.shop.shop.domain.Cart;
 import com.shop.shop.domain.CartDetail;
 import com.shop.shop.domain.Order;
@@ -18,24 +22,16 @@ import com.shop.shop.domain.User;
 import com.shop.shop.domain.UserAddress;
 import com.shop.shop.domain.Voucher;
 import com.shop.shop.dto.ProductDTO;
+import com.shop.shop.repository.CarrierRepository;
 import com.shop.shop.repository.CartDetailRepository;
 import com.shop.shop.repository.CartRepository;
 import com.shop.shop.repository.OrderRepository;
-import com.shop.shop.repository.UserRepository;
 import com.shop.shop.repository.UserVoucherRepository;
 import com.shop.shop.repository.VoucherRepository;
-import com.shop.shop.repository.CarrierRepository;
 import com.shop.shop.service.client.CartService;
 import com.shop.shop.service.client.ProductDetailService;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
-import com.shop.shop.domain.Carrier;
-import com.shop.shop.util.ProvinceUtils;
 import com.shop.shop.service.client.ProductService;
+import com.shop.shop.util.ProvinceUtils;
 
 import jakarta.transaction.Transactional;
 
@@ -113,10 +109,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Long updateCart(Cart cartFromForm) {
+    public Long updateCart(Cart cartFromForm, User user) {
         Cart cartInDB = cartRepository.findById(cartFromForm.getId()).orElse(null);
 
         if (cartInDB != null) {
+            UserAddress address = user.getReceiver();
             List<CartDetail> detailsFromForm = cartFromForm.getCartDetails();
             double newTotalCartPrice = 0.0;
 
@@ -168,6 +165,7 @@ public class CartServiceImpl implements CartService {
                     orderDetail.setQuantity(cartDetailInDB.getQuantity());
                     orderDetail.setShop(cartDetailInDB.getProduct().getShop());
                     orderDetail.setSize(cartDetailInDB.getSize());
+                    orderDetail.setAddress(address);
                     orderDetail.setStatus("PENDING_PAYMENT");
                     if (carrierId != null) {
                         Carrier carrier = carrierRepository.findById(carrierId).orElse(null);
@@ -199,6 +197,7 @@ public class CartServiceImpl implements CartService {
     public boolean handleCheckout(User user, String payment, Double shippingFee, Long orderId) {
         Cart cart = cartRepository.findByUser(user);
         try {
+            UserAddress userAddress = user.getReceiver();
             // Find the order: prefer provided orderId, otherwise the most recent pending order
             Order order = null;
             if (orderId != null) {
@@ -226,6 +225,7 @@ public class CartServiceImpl implements CartService {
                 for (OrderDetail orderDetail : order.getOrderDetails()) {
                     // Move from PENDING_PAYMENT -> PENDING (waiting confirmation)
                     orderDetail.setStatus("PENDING");
+                    orderDetail.setAddress(userAddress);
                 }
             }
 
@@ -238,14 +238,6 @@ public class CartServiceImpl implements CartService {
                             userVoucher.setStatus(false);
                             userVoucherRepository.save(userVoucher);
                         });
-            }
-
-            // Apply shipping fee if provided
-            if (shippingFee != null) {
-                Double current = order.getShippingFee() != null ? order.getShippingFee() : 0.0;
-                order.setShippingFee(current + shippingFee);
-                Double total = order.getTotalPrice() != null ? order.getTotalPrice() : 0.0;
-                order.setTotalPrice(total + shippingFee);
             }
 
             orderRepository.save(order);

@@ -204,7 +204,7 @@
 
                                     <input type="hidden" name="shop_id" value="${shop.id}">
 
-                                    <select name="status" id="statusFilter"
+                                    <!-- <select name="status" id="statusFilter"
                                         class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
                                         onchange="this.form.submit()">
                                         <option value="">-- Tất cả Trạng thái --</option>
@@ -222,7 +222,7 @@
                                                 </c:choose>
                                             </option>
                                         </c:forEach>
-                                    </select>
+                                    </select> -->
                                 </form>
 
 

@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shop.shop.domain.Order;
 import com.shop.shop.domain.OrderDetail;
 import com.shop.shop.domain.Product;
 import com.shop.shop.domain.ProductDetail;
 import com.shop.shop.dto.OrderDetailDTO;
 import com.shop.shop.repository.OrderDetailRepository;
+import com.shop.shop.repository.OrderRepository;
 import com.shop.shop.repository.ProductDetailRepository;
 import com.shop.shop.repository.ProductRepository;
 
@@ -23,6 +25,9 @@ public class OrderDetailService {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private OrderRepository OrderRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -91,8 +96,8 @@ public class OrderDetailService {
     }
 
     @Transactional
-    public void returnedOrderDTToProduct(Long orderId) {
-        OrderDetail orderDetails = orderDetailRepository.findById(orderId).get();
+    public void returnedOrderDTToProduct(Long orderDTId) {
+        OrderDetail orderDetails = orderDetailRepository.findById(orderDTId).get();
         if (orderDetails != null) {
             String size = orderDetails.getSize();
             Long quantity = orderDetails.getQuantity();
@@ -109,6 +114,20 @@ public class OrderDetailService {
             orderDetails.setPrice(0D);
             orderDetails.setFinalPrice(0D);
             orderDetailRepository.save(orderDetails);
+        }
+    }
+
+    public void returnedOrderToProduct(Long orderId) {
+        Order order = OrderRepository.findById(orderId).get();
+        if (order != null) {
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            for (OrderDetail orderDetail : orderDetails) {
+                if (orderDetail.getStatus().equals("RETURNED")) {
+                    order.setTotalPrice(order.getTotalPrice() - orderDetail.getFinalPrice());
+                    returnedOrderDTToProduct(orderDetail.getId());
+                }
+            }
+            OrderRepository.save(order);
         }
     }
 }
