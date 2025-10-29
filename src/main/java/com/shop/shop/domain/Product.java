@@ -66,7 +66,7 @@ public class Product {
     private List<Review> reviews;
 
     @Column(length = 20)
-    private String status = "ACTIVE";
+    private String status = "Active";
 
     @Column(length = 50)
     private String violationType;

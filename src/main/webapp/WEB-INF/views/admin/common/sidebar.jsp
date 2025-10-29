@@ -10,7 +10,7 @@ uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         <div class="sidebar-profile-image">
           <c:choose>
             <c:when test="${not empty acc.image}">
-              <img src="/admin/images/user/${acc.image}" alt="image" />
+              <img src="${acc.image}" alt="image" />
             </c:when>
           </c:choose>
           <span class="sidebar-status-indicator"></span>

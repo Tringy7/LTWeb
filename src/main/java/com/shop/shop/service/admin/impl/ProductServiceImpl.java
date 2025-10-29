@@ -139,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setStatus("HIDDEN");
+            product.setStatus("Hidden");
             product.setViolationType(violationType);
             product.setAdminNotes(adminNotes);
             product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
@@ -152,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setStatus("LOCKED");
+            product.setStatus("Locked");
             product.setViolationType(violationType);
             product.setAdminNotes(adminNotes);
             product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
@@ -165,7 +165,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
-            product.setStatus("ACTIVE");
+            product.setStatus("Active");
             product.setViolationType(null);
             product.setAdminNotes(null);
             product.setLastModifiedByAdmin(java.time.LocalDateTime.now());
