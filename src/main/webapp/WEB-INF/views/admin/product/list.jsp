@@ -195,13 +195,13 @@
                                         </td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${product.status == 'ACTIVE'}">
+                                                <c:when test="${product.status == 'Active'}">
                                                     <span class="badge badge-success">Hoạt động</span>
                                                 </c:when>
-                                                <c:when test="${product.status == 'HIDDEN'}">
+                                                <c:when test="${product.status == 'Hidden'}">
                                                     <span class="badge badge-warning">Đã ẩn</span>
                                                 </c:when>
-                                                <c:when test="${product.status == 'LOCKED'}">
+                                                <c:when test="${product.status == 'Locked'}">
                                                     <span class="badge badge-danger">Bị khóa</span>
                                                 </c:when>
                                                 <c:otherwise>
@@ -221,7 +221,7 @@
                                                 
                                                 <!-- Admin Moderation Actions -->
                                                 <c:choose>
-                                                    <c:when test="${product.status == 'ACTIVE'}">
+                                                    <c:when test="${product.status == 'Active'}">
                                                          <!-- Hide Product -->
                                             <button type="button" class="btn btn-sm btn-warning mr-1" data-id="${product.id}"
                                                 data-action="hide" data-name="${product.name}"
