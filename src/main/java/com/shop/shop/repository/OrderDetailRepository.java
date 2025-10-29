@@ -126,4 +126,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
         // Find all unassigned order details by status
         @Query("SELECT od FROM OrderDetail od WHERE od.shipper IS NULL AND od.status = :status")
         List<OrderDetail> findUnassignedOrderDetailsByStatus(@Param("status") String status);
+
+        List<OrderDetail> findByStatusAndShipper_Id(String status, Long shipperId);
 }

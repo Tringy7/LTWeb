@@ -418,14 +418,12 @@
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
                                                                     <button type="button"
                                                                         class="btn btn-status btn-sm btn-status-shipping"
-                                                                        data-bs-toggle="tooltip"
-                                                                        title="Xác nhận thành công"
-                                                                        data-bs-target="#confirmModal"
-                                                                        data-action-url="${pageContext.request.contextPath}/shipper/order/complete/${orderDetail.id}"
-                                                                        data-action-text="Xác nhận đơn này đã giao thành công?">
+                                                                        title="Xem chi tiết và xác nhận đơn này"
+                                                                        onclick="location.href='${pageContext.request.contextPath}/shipper/shipping?selectedId=${orderDetail.id}'">
                                                                         <i class="fas fa-check-circle"></i>
                                                                     </button>
                                                                 </c:when>
+
 
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <button type="button"
