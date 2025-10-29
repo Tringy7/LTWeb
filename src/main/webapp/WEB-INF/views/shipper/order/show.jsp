@@ -187,13 +187,13 @@
                     }
 
                     .btn-status-confirmed {
-                        color: #0dcaf0;
-                        border-color: #0dcaf0;
+                        color: #f00d0d;
+                        border-color: #f00d0d;
                         background-color: white;
                     }
 
                     .btn-status-confirmed:hover {
-                        background-color: #0dcaf0;
+                        background-color: #f00d0d;
                         color: white;
                     }
 
@@ -328,12 +328,11 @@
                                                                 value="${fn:toUpperCase(fn:trim(orderDetail.status))}" />
                                                             <c:choose>
                                                                 <c:when test="${statusUpper == 'CONFIRMED'}">
-                                                                    <span class="badge bg-info text-white">Đã xác
+                                                                    <span class="badge bg-danger text-white">Đã xác
                                                                         nhận</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge"
-                                                                        style="background-color: #fee20d; color: white;">Đang
+                                                                    <span class="badge bg-info text-white">Đang
                                                                         giao</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
@@ -369,6 +368,7 @@
                                                                 <c:when test="${statusUpper == 'SHIPPING'}">
                                                                     <button type="button"
                                                                         class="btn btn-status btn-sm btn-status-shipping"
+                                                                        data-bs-toggle="tooltip"
                                                                         title="Xem chi tiết và xác nhận đơn này"
                                                                         onclick="location.href='${pageContext.request.contextPath}/shipper/shipping?selectedId=${orderDetail.id}'">
                                                                         <i class="fas fa-check-circle"></i>
@@ -389,11 +389,12 @@
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <button type="button"
                                                                         class="btn btn-status btn-sm btn-status-returned"
-                                                                        data-bs-toggle="tooltip" title="Xem lý do"
-                                                                        onclick="window.location.href='${pageContext.request.contextPath}/shipper/order/return-reason/${orderDetail.id}'">
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Đơn hàng đã được trả" disabled>
                                                                         <i class="fas fa-info-circle"></i>
                                                                     </button>
                                                                 </c:when>
+
 
                                                                 <c:otherwise>
                                                                     <span class="text-muted" title="Không có hành động">
