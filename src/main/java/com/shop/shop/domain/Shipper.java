@@ -34,5 +34,9 @@ public class Shipper {
     private Carrier carrier;
 
     @OneToMany(mappedBy = "shipper", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetail> orders;
+
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false, unique = true)
+    private User user;
 }

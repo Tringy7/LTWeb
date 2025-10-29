@@ -290,16 +290,14 @@
                     </div>
 
                     <div class="card chart-container">
-                        <div class="card-header chart-header"
+                        <div class="card-header chart-header bg-white"
                             style="display:flex; justify-content:space-between; align-items:center;">
                             <div class="chart-legend">
-                                <span class="chart-title">Revenue Report</span>
-                                <!-- <span class="legend-item purple"><span class="legend-color"></span>Earnings</span>
-                                <span class="legend-item green"><span class="legend-color"></span>Invested</span>
-                                <span class="legend-item orange"><span class="legend-color"></span>Expenses</span> -->
+                                <span class="chart-title">Shipper Revenue Report</span>
                             </div>
+
+
                             <div class="chart-controls" style="display:flex; gap:0.5rem;">
-                                <!-- Kiểu biểu đồ -->
                                 <!-- Kiểu biểu đồ -->
                                 <div class="filter-item">
                                     <label for="chartType">Chart:</label>
@@ -313,18 +311,18 @@
                                 <div class="filter-item">
                                     <label for="monthStart">From:</label>
                                     <select id="monthStart" class="form-select">
-                                        <option value="0">Jan</option>
-                                        <option value="1">Feb</option>
-                                        <option value="2">Mar</option>
-                                        <option value="3">Apr</option>
-                                        <option value="4">May</option>
-                                        <option value="5">Jun</option>
-                                        <option value="6">Jul</option>
-                                        <option value="7">Aug</option>
-                                        <option value="8">Sep</option>
-                                        <option value="9">Oct</option>
-                                        <option value="10">Nov</option>
-                                        <option value="11">Dec</option>
+                                        <option value="0">Tháng 1</option>
+                                        <option value="1">Tháng 2</option>
+                                        <option value="2">Tháng 3</option>
+                                        <option value="3">Tháng 4</option>
+                                        <option value="4">Tháng 5</option>
+                                        <option value="5" selected>Tháng 6</option>
+                                        <option value="6">Tháng 7</option>
+                                        <option value="7">Tháng 8</option>
+                                        <option value="8">Tháng 9</option>
+                                        <option value="9">Tháng 10</option>
+                                        <option value="10">Tháng 11</option>
+                                        <option value="11">Tháng 12</option>
                                     </select>
                                 </div>
 
@@ -332,18 +330,18 @@
                                 <div class="filter-item">
                                     <label for="monthEnd">To:</label>
                                     <select id="monthEnd" class="form-select">
-                                        <option value="0">Jan</option>
-                                        <option value="1">Feb</option>
-                                        <option value="2">Mar</option>
-                                        <option value="3">Apr</option>
-                                        <option value="4">May</option>
-                                        <option value="5" selected>Jun</option>
-                                        <option value="6">Jul</option>
-                                        <option value="7">Aug</option>
-                                        <option value="8">Sep</option>
-                                        <option value="9">Oct</option>
-                                        <option value="10">Nov</option>
-                                        <option value="11">Dec</option>
+                                        <option value="0">Tháng 1</option>
+                                        <option value="1">Tháng 2</option>
+                                        <option value="2">Tháng 3</option>
+                                        <option value="3">Tháng 4</option>
+                                        <option value="4">Tháng 5</option>
+                                        <option value="5" selected>Tháng 6</option>
+                                        <option value="6">Tháng 7</option>
+                                        <option value="7">Tháng 8</option>
+                                        <option value="8">Tháng 9</option>
+                                        <option value="9">Tháng 10</option>
+                                        <option value="10">Tháng 11</option>
+                                        <option value="11">Tháng 12</option>
                                     </select>
                                 </div>
 
@@ -371,20 +369,25 @@
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                 <script>
-                    const monthsAbbr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    const monthsVN = [
+                        "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+                        "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+                    ];
 
+                    // Fake data cho doanh thu vận chuyển
                     function generateDataRange(startMonth, endMonth) {
                         const labels = [];
-                        const earnings = [];
-                        const invested = [];
-                        const expenses = [];
+                        const success = [];   // thành công
+                        const pending = [];   // đang giao
+                        const failed = [];    // thất bại
+
                         for (let i = startMonth; i <= endMonth; i++) {
-                            labels.push(monthsAbbr[i]);
-                            earnings.push(Math.floor(Math.random() * 4000 + 1000));
-                            invested.push(Math.floor(Math.random() * 3000 + 1000));
-                            expenses.push(Math.floor(Math.random() * 2000 + 500));
+                            labels.push(monthsVN[i]);
+                            success.push(Math.floor(Math.random() * 7000000 + 3000000)); // 3-10 triệu
+                            pending.push(Math.floor(Math.random() * 3000000 + 500000));  // 0.5-3.5 triệu
+                            failed.push(Math.floor(Math.random() * 1000000 + 200000));   // 0.2-1.2 triệu
                         }
-                        return { labels, earnings, invested, expenses };
+                        return { labels, success, pending, failed };
                     }
 
                     let ctx = document.getElementById('revenueChart').getContext('2d');
@@ -397,31 +400,31 @@
                                 labels: dataObj.labels,
                                 datasets: [
                                     {
-                                        label: 'Earnings',
-                                        data: dataObj.earnings,
-                                        borderColor: '#8c57ff',
-                                        backgroundColor: type === 'pie' ? '#8c57ff' : 'rgba(140,87,255,0.2)',
-                                        fill: type !== 'pie',
+                                        label: 'Thành công',
+                                        data: dataObj.success,
+                                        borderColor: '#4caf50',
+                                        backgroundColor: type === 'bar' ? 'rgba(76,175,80,0.3)' : '#4caf50',
+                                        fill: type === 'line',
                                         tension: 0.3,
                                         pointRadius: 5,
                                         pointHoverRadius: 8
                                     },
                                     {
-                                        label: 'Invested',
-                                        data: dataObj.invested,
-                                        borderColor: '#00c853',
-                                        backgroundColor: type === 'pie' ? '#00c853' : 'rgba(0,200,83,0.2)',
-                                        fill: type !== 'pie',
+                                        label: 'Đang giao',
+                                        data: dataObj.pending,
+                                        borderColor: '#fbc02d',
+                                        backgroundColor: type === 'bar' ? 'rgba(255,235,59,0.4)' : '#fbc02d',
+                                        fill: type === 'line',
                                         tension: 0.3,
                                         pointRadius: 5,
                                         pointHoverRadius: 8
                                     },
                                     {
-                                        label: 'Expenses',
-                                        data: dataObj.expenses,
-                                        borderColor: '#ff9800',
-                                        backgroundColor: type === 'pie' ? '#ff9800' : 'rgba(255,152,0,0.2)',
-                                        fill: type !== 'pie',
+                                        label: 'Thất bại',
+                                        data: dataObj.failed,
+                                        borderColor: '#f44336',
+                                        backgroundColor: type === 'bar' ? 'rgba(244,67,54,0.4)' : '#f44336',
+                                        fill: type === 'line',
                                         tension: 0.3,
                                         pointRadius: 5,
                                         pointHoverRadius: 8
@@ -435,16 +438,20 @@
                                     tooltip: {
                                         callbacks: {
                                             label: function (context) {
-                                                if (context.parsed?.y !== undefined) {
-                                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString('vi-VN') + ' VND';
-                                                } else {
-                                                    return context.dataset.label + ': ' + context.raw.toLocaleString('vi-VN') + ' VND';
-                                                }
+                                                const value = context.parsed?.y ?? context.raw;
+                                                return context.dataset.label + ': ' + value.toLocaleString('vi-VN') + ' VND';
                                             }
                                         }
                                     }
                                 },
-                                scales: type === 'pie' ? {} : { y: { beginAtZero: true } }
+                                scales: type === 'bar' || type === 'line' ? {
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            callback: value => value.toLocaleString('vi-VN') + ' VND'
+                                        }
+                                    }
+                                } : {}
                             }
                         });
                     }
@@ -461,7 +468,6 @@
                         }
 
                         const dataObj = generateDataRange(start, end);
-
                         if (revenueChart) revenueChart.destroy();
                         createChart(type, dataObj);
                     }
@@ -471,7 +477,6 @@
                     document.getElementById('monthEnd').addEventListener('change', updateChart);
                     document.getElementById('chartYear').addEventListener('change', updateChart);
 
-                    // Khởi tạo chart lần đầu
-                    updateChart();
+                    updateChart(); // khởi tạo lần đầu
                 </script>
             </div>

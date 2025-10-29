@@ -110,4 +110,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
         @Query("SELECT DISTINCT od.order.id FROM OrderDetail od WHERE od.shop.id = :shopId AND od.status = :status")
         List<Long> findDistinctOrderIdsByShopIdAndStatus(@Param("shopId") Long shopId, @Param("status") String status);
 
+        List<OrderDetail> findByShipper_Id(Long shipperId);
+
+        @Query("SELECT COUNT(od) FROM OrderDetail od WHERE UPPER(od.status) = :status AND od.shipper.id = :shipperId")
+        Long countByStatusAndShipperId(String status, Long shipperId);
 }

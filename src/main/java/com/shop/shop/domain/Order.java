@@ -1,6 +1,7 @@
 package com.shop.shop.domain;
 
 import java.beans.Transient;
+import com.shop.shop.domain.Carrier;
 import java.time.LocalDateTime;
 import java.util.List;
 
