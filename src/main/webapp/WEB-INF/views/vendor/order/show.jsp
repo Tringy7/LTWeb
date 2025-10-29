@@ -209,7 +209,7 @@
                                         onchange="this.form.submit()">
                                         <option value="">-- Tất cả Trạng thái --</option>
                                         <c:forEach var="st"
-                                            items="${['PENDING','CONFIRMED','PROCESSING','SHIPPING','DELIVERED','RETURNED']}">
+                                            items="${['PENDING','CONFIRMED','PROCESSING','SHIPPING','DELIVERED','CANCELLED','RETURNED']}">
                                             <option value="${st}" <c:if test="${status eq st}">selected</c:if>>
                                                 <c:choose>
                                                     <c:when test="${st eq 'PENDING'}">Đơn hàng mới</c:when>
@@ -217,7 +217,8 @@
                                                     <c:when test="${st eq 'PROCESSING'}">Đang xử lý</c:when>
                                                     <c:when test="${st eq 'SHIPPING'}">Đang giao</c:when>
                                                     <c:when test="${st eq 'DELIVERED'}">Đã giao</c:when>
-                                                    <c:when test="${st eq 'RETURNED'}">Trả hàng</c:when>
+                                                    <c:when test="${st eq 'CANCELLED'}">Hủy</c:when>
+                                                    <c:when test="${st eq 'RETURNED'}">Trả hàng - Hoàn tiền</c:when>
                                                 </c:choose>
                                             </option>
                                         </c:forEach>
@@ -271,24 +272,6 @@
                                                                     Thanh toán trực tuyến
                                                                 </c:when>
                                                                 <c:otherwise>${order.paymentMethod}</c:otherwise>
-                                                                <c:when test="${statusUpper == 'CONFIRMED'}">
-                                                                    <span class="badge badge-info">Đã xác nhận</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'SHIPPING'}">
-                                                                    <span class="badge badge-primary">Đang giao</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'DELIVERED'}">
-                                                                    <span class="badge badge-success">Đã giao</span>
-                                                                </c:when>
-                                                                <c:when test="${statusUpper == 'RETURNED'}">
-                                                                    <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">Trả
-                                                                        hàng</span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="badge bg-dark">Không xác định
-                                                                        (${order.status})</span>
-                                                                </c:otherwise>
                                                             </c:choose>
                                                         </td>
                                                         <td>
