@@ -40,6 +40,14 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     """)
     List<User> findDistinctShopOwnersByUser(@Param("currentUser") User currentUser);
 
+    // Lấy danh sách tất cả những người đã gửi tin nhắn tới currentUser (dành cho vendor)
+    @Query("""
+      SELECT DISTINCT m.sender FROM Message m
+      WHERE m.receiver = :currentUser
+      ORDER BY m.sender.fullName ASC
+      """)
+    List<User> findDistinctSendersByReceiver(@Param("currentUser") User currentUser);
+
     // Lấy tin nhắn cuối cùng giữa 2 user
     @Query(value = """
     SELECT * FROM messages m

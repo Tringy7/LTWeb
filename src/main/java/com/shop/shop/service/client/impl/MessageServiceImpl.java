@@ -54,6 +54,13 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public List<User> getListUsersWhoMessaged(User currentUser) {
+        return messageRepository.findDistinctSendersByReceiver(currentUser) != null
+                ? messageRepository.findDistinctSendersByReceiver(currentUser)
+                : new ArrayList<>();
+    }
+
+    @Override
     public MessageDTO getLastMessage(Long user1Id, Long user2Id) {
         User user1 = userRepository.findById(user1Id)
                 .orElseThrow(() -> new RuntimeException("User 1 not found"));

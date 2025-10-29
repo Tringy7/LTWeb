@@ -76,12 +76,15 @@ public class HomePageController {
 
     @GetMapping("/account")
     public String showAccount(Model model) {
-        User currentUser = userAfterLogin.getUser();
-        if (currentUser == null) {
+        User userInSession = userAfterLogin.getUser();
+        if (userInSession == null) {
             return "redirect:/login";
         }
-        // model.addAttribute("receiver", userService.handlUserAddress(currentUser));
-        model.addAttribute("user", currentUser);
+
+        // Làm mới thông tin người dùng trong session
+        userAfterLogin.updateUserInSession(userInSession.getId());
+        User refreshedUser = userAfterLogin.getUser();
+        model.addAttribute("user", refreshedUser);
         return "client/homepage/account";
     }
 

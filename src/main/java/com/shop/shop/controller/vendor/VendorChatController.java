@@ -32,9 +32,10 @@ public class VendorChatController {
     public String showChat(Model model) {
         User currentUser = userAfterLogin.getUser();
 
-        List<User> shopOwners = messageService.getListShopOwners(currentUser);
+        // For vendor we want the list of users (customers) who have messaged this vendor
+        List<User> usersWhoMessaged = messageService.getListUsersWhoMessaged(currentUser);
 
-        model.addAttribute("users", shopOwners);
+        model.addAttribute("users", usersWhoMessaged);
         model.addAttribute("currentUser", currentUser);
 
         return "vendor/chat/show";

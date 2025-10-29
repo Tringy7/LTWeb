@@ -147,6 +147,25 @@ public class UserServiceImpl implements UserService {
             }
         }
 
+        UserAddress userAddress = userAddressRepository.findByUser(userInDB);
+        if (userAddress == null) {
+            UserAddress newAddress = new UserAddress();
+            newAddress.setUser(userInDB);
+            newAddress.setReceiverName(user.getReceiver().getReceiverName());
+            newAddress.setReceiverPhone(user.getReceiver().getReceiverPhone());
+            newAddress.setReceiverAddress(user.getReceiver().getReceiverAddress());
+            newAddress.setReceiverDistrict(user.getReceiver().getReceiverDistrict());
+            // newAddress.setNote(user.getReceiver().getNote());
+            userAddressRepository.save(newAddress);
+        } else {
+            userAddress.setReceiverName(user.getReceiver().getReceiverName());
+            userAddress.setReceiverPhone(user.getReceiver().getReceiverPhone());
+            userAddress.setReceiverAddress(user.getReceiver().getReceiverAddress());
+            userAddress.setReceiverDistrict(user.getReceiver().getReceiverDistrict());
+            // userAddress.setNote(user.getReceiver().getNote());
+            userAddressRepository.save(userAddress);
+        }
+
         userRepository.save(userInDB);
     }
 

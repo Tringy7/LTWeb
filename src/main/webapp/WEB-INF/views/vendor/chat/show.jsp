@@ -30,71 +30,81 @@
                     <c:choose>
                         <c:when test="${not empty users}">
                             <c:forEach var="user" items="${users}">
-                                <div class="contact-item" data-shop-id="${user.shop.id}" data-user-id="${user.id}"
-                                    onclick="selectContact(this, ${user.id}, ${user.shop.id}, '${user.fullName}', '${user.image}')">
-                                    <div class="contact-avatar">
-                                        <img src="/admin/images/user/${user.image}" alt="Avatar">
-                                    </div>
-                                    <div class="contact-info">
-                                        <h6 class="contact-name">${user.fullName}</h6>
-                                        <p class="contact-message">Nhấn để bắt đầu trò chuyện</p>
-                                    </div>
-                                    <div class="contact-actions">
-                                        <button class="delete-contact-btn"
-                                            onclick="event.stopPropagation(); deleteContact(${user.id}, ${user.shop.id})"
-                                            title="Xóa cuộc trò chuyện">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </div>
+                                <c:choose>
+                                    <c:when test="${not empty user.shop}">
+                                        <div class="contact-item" data-shop-id="${user.shop.id}"
+                                            data-user-id="${user.id}" data-fullname="${user.fullName}"
+                                            data-image="${user.image}" onclick="selectContact(this)">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="contact-item" data-shop-id="" data-user-id="${user.id}"
+                                            data-fullname="${user.fullName}" data-image="${user.image}"
+                                            onclick="selectContact(this)">
+                                    </c:otherwise>
+                                </c:choose>
+                                <div class="contact-avatar">
+                                    <img src="/admin/images/user/${user.image}" alt="Avatar">
                                 </div>
-                            </c:forEach>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="text-center py-5">
-                                <i class="fa fa-comments" style="font-size: 48px; color: #bcc0c4;"></i>
-                                <p class="text-muted mt-3">Chưa có cuộc trò chuyện nào</p>
-                                <small class="text-muted">Bắt đầu nhắn tin với người bán từ trang sản phẩm</small>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
+                                <div class="contact-info">
+                                    <h6 class="contact-name">${user.fullName}</h6>
+                                    <p class="contact-message">Nhấn để bắt đầu trò chuyện</p>
+                                </div>
+                                <div class="contact-actions">
+                                    <button class="delete-contact-btn"
+                                        onclick="event.stopPropagation(); deleteContact(this.closest('.contact-item').dataset.userId, this.closest('.contact-item').dataset.shopId)"
+                                        title="Xóa cuộc trò chuyện">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                </div>
+                </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="text-center py-5">
+                        <i class="fa fa-comments" style="font-size: 48px; color: #bcc0c4;"></i>
+                        <p class="text-muted mt-3">Chưa có cuộc trò chuyện nào</p>
+                        <small class="text-muted">Bắt đầu nhắn tin với người bán từ trang sản phẩm</small>
+                    </div>
+                </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+
+        <!-- Right Side - Chat Area -->
+        <div class="messenger-chat-area">
+            <!-- Chat Header -->
+            <div class="chat-header" id="chatHeader" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <div class="chat-avatar">
+                        <img src="/admin/images/user/user1.jpg" alt="Avatar" id="chatAvatar">
+                    </div>
+                    <div class="chat-user-info">
+                        <h5 class="mb-0" id="chatUserName"></h5>
+                    </div>
                 </div>
             </div>
 
-            <!-- Right Side - Chat Area -->
-            <div class="messenger-chat-area">
-                <!-- Chat Header -->
-                <div class="chat-header" id="chatHeader" style="display: none;">
-                    <div class="d-flex align-items-center">
-                        <div class="chat-avatar">
-                            <img src="/admin/images/user/user1.jpg" alt="Avatar" id="chatAvatar">
-                        </div>
-                        <div class="chat-user-info">
-                            <h5 class="mb-0" id="chatUserName"></h5>
-                        </div>
+            <!-- Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="text-center py-5" id="welcomeScreen">
+                    <div class="welcome-icon mx-auto mb-3">
+                        <i class="fa fa-comments" style="font-size: 80px; color: #0084ff;"></i>
                     </div>
-                </div>
-
-                <!-- Messages Area -->
-                <div class="chat-messages" id="chatMessages">
-                    <div class="text-center py-5" id="welcomeScreen">
-                        <div class="welcome-icon mx-auto mb-3">
-                            <i class="fa fa-comments" style="font-size: 80px; color: #0084ff;"></i>
-                        </div>
-                        <p class="text-muted">Chọn một cuộc trò chuyện bên trái để bắt đầu nhắn tin</p>
-                    </div>
-                </div>
-
-                <!-- Message Input -->
-                <div class="chat-input-area" id="chatInputArea" style="display: none;">
-                    <div class="input-wrapper">
-                        <input type="text" class="chat-input" id="messageInput" placeholder="Aa"
-                            onkeypress="handleKeyPress(event)">
-                        <button class="send-btn" onclick="sendMessage()" id="sendBtn">
-                            <i class="fa fa-paper-plane"></i>
-                        </button>
-                    </div>
+                    <p class="text-muted">Chọn một cuộc trò chuyện bên trái để bắt đầu nhắn tin</p>
                 </div>
             </div>
+
+            <!-- Message Input -->
+            <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                <div class="input-wrapper">
+                    <input type="text" class="chat-input" id="messageInput" placeholder="Aa"
+                        onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
         </div>
 
         <style>
@@ -607,8 +617,9 @@
 
         <script>
             let chatMessages = [];
-            const currentUserId = ${ currentUser.id };
+            const currentUserId = ${currentUser.id};
             const currentUserEmail = '${currentUser.email}';
+            const isVendor = true;
             let activeShopOwnerId = null;
             let activeShopId = null;
             let stompClient = null;
@@ -708,8 +719,16 @@
                 try {
                     console.log('🗑️ Deleting conversation - userId:', userId, 'shopId:', shopId);
 
+                    // Determine endpoint: if shopId exists, call shop-delete endpoint, otherwise user-delete
+                    let endpoint = '';
+                    if (shopId && shopId !== '' && shopId !== '0') {
+                        endpoint = '/api/chat/delete/shop/' + shopId;
+                    } else {
+                        endpoint = '/api/chat/delete/user/' + userId;
+                    }
+
                     // Call API to delete conversation
-                    const response = await fetch('/api/chat/delete/shop/' + shopId, {
+                    const response = await fetch(endpoint, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -767,7 +786,12 @@
             }
 
             // Select contact from sidebar
-            function selectContact(element, userId, shopId, fullName, userImage) {
+            function selectContact(element) {
+                // Read values from data attributes
+                const userId = element.dataset.userId;
+                const shopId = element.dataset.shopId;
+                const fullName = element.dataset.fullname;
+                const userImage = element.dataset.image;
                 // Update active state
                 document.querySelectorAll('.contact-item').forEach(item => {
                     item.classList.remove('active');
@@ -775,8 +799,13 @@
                 element.classList.add('active');
 
                 // Update active IDs
-                activeShopOwnerId = userId;
-                activeShopId = shopId;
+                activeShopOwnerId = Number(userId);
+                // Normalize shopId
+                if (!shopId || shopId === '' || shopId === '0') {
+                    activeShopId = null;
+                } else {
+                    activeShopId = Number(shopId);
+                }
 
                 // Show chat header and input area
                 document.getElementById('chatHeader').style.display = 'flex';
@@ -791,13 +820,57 @@
             }
 
             async function loadChatHistory(silent = false) {
-                if (!activeShopId) return;
-
                 const messagesContainer = document.getElementById('chatMessages');
 
+                if (!activeShopOwnerId) return;
+
                 try {
-                    console.log('🔍 Loading chat history for shopId:', activeShopId);
-                    const response = await fetch('/api/chat/history/' + activeShopId);
+                    // If activeShopId exists, use shop-based endpoint (client-style)
+                    if (activeShopId) {
+                        console.log('🔍 Loading chat history for shopId:', activeShopId);
+                        const response = await fetch('/api/chat/history/' + activeShopId);
+                        console.log('📡 Response status:', response.status);
+
+                        if (response.ok) {
+                            const messages = await response.json();
+                            console.log('📨 Received messages:', messages);
+                            const chatAvatarSrc = document.getElementById('chatAvatar').src;
+                            const chatUserName = document.getElementById('chatUserName').textContent;
+
+                            if (messages.length === 0) {
+                                messagesContainer.innerHTML = `
+                            <div class="text-center py-5" id="welcomeScreen">
+                                <div class="welcome-avatar mx-auto mb-3">
+                                    <img src="${chatAvatarSrc}" alt="Avatar">
+                                </div>
+                                <h5>${chatUserName}</h5>
+                                <p class="text-muted">Bạn và ${chatUserName} đã kết nối trên Messenger</p>
+                                <small class="text-muted">Bắt đầu cuộc trò chuyện ngay!</small>
+                            </div>
+                        `;
+                            } else {
+                                let html = '';
+                                messages.forEach(msgDTO => {
+                                    const msgHtml = createMessageHTMLFromDTO(msgDTO, chatAvatarSrc);
+                                    if (msgHtml) {
+                                        html += msgHtml;
+                                    }
+                                });
+                                messagesContainer.innerHTML = html;
+                                scrollToBottom(true); // Scroll instantly on load
+                            }
+                        } else {
+                            const errorText = await response.text();
+                            console.error('❌ Error response:', errorText);
+                            messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi tải tin nhắn</div>`;
+                        }
+
+                        return;
+                    }
+
+                    // Vendor path: load by user id
+                    console.log('🔍 Loading chat history for userId:', activeShopOwnerId);
+                    const response = await fetch('/api/chat/history/user/' + activeShopOwnerId);
                     console.log('📡 Response status:', response.status);
 
                     if (response.ok) {
@@ -810,11 +883,10 @@
                             messagesContainer.innerHTML = `
                         <div class="text-center py-5" id="welcomeScreen">
                             <div class="welcome-avatar mx-auto mb-3">
-                                <img src="\${chatAvatarSrc}" alt="Avatar">
+                                <img src="${chatAvatarSrc}" alt="Avatar">
                             </div>
-                            <h5>\${chatUserName}</h5>
-                            <p class="text-muted">Bạn và \${chatUserName} đã kết nối trên Messenger</p>
-                            <small class="text-muted">Bắt đầu cuộc trò chuyện ngay!</small>
+                            <h5>${chatUserName}</h5>
+                            <p class="text-muted">Chưa có tin nhắn với người dùng này.</p>
                         </div>
                     `;
                         } else {
@@ -826,7 +898,7 @@
                                 }
                             });
                             messagesContainer.innerHTML = html;
-                            scrollToBottom(true); // Scroll instantly on load
+                            scrollToBottom(true);
                         }
                     } else {
                         const errorText = await response.text();
@@ -835,7 +907,7 @@
                     }
                 } catch (error) {
                     console.error('❌ Error loading chat:', error);
-                    messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi kết nối: \${error.message}</div>`;
+                    messagesContainer.innerHTML = `<div class="text-center py-5 text-danger">Lỗi kết nối: ${error.message}</div>`;
                 }
             }
 
@@ -880,7 +952,7 @@
             }
 
             async function sendMessage() {
-                if (!activeShopId || !activeShopOwnerId) {
+                if (!activeShopOwnerId) {
                     alert('Vui lòng chọn một người để nhắn tin!');
                     return;
                 }
@@ -898,7 +970,7 @@
                 try {
                     const messageDTO = {
                         sender: {
-                            id: currentUserId,
+                            id: Number(currentUserId),
                             email: currentUserEmail,
                             fullName: '${currentUser.fullName}',
                             avatar: '${currentUser.image}'
@@ -909,16 +981,25 @@
                         content: messageText,
                         timestamp: new Date().toISOString()
                     };
-
                     console.log('📤 Sending message:', messageDTO);
-                    console.log('📍 Destination: /app/chat/send/' + activeShopId);
 
-                    // Send to shop owner via /app/chat/send/{shopId}
-                    stompClient.send(
-                        '/app/chat/send/' + activeShopId,
-                        {},
-                        JSON.stringify(messageDTO)
-                    );
+                    if (isVendor) {
+                        console.log('📍 Destination (vendor): /app/vendor/chat/send/' + activeShopOwnerId);
+                        // Send to user via vendor endpoint
+                        stompClient.send(
+                            '/app/vendor/chat/send/' + activeShopOwnerId,
+                            {},
+                            JSON.stringify(messageDTO)
+                        );
+                    } else {
+                        console.log('📍 Destination: /app/chat/send/' + activeShopId);
+                        // Send to shop owner via /app/chat/send/{shopId}
+                        stompClient.send(
+                            '/app/chat/send/' + activeShopId,
+                            {},
+                            JSON.stringify(messageDTO)
+                        );
+                    }
 
                     console.log('✅ Message sent successfully');
                     input.value = '';
