@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <!-- Profile -->
@@ -58,12 +59,24 @@
 
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
+                            onclick="location.href='/shipper/shipping'">
+                            <i class="typcn typcn-map menu-icon"></i>
+                            <span class="menu-title">Shipping</span>
+                            <i class="menu-arrow"></i>
+                        </button>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link w-100 text-left" type="button"
                             onclick="location.href='/shipper/information'">
                             <i class="typcn typcn-user-outline menu-icon"></i>
                             <span class="menu-title">Profile</span>
                             <i class="menu-arrow"></i>
                         </button>
                     </li>
+
+
 
 
                 </ul>
