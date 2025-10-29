@@ -21,7 +21,7 @@ public class DashboardService {
     }
 
     public long getTotalVouchers(Long shopId) {
-        return 20;
+        return productVoucherRepository.countByShopId(shopId);
     }
 
     public long getTotalOrders(Long shopId) {
