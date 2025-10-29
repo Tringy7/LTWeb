@@ -114,4 +114,16 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
 
         @Query("SELECT COUNT(od) FROM OrderDetail od WHERE UPPER(od.status) = :status AND od.shipper.id = :shipperId")
         Long countByStatusAndShipperId(String status, Long shipperId);
+
+        // Find order details by carrier that need shipper assignment
+        List<OrderDetail> findByCarrier_IdAndShipperIsNull(Long carrierId);
+
+        // Find unassigned order details by carrier and status
+        @Query("SELECT od FROM OrderDetail od WHERE od.carrier.id = :carrierId AND od.shipper IS NULL AND od.status = :status")
+        List<OrderDetail> findUnassignedOrderDetailsByCarrierAndStatus(@Param("carrierId") Long carrierId,
+                        @Param("status") String status);
+
+        // Find all unassigned order details by status
+        @Query("SELECT od FROM OrderDetail od WHERE od.shipper IS NULL AND od.status = :status")
+        List<OrderDetail> findUnassignedOrderDetailsByStatus(@Param("status") String status);
 }

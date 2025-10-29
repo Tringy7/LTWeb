@@ -172,7 +172,7 @@
                                                     <th>Số lượng</th>
                                                     <th>Giá (VND)</th>
                                                     <th>Trạng thái</th>
-                                                    <th>Thực hiện</th>
+                                                    <!-- <th>Thực hiện</th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -226,7 +226,7 @@
                                                                 data-status="${d.status}"
                                                                 title="Cập nhật trạng thái"></i>
                                                         </td>
-                                                        <td>
+                                                        <!-- <td>
                                                             <c:choose>
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <form
@@ -240,7 +240,6 @@
                                                                     </form>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <!-- chỉ hiển thị nút, không submit nếu không phải RETURNED -->
                                                                     <button type="button"
                                                                         class="btn btn-warning apply-btn"
                                                                         title="Áp dụng (chỉ hiển thị)">
@@ -248,7 +247,7 @@
                                                                     </button>
                                                                 </c:otherwise>
                                                             </c:choose>
-                                                        </td>
+                                                        </td> -->
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -260,11 +259,13 @@
 
                             <!-- Nút quay lại dưới cùng -->
                             <div class="card-footer card-footer-custom text-center">
-                                <a href="${pageContext.request.contextPath}/vendor/order" id="backLink"
-                                    class="btn btn-primary btn-sm px-4 py-2 btn-lift disabled-link" aria-disabled="true"
-                                    title="Vui lòng bấm 'Áp dụng' trước khi quay lại">
-                                    <i class="fas fa-arrow-left me-1"></i> Quay lại
-                                </a>
+                                <form action="/vendor/order/${order.id}/returned" method="post">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                    <button type="submit" id="backLink"
+                                        class="btn btn-primary btn-sm px-4 py-2 btn-lift" title="Quay lại">
+                                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                                    </button>
+                                </form>
                             </div>
 
                         </div>
@@ -325,17 +326,6 @@
 
                     <script>
                         $(document).ready(function () {
-                            // Track whether the user has clicked an "Áp dụng" action
-                            let hasApplied = false;
-
-                            function enableBack() {
-                                $("#backLink").removeClass("disabled-link").removeAttr("aria-disabled");
-                            }
-
-                            function requireApplyAlert() {
-                                alert("Vui lòng bấm 'Áp dụng' trước khi thực hiện thao tác này.");
-                            }
-
                             // Open modal when clicking the edit icon (existing behavior)
                             $(document).on("click", ".edit-status", function () {
                                 const detailId = $(this).data("detail-id");
@@ -345,21 +335,9 @@
                                 $("#updateStatusModal").modal("show");
                             });
 
-                            // Intercept clicks on the back link: block until applied
-                            $(document).on("click", "#backLink", function (e) {
-                                if ($(this).hasClass("disabled-link")) {
-                                    e.preventDefault();
-                                    requireApplyAlert();
-                                    return false;
-                                }
-                                // otherwise allow navigation
-                            });
-
-                            // When any apply button is clicked (form submit or confirm), mark as applied
+                            // When any apply button is clicked (form submit or confirm), allow submission
                             $(document).on("click", ".apply-btn", function () {
-                                hasApplied = true;
-                                enableBack();
-                                // let the form submission proceed
+                                // no-op: allow the default action to proceed
                             });
 
                             $("#saveStatusBtn").click(function () {
@@ -377,9 +355,6 @@
                                     data: { detailId: detailId, status: status },
                                     success: function (response) {
                                         if (response.status === "success") {
-                                            // mark applied and enable back link
-                                            hasApplied = true;
-                                            enableBack();
                                             alert(response.message);
                                             location.reload();
                                         } else {
