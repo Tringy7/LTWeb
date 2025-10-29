@@ -241,91 +241,42 @@
 
                 <div class="main-panel">
                     <div class="content-wrapper">
-
-                        <!-- Header Danh sách đơn hàng -->
-                        <div class="card mb-3 border-0 shadow-sm overflow-hidden card-custom"
-                            style="border-radius: 15px;">
-                            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <div class="card border-0 shadow-sm overflow-hidden card-custom" style="border-radius: 15px;">
+                            <!-- Header -->
+                            <div
+                                class="card-header-custom d-flex justify-content-between align-items-center p-3 border-bottom">
                                 <h4 class="mb-0 fw-bold">
                                     <i class="fas fa-receipt me-2"></i> Danh sách đơn hàng
                                 </h4>
-                                <span class="badge bg-light text-dark fs-6 shadow-sm">
+                                <span class="badge bg-light text-dark fs-6 shadow-sm px-3 py-2">
                                     <i class="fas fa-box me-1"></i> Tổng: ${fn:length(orders)} đơn hàng
                                 </span>
                             </div>
 
-                            <!-- Thanh hành động -->
-                            <div class="card-body py-4" style="background-color: #fff; border-top: 1px solid #eee;">
-
+                            <!-- Nội dung chính -->
+                            <div class="card-body mt-0 pt-0" style="background-color: #fff;">
                                 <!-- Bộ lọc -->
-                                <form class="d-flex justify-content-evenly align-items-end flex-wrap gap-4">
+                                <form class="d-flex justify-content-evenly align-items-end flex-wrap gap-4 mb-4">
 
                                     <!-- Lọc theo trạng thái -->
+                                    <!-- 
                                     <div class="d-flex flex-column align-items-start text-center">
-                                        <label for="statusFilter" class="fw-bold mb-2 text-dark"
-                                            style="font-size: 15px;">
-                                            Trạng thái
-                                        </label>
-                                        <select id="statusFilter"
-                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
-                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
+                                        <label for="statusFilter" class="fw-bold mb-2 text-dark" style="font-size: 15px;">Trạng thái</label>
+                                        <select id="statusFilter" class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
+                                            style="min-width: 220px; height: 48px; font-size: 15px;">
                                             <option value="">-- Tất cả --</option>
                                             <option value="CONFIRMED">Đã xác nhận</option>
                                             <option value="SHIPPING">Đang giao</option>
                                             <option value="DELIVERED">Đã giao</option>
-                                            <option value="CANCELLED">Hủy</option>
                                             <option value="RETURNED">Hoàn hàng</option>
                                         </select>
                                     </div>
+                                    -->
 
-                                    <!-- Lọc theo mốc thời gian giao hàng -->
-                                    <div class="d-flex flex-column align-items-start text-center">
-                                        <label for="deliveryDateFilter" class="fw-bold mb-2 text-dark"
-                                            style="font-size: 15px;">
-                                            Thời gian giao hàng
-                                        </label>
-                                        <select id="deliveryDateFilter"
-                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
-                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
-                                            <option value="">-- Tất cả --</option>
-                                            <option value="3days">3 ngày trước</option>
-                                            <option value="1week">1 tuần trước</option>
-                                            <option value="1month">1 tháng trước</option>
-                                            <option value="3months">3 tháng trước</option>
-                                            <option value="6months">6 tháng trước</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Lọc theo khu vực -->
-                                    <div class="d-flex flex-column align-items-start text-center">
-                                        <label for="areaFilter" class="fw-bold mb-2 text-dark" style="font-size: 15px;">
-                                            Khu vực
-                                        </label>
-                                        <select id="areaFilter"
-                                            class="form-select fw-semibold text-dark border rounded-4 shadow-sm btn-lift"
-                                            style="min-width: 220px; height: 48px; font-size: 15px; border-radius: 12px;">
-                                            <option value="">-- Tất cả --</option>
-                                            <option value="Quan1">Quận 1</option>
-                                            <option value="Quan3">Quận 3</option>
-                                            <option value="Quan5">Quận 5</option>
-                                            <option value="Quan7">Quận 7</option>
-                                            <option value="Quan10">Quận 10</option>
-                                            <option value="QuanBinhThanh">Bình Thạnh</option>
-                                            <option value="QuanGoVap">Gò Vấp</option>
-                                            <option value="QuanPhuNhuan">Phú Nhuận</option>
-                                            <option value="ThuDuc">Thủ Đức</option>
-                                        </select>
-                                    </div>
-
+                                    <!-- Các bộ lọc khác có thể thêm tương tự -->
                                 </form>
-                            </div>
-                        </div>
 
-
-
-                        <!-- Card chứa bảng -->
-                        <div class="card card-custom border-0 shadow-sm" style="border-radius: 15px;">
-                            <div class="card-body bg-white">
+                                <!-- Bảng danh sách đơn hàng -->
                                 <div class="table-responsive">
                                     <form:form>
                                         <table class="table table-hover table-custom align-middle text-center">
@@ -385,22 +336,22 @@
                                                                         style="background-color: #fee20d; color: white;">Đang
                                                                         giao</span>
                                                                 </c:when>
-
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <span class="badge bg-success text-white">Đã
                                                                         giao</span>
                                                                 </c:when>
                                                                 <c:when test="${statusUpper == 'RETURNED'}">
                                                                     <span class="badge"
-                                                                        style="background-color:#6f42c1;color:white;">
-                                                                        Trả hàng
-                                                                    </span>
+                                                                        style="background-color:#6f42c1;color:white;">Trả
+                                                                        hàng</span>
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <span class="badge bg-dark">Không xác định</span>
                                                                 </c:otherwise>
                                                             </c:choose>
                                                         </td>
+
+                                                        <!-- Hành động -->
                                                         <td>
                                                             <c:choose>
                                                                 <c:when test="${statusUpper == 'CONFIRMED'}">
@@ -423,7 +374,6 @@
                                                                         <i class="fas fa-check-circle"></i>
                                                                     </button>
                                                                 </c:when>
-
 
                                                                 <c:when test="${statusUpper == 'DELIVERED'}">
                                                                     <button type="button"
@@ -451,9 +401,7 @@
                                                                     </span>
                                                                 </c:otherwise>
                                                             </c:choose>
-
                                                         </td>
-
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -463,6 +411,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
 
 
