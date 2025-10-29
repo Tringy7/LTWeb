@@ -41,4 +41,8 @@ public class ProductDetailService {
         return optional.orElse(null);
     }
 
+    public void deleteById(Long id) {
+        productDetailRepository.deleteById(id);
+    }
+
 }

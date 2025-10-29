@@ -139,6 +139,25 @@
                             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                             transform: translateY(-2px);
                         }
+
+                        .product-info p {
+                            font-size: 1.15rem;
+                            /* chữ to hơn */
+                            margin-bottom: 18px;
+                            /* khoảng cách giữa các dòng */
+                            line-height: 1.6;
+                            /* giãn dòng để nhìn thoáng hơn */
+                        }
+
+                        .product-info strong {
+                            color: #222;
+                            font-weight: 600;
+                            margin-right: 8px;
+                        }
+
+                        .product-info .text-danger {
+                            font-size: 1.2rem;
+                        }
                     </style>
                 </head>
 
@@ -162,52 +181,33 @@
                                     <form:hidden path="id" />
 
                                     <div class="row">
-                                        <!-- Image -->
+                                        <!-- Ảnh và Tên -->
                                         <div class="col-md-5 d-flex flex-column align-items-center mb-4">
-
                                             <div class="product-image-container w-100 mb-4">
                                                 <img src="<c:url value='/resources/admin/images/product/${product.image}'/>"
-                                                    alt="Hình sản phẩm" class="img-fluid">
+                                                    alt="Hình sản phẩm" class="img-fluid rounded shadow-sm">
                                             </div>
-                                            <h3 class="display-6 fw-bolder mb-4 text-dark">${product.name}</h3>
+                                            <h3 class="display-6 fw-bolder mb-4 text-dark text-center">${product.name}
+                                            </h3>
                                         </div>
 
-                                        <!-- Info -->
+                                        <!-- Thông tin sản phẩm -->
                                         <div class="col-md-7 ps-md-5 border-start">
+                                            <div class="product-info">
 
-                                            <div class="row g-3 mb-4">
-                                                <div class="col-md-4">
-                                                    <label class="info-label">Thương hiệu</label>
-                                                    <p class="info-value">${product.brand}</p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="info-label">Danh mục</label>
-                                                    <p class="info-value">${product.category}</p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="info-label">Giới tính</label>
-                                                    <p class="info-value">${product.gender}</p>
-                                                </div>
-                                            </div>
+                                                <p><strong>Thương hiệu:</strong> ${product.brand}</p>
+                                                <p><strong>Danh mục:</strong> ${product.category}</p>
+                                                <p><strong>Giới tính:</strong> ${product.gender}</p>
+                                                <p><strong>Màu sắc:</strong> ${product.color}</p>
+                                                <p><strong>Giá:</strong> <span
+                                                        class="text-danger fw-semibold">${product.price} VND</span></p>
+                                                <p><strong>Mô tả chi tiết:</strong>${product.detailDesc}</p>
 
-                                            <div class="row g-3 mb-4">
-                                                <div class="col-md-6">
-                                                    <label class="info-label">Màu sắc</label>
-                                                    <p class="info-value">${product.color}</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="info-label">Giá</label>
-                                                    <p class="info-value">${product.price} VND</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-4">
-                                                <label class="form-label fw-bold">Mô tả chi tiết</label>
-                                                <div class="description-box text-start">${product.detailDesc}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </form:form>
+
                                 <!-- Kho hàng -->
                                 <div class="table-responsive">
                                     <table

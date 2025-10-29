@@ -244,11 +244,31 @@ public class VendorProductController {
                 }
             }
 
-            for (ProductDetail oldDetail : currentDetails) {
-                if (!updatedIds.contains(oldDetail.getId())) {
-                    productDetailService.deleteByProductId(oldDetail.getId());
+            if (sizes != null && quantities != null && detailIds != null) {
+                for (int i = 0; i < sizes.size(); i++) {
+                    Long id = detailIds.get(i);
+                    String size = sizes.get(i);
+                    Long quantity = quantities.get(i);
+
+                    if (id != null && id != 0) {
+                        // Cập nhật chi tiết có sẵn
+                        ProductDetail detail = productDetailService.getById(id);
+                        if (detail != null) {
+                            detail.setSize(size);
+                            detail.setQuantity(quantity);
+                            productDetailService.save(detail);
+                        }
+                    } else {
+                        // Thêm mới nếu chưa có ID
+                        ProductDetail newDetail = new ProductDetail();
+                        newDetail.setProduct(product);
+                        newDetail.setSize(size);
+                        newDetail.setQuantity(quantity);
+                        productDetailService.save(newDetail);
+                    }
                 }
             }
+
         }
 
         return "redirect:/vendor/product";
