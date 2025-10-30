@@ -1,6 +1,7 @@
 package com.shop.shop.service.client.impl;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -277,14 +278,17 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Order handleApplyVoucherToOrder(String code, User user) {
-        // Find the voucher
-        Voucher voucher = voucherRepository.findByCode(code).get();
-        if (voucher == null) {
+        // Find the voucher safely (avoid calling Optional.get() on empty)
+        Optional<Voucher> optVoucher = voucherRepository.findByCode(code);
+        if (optVoucher == null || optVoucher.isEmpty()) {
             return null;
         }
-        // Validate thời gian hiệu lực và trạng thái
+        Voucher voucher = optVoucher.get();
+
         LocalDateTime now = LocalDateTime.now();
-        if (Boolean.FALSE.equals(voucher.getStatus())) {
+        // Only allow vouchers with explicit status 'Active' (case-insensitive).
+        // Reject vouchers with other statuses (e.g., 'Expired', 'Inactive', etc.).
+        if (voucher.getStatus() != null && !"Active".equalsIgnoreCase(voucher.getStatus())) {
             return null;
         }
         if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(now)) {
@@ -345,7 +349,7 @@ public class CartServiceImpl implements CartService {
         order.setVoucherCode(voucher.getCode());
 
         // Set the order totalPrice to the computed (possibly discounted) total.
-        order.setTotalPrice(total);
+        order.setTotalPrice(total + (order.getShippingFee() != null ? order.getShippingFee() : 0.0));
 
         orderRepository.save(order);
         return order;
@@ -373,7 +377,7 @@ public class CartServiceImpl implements CartService {
         for (OrderDetail od : order.getOrderDetails()) {
             total += od.getFinalPrice() != null ? od.getFinalPrice() : od.getPrice();
         }
-        order.setTotalPrice(total);
+        order.setTotalPrice(total + order.getShippingFee());
         orderRepository.save(order);
         return order;
     }

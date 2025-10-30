@@ -183,7 +183,8 @@ public class UserServiceImpl implements UserService {
 
         // Chuyển đổi từ UserVoucher sang Voucher
         return userVouchers.stream()
-                .map(com.shop.shop.domain.UserVoucher::getVoucher)
+                .map(UserVoucher::getVoucher)
+                .filter(voucher -> voucher != null && "Active".equalsIgnoreCase(voucher.getStatus()))
                 .collect(Collectors.toList());
     }
 
