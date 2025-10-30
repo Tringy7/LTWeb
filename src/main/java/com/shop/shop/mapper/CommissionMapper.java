@@ -15,16 +15,16 @@ public class CommissionMapper {
 
         return new CommissionResponseDTO(
                 commission.getId(),
-                commission.getShopId(), // Uses helper method
-                null, // shopName will be set by service
+                commission.getShopId(),
+                null,
                 commission.getTotalRevenue(),
-                commission.getCommissionRate(), // Uses helper method
-                commission.getCommissionAmount(), // Uses helper method
-                commission.getCalculationDate(), // Uses helper method
-                commission.getFromDate(), // Uses helper method
-                commission.getToDate(), // Uses helper method
+                commission.getCommissionRate(),
+                commission.getCommissionAmount(),
+                commission.getCalculationDate(),
+                commission.getFromDate(),
+                commission.getToDate(),
                 commission.getStatus(),
                 commission.getCreatedAt(),
-                commission.getUpdatedAt()); // Uses helper method
+                commission.getUpdatedAt());
     }
 }

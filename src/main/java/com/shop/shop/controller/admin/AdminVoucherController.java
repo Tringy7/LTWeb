@@ -27,10 +27,9 @@ import com.shop.shop.service.admin.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-/**
- * Admin Controller for Voucher Management
- * Handles system voucher creation and shop voucher moderation
- */
+// Admin Controller for Voucher Management
+// Handles system voucher creation and shop voucher moderation
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/voucher")
@@ -40,9 +39,8 @@ public class AdminVoucherController {
     private final VoucherMapper voucherMapper;
     private final UserRepository userRepository;
 
-    /**
-     * Display voucher management page with search functionality
-     */
+    // Display voucher management page with search functionality
+
     @GetMapping
     public String showVouchers(@RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "ALL") String status,
@@ -91,9 +89,7 @@ public class AdminVoucherController {
         return "admin/voucher/show";
     }
 
-    /**
-     * Display voucher details
-     */
+    // Display voucher details
     @GetMapping("/{id}")
     public String showVoucherDetail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Voucher> voucherOpt = voucherService.getVoucherById(id);
@@ -110,18 +106,15 @@ public class AdminVoucherController {
         return "admin/voucher/detail";
     }
 
-    /**
-     * Show create voucher form
-     */
+    // Show create voucher form
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("createDTO", new VoucherCreateDTO());
         return "admin/voucher/create";
     }
 
-    /**
-     * Create new system voucher
-     */
+    // Create new system voucher
+
     @PostMapping("/create")
     public String createVoucher(@Valid @ModelAttribute("createDTO") VoucherCreateDTO createDTO,
             BindingResult result,
@@ -149,9 +142,8 @@ public class AdminVoucherController {
         }
     }
 
-    /**
-     * Show edit voucher form
-     */
+    // Show edit voucher form
+
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Voucher> voucherOpt = voucherService.getVoucherById(id);
@@ -168,9 +160,8 @@ public class AdminVoucherController {
         return "admin/voucher/edit";
     }
 
-    /**
-     * Update voucher
-     */
+    // Update voucher
+
     @PostMapping("/edit")
     public String updateVoucher(@Valid @ModelAttribute("updateDTO") VoucherUpdateDTO updateDTO,
             BindingResult result,
@@ -201,9 +192,8 @@ public class AdminVoucherController {
         }
     }
 
-    /**
-     * Delete voucher
-     */
+    // Delete voucher
+
     @PostMapping("/delete/{id}")
     public String deleteVoucher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -215,9 +205,8 @@ public class AdminVoucherController {
         return "redirect:/admin/voucher";
     }
 
-    /**
-     * Lock voucher for policy violation
-     */
+    // Lock voucher for policy violation
+
     @PostMapping("/{id}/lock")
     public String lockVoucher(@PathVariable Long id,
             @RequestParam(defaultValue = "Policy violation") String reason,
@@ -231,9 +220,8 @@ public class AdminVoucherController {
         return "redirect:/admin/voucher";
     }
 
-    /**
-     * Unlock voucher
-     */
+    // Unlock voucher
+
     @PostMapping("/{id}/unlock")
     public String unlockVoucher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -245,9 +233,8 @@ public class AdminVoucherController {
         return "redirect:/admin/voucher";
     }
 
-    /**
-     * Activate voucher
-     */
+    // Activate voucher
+
     @PostMapping("/{id}/activate")
     public String activateVoucher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -259,9 +246,8 @@ public class AdminVoucherController {
         return "redirect:/admin/voucher";
     }
 
-    /**
-     * Deactivate voucher
-     */
+    // Deactivate voucher
+
     @PostMapping("/{id}/deactivate")
     public String deactivateVoucher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -273,9 +259,8 @@ public class AdminVoucherController {
         return "redirect:/admin/voucher";
     }
 
-    /**
-     * AJAX endpoint to check if voucher code exists
-     */
+    // AJAX endpoint to check if voucher code exists
+
     @GetMapping("/check-code")
     @ResponseBody
     public boolean checkVoucherCode(@RequestParam String code,
@@ -286,9 +271,8 @@ public class AdminVoucherController {
         return !voucherService.existsByCode(code);
     }
 
-    /**
-     * Get vouchers for moderation (shop vouchers that may violate policies)
-     */
+    // Get vouchers for moderation (shop vouchers that may violate policies)
+
     @GetMapping("/moderation")
     public String showModerationVouchers(Model model) {
         List<Voucher> shopVouchers = voucherService.getShopVouchersForModeration();
@@ -301,9 +285,8 @@ public class AdminVoucherController {
         return "admin/voucher/moderation";
     }
 
-    /**
-     * Manually assign a voucher to all users (for existing vouchers)
-     */
+    // Manually assign a voucher to all users (for existing vouchers)
+
     @PostMapping("/{id}/assign-to-all")
     public String assignVoucherToAllUsers(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

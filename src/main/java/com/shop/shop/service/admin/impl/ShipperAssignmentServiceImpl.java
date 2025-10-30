@@ -113,4 +113,39 @@ public class ShipperAssignmentServiceImpl implements ShipperAssignmentService {
 
         return orderDetailRepository.findUnassignedOrderDetailsByStatus(finalStatus);
     }
+
+    @Override
+    public Carrier getCarrierById(Long carrierId) {
+        Optional<Carrier> carrierOpt = carrierRepository.findById(carrierId);
+        if (carrierOpt.isEmpty()) {
+            throw new RuntimeException("Carrier not found with ID: " + carrierId);
+        }
+        return carrierOpt.get();
+    }
+
+    @Override
+    public Carrier updateCarrierDeliveryFee(Long carrierId, Double deliveryFee) {
+        if (deliveryFee == null || deliveryFee < 0) {
+            throw new RuntimeException("Delivery fee must be a positive number");
+        }
+
+        Optional<Carrier> carrierOpt = carrierRepository.findById(carrierId);
+        if (carrierOpt.isEmpty()) {
+            throw new RuntimeException("Carrier not found with ID: " + carrierId);
+        }
+
+        Carrier carrier = carrierOpt.get();
+        carrier.setDeliveryFee(deliveryFee);
+        return carrierRepository.save(carrier);
+    }
+
+    @Override
+    public List<Carrier> searchCarriers(String searchTerm, String status, String area) {
+        return carrierRepository.searchCarriers(searchTerm, status, area);
+    }
+
+    @Override
+    public List<String> getAllCarrierAreas() {
+        return carrierRepository.findAllDistinctAreas();
+    }
 }

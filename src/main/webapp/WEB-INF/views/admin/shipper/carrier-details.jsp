@@ -38,9 +38,13 @@
                     Chi tiết nhà vận chuyển
                 </h4>
                 <div>
-                    <a href="/admin/shipper-assignment" class="btn btn-secondary">
+                    <a href="/admin/shipper-assignment" class="btn btn-outline-secondary btn-sm">
                         <i class="typcn typcn-arrow-back mr-1"></i>
-                        Quay lại
+                        Quay lại danh sách
+                    </a>
+                    <a href="/admin/shipper-assignment?search=" class="btn btn-outline-info btn-sm">
+                        <i class="typcn typcn-zoom mr-1"></i>
+                        Tìm kiếm carriers
                     </a>
                     <c:if test="${not empty unassignedOrders}">
                         <form action="/admin/shipper-assignment/auto-assign/carrier" method="POST" style="display: inline;">

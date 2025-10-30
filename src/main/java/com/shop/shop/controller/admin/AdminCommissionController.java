@@ -38,9 +38,8 @@ public class AdminCommissionController {
 
         model.addAttribute("commissions", commissions);
         model.addAttribute("summary", summary);
-        // Use string formatting for HTML date inputs
-        model.addAttribute("fromDate", firstOfMonth.toString()); // Returns "2025-10-01" format
-        model.addAttribute("toDate", lastOfMonth.toString()); // Returns "2025-10-31" format
+        model.addAttribute("fromDate", firstOfMonth.toString());
+        model.addAttribute("toDate", lastOfMonth.toString());
         model.addAttribute("calculationRequest", new CommissionCalculationRequestDTO());
 
         return "admin/commission/show";

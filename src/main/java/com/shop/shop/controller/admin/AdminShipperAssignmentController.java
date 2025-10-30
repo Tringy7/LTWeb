@@ -25,10 +25,24 @@ public class AdminShipperAssignmentController {
     private final ShipperAssignmentService shipperAssignmentService;
 
     @GetMapping
-    public String showShipperAssignmentPage(Model model) {
+    public String showShipperAssignmentPage(
+            @RequestParam(value = "search", required = false) String searchTerm,
+            @RequestParam(value = "status", required = false) String statusFilter,
+            @RequestParam(value = "area", required = false) String areaFilter,
+            Model model) {
         try {
-            // Get all carriers with their statistics
-            List<Carrier> carriers = shipperAssignmentService.getAllCarriersWithStats();
+            // Get carriers based on search criteria
+            List<Carrier> carriers;
+            if (searchTerm != null || statusFilter != null || areaFilter != null) {
+                carriers = shipperAssignmentService.searchCarriers(searchTerm, statusFilter, areaFilter);
+                model.addAttribute("searchTerm", searchTerm);
+                model.addAttribute("statusFilter", statusFilter);
+                model.addAttribute("areaFilter", areaFilter);
+                model.addAttribute("isSearching", true);
+            } else {
+                carriers = shipperAssignmentService.getAllCarriersWithStats();
+                model.addAttribute("isSearching", false);
+            }
             model.addAttribute("carriers", carriers);
 
             // Get order details that need assignment
@@ -38,6 +52,10 @@ public class AdminShipperAssignmentController {
 
             // Group unassigned orders by carrier for display
             model.addAttribute("hasUnassignedOrders", !unassignedOrders.isEmpty());
+
+            // Get all unique areas for filter dropdown
+            List<String> allAreas = shipperAssignmentService.getAllCarrierAreas();
+            model.addAttribute("allAreas", allAreas);
 
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Có lỗi khi tải dữ liệu: " + e.getMessage());
@@ -126,6 +144,33 @@ public class AdminShipperAssignmentController {
                     "Có lỗi khi tự động phân công tất cả: " + e.getMessage());
         }
 
+        return "redirect:/admin/shipper-assignment";
+    }
+
+    @GetMapping("/carrier/edit-fee")
+    public String showEditDeliveryFeePage(@RequestParam("carrierId") Long carrierId, Model model) {
+        try {
+            Carrier carrier = shipperAssignmentService.getCarrierById(carrierId);
+            model.addAttribute("carrier", carrier);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Có lỗi khi tải thông tin carrier: " + e.getMessage());
+        }
+        return "admin/shipper/edit-delivery-fee";
+    }
+
+    @PostMapping("/carrier/update-fee")
+    public String updateDeliveryFee(
+            @RequestParam("carrierId") Long carrierId,
+            @RequestParam("deliveryFee") Double deliveryFee,
+            RedirectAttributes redirectAttributes) {
+        try {
+            shipperAssignmentService.updateCarrierDeliveryFee(carrierId, deliveryFee);
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "Đã cập nhật phí vận chuyển thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Có lỗi khi cập nhật phí vận chuyển: " + e.getMessage());
+        }
         return "redirect:/admin/shipper-assignment";
     }
 }

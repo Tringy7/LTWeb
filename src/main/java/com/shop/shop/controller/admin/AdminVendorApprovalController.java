@@ -18,9 +18,8 @@ import com.shop.shop.domain.Shop;
 import com.shop.shop.service.admin.VendorApprovalService;
 import com.shop.shop.service.admin.VendorApprovalService.VendorStatisticsDto;
 
-/**
- * Controller for Admin Vendor Approval Management
- */
+// Controller for Admin Vendor Approval Management
+
 @Controller
 @RequestMapping("/admin/vendor-approval")
 public class AdminVendorApprovalController {
@@ -30,9 +29,8 @@ public class AdminVendorApprovalController {
     @Autowired
     private VendorApprovalService vendorApprovalService;
 
-    /**
-     * Show vendor approval dashboard
-     */
+    // Show vendor approval dashboard
+
     @GetMapping
     public String showVendorApprovalDashboard(Model model) {
         try {
@@ -54,9 +52,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Show all applications
-     */
+    // Show all applications
+
     @GetMapping("/applications")
     public String showAllApplications(Model model) {
         try {
@@ -85,9 +82,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Show pending vendor applications
-     */
+    // Show pending vendor applications
+
     @GetMapping("/pending")
     public String showPendingApplications(Model model) {
         try {
@@ -107,9 +103,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Show approved vendors
-     */
+    // Show approved vendors
+
     @GetMapping("/approved")
     public String showApprovedVendors(Model model) {
         try {
@@ -129,9 +124,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Show rejected applications
-     */
+    // Show rejected applications
+
     @GetMapping("/rejected")
     public String showRejectedApplications(Model model) {
         try {
@@ -151,9 +145,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Show vendor application details
-     */
+    // Show vendor application details
+
     @GetMapping("/details/{shopId}")
     public String showApplicationDetails(@PathVariable Long shopId, Model model) {
         try {
@@ -173,9 +166,8 @@ public class AdminVendorApprovalController {
         }
     }
 
-    /**
-     * Approve vendor application
-     */
+    // Approve vendor application
+
     @PostMapping("/approve/{shopId}")
     public String approveVendor(@PathVariable Long shopId, RedirectAttributes redirectAttributes) {
         try {
@@ -197,9 +189,8 @@ public class AdminVendorApprovalController {
         return "redirect:/admin/vendor-approval/pending";
     }
 
-    /**
-     * Reject vendor application
-     */
+    // Reject vendor application
+
     @PostMapping("/reject/{shopId}")
     public String rejectVendor(@PathVariable Long shopId,
             @RequestParam(defaultValue = "Đơn đăng ký bị từ chối bởi quản trị viên") String rejectionReason,
@@ -223,9 +214,8 @@ public class AdminVendorApprovalController {
         return "redirect:/admin/vendor-approval/pending";
     }
 
-    /**
-     * Bulk approve multiple vendors
-     */
+    // Bulk approve multiple vendors
+
     @PostMapping("/bulk-approve")
     public String bulkApproveVendors(@RequestParam("shopIds") List<Long> shopIds,
             RedirectAttributes redirectAttributes) {
@@ -262,9 +252,8 @@ public class AdminVendorApprovalController {
         return "redirect:/admin/vendor-approval/pending";
     }
 
-    /**
-     * Bulk reject multiple vendors
-     */
+    // Bulk reject multiple vendors
+
     @PostMapping("/bulk-reject")
     public String bulkRejectVendors(@RequestParam("shopIds") List<Long> shopIds,
             @RequestParam(defaultValue = "Bulk rejection by admin") String rejectionReason,

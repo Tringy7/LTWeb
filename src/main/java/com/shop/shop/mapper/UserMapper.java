@@ -7,12 +7,10 @@ import com.shop.shop.dto.UserUpdateDTO;
 import org.springframework.stereotype.Component;
 
 // Handles conversion between User entity and User-related DTOs.
-
 @Component
 public class UserMapper {
 
     // Converts UserUpdateDTO into a new User entity for saving to the database.
-
     public User toEntity(UserUpdateDTO dto, Role role) {
         if (dto == null) {
             return null;
@@ -31,7 +29,6 @@ public class UserMapper {
 
     // Updates an existing User entity with new data from UserUpdateDTO
     // (not modify password)
-
     public void updateEntityFromDTO(User user, UserUpdateDTO dto, Role role) {
         if (user == null || dto == null) {
             return;
