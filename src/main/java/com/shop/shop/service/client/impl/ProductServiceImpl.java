@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
             return false;
         }
         String prodStatus = p.getStatus();
-        if (prodStatus == null || !"ACTIVE".equalsIgnoreCase(prodStatus) || !"Active".equalsIgnoreCase(prodStatus)) {
+        if (prodStatus == null || !prodStatus.equalsIgnoreCase("ACTIVE")) {
             return false;
         }
         if (p.getShop() == null) {
@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
         if (shopStatus == null) {
             return false;
         }
-        return "Active".equalsIgnoreCase(shopStatus) || "ACTIVE".equalsIgnoreCase(shopStatus);
+        return shopStatus.equalsIgnoreCase("ACTIVE");
     }
 
     @Override
@@ -84,9 +84,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getProductPage(Pageable pageable) {
-        Page<Product> page = productRepository.findAll(pageable);
-        List<Product> filtered = page.getContent().stream().filter(this::isProductAndShopActive).toList();
-        return new PageImpl<>(filtered, pageable, filtered.size());
+        // 1. Lấy tất cả sản phẩm từ repository, áp dụng sắp xếp nếu có
+        List<Product> allProducts;
+        if (pageable.getSort().isSorted()) {
+            allProducts = productRepository.findAll(pageable.getSort());
+        } else {
+            allProducts = productRepository.findAll();
+        }
+
+        // 2. Lọc tất cả sản phẩm để chỉ giữ lại những sản phẩm active
+        List<Product> activeProducts = allProducts.stream()
+                .filter(this::isProductAndShopActive)
+                .toList();
+
+        // 3. Thực hiện phân trang thủ công trên danh sách đã lọc
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), activeProducts.size());
+        List<Product> pagedProducts = (start > activeProducts.size()) ? Collections.emptyList() : activeProducts.subList(start, end);
+
+        return new PageImpl<>(pagedProducts, pageable, activeProducts.size());
     }
 
     @Override
