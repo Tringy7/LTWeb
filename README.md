@@ -1,121 +1,113 @@
-## LTWeb - Shop (Spring Boot + JSP)
+### 1. Cấu trúc dự án (tương tự mẫu Uteshop)
 
-Một ứng dụng web thương mại điện tử dựa trên Spring Boot, JSP và Hibernate/JPA.
+```
+LTWeb/ (fashion_shop)
+│── .git/
+│── pom.xml                    # Quản lý dependencies Maven (packaging = war)
+│── mvnw, mvnw.cmd             # Maven Wrapper
+│── src/
+│   ├── main/
+│   │   ├── java/com/shop/shop/
+│   │   │   ├── config/        # Cấu hình Spring, Security, email, jwt, vnpay
+│   │   │   ├── controller/    # Controller (client, admin, shipper, vendor)
+│   │   │   ├── domain/        # Entity / Model (User, Order, Product...)
+│   │   │   ├── dto/           # DTOs
+│   │   │   ├── mapper/        # Mapstruct/ModelMapper helpers
+│   │   │   ├── repository/    # Spring Data JPA repositories
+│   │   │   ├── service/       # Service interfaces
+│   │   │   ├── service/impl/  # Service implementations
+│   │   │   └── util/          # Helpers (UserAfterLogin, util functions)
+│   │   ├── resources/
+│   │   │   ├── application.properties  # Main config (DB, vnpay, jwt...)
+│   │   │   └── fonts/                    
+│   │   └── webapp/
+│   │       ├── resources/                # static assets (admin, client folders)
+│   │       │   ├── admin/
+│   │       │   └── client/
+│   │       └── WEB-INF/
+│   │           ├── views/                 # JSP views
+│   │           └── web.xml
+│   └── test/                             # Unit tests (DAO, Service)
+│
+└── db/                                   # SQL scripts / seed data
+```
 
-### Tổng quan
+### 2. Mô tả các thư mục (như bạn yêu cầu)
 
-- Packaging: WAR (hỗ trợ JSP)
-- Java: 22
-- Build: Maven (đã có Maven Wrapper `mvnw` / `mvnw.cmd`)
-- DB: MySQL (mặc định cấu hình trong `src/main/resources/application.properties`)
-- Templating / decorator: Sitemesh
+- `controller/` → Servlet / Controller nhận request từ client, gọi service.
+- `repository/` (dao) → Tầng truy xuất DB (Spring Data JPA).
+- `domain/` (model) → entity ánh xạ bảng DB.
+- `service/` + `service/impl/` → Xử lý logic nghiệp vụ (gọi repository/dao).
+- `util/` → Helper (ví dụ: `UserAfterLogin`, hash password, validate...).
+- `webapp/WEB-INF/views/` → JSP pages.
+- `resources/` → `application.properties`, font, các file cấu hình (vnpay, jwt).
+- `assets/` (dưới webapp/resources) → CSS, JS, images.
+- `test/` → JUnit test cho repository/service.
 
-### Những gì có trong repo
-
-- `src/main/java` - mã nguồn Java
-- `src/main/resources` - cấu hình, `application.properties`
-- `src/main/webapp` - JSP/JS/CSS và tài nguyên web
-- `pom.xml` - cấu hình Maven và dependencies
-
-### Yêu cầu
+### 3. Yêu cầu & môi trường
 
 - Java 22
-- Maven hoặc sử dụng Maven Wrapper (`mvnw` / `mvnw.cmd`)
-- MySQL (hoặc SQL Server nếu muốn đổi driver)
+- Maven (sử dụng `mvnw.cmd` trên Windows)
+- MySQL 
 
-### Cấu hình nhanh (local)
+### 4. Cài đặt 
 
-Tệp cấu hình chính: `src/main/resources/application.properties`.
-Một số giá trị mặc định (hãy sửa trước khi deploy):
+1. Tạo database (MySQL) theo `application.properties`.
 
-- `spring.datasource.url=jdbc:mysql://localhost:3306/shop`
-- `spring.datasource.username=root`
-- `spring.datasource.password=171005` (thay bằng mật khẩu an toàn)
-- `server.port=8080`
+2. Sửa `src/main/resources/application.properties` cho phù hợp (DB url/username/password, VNPAY, JWT secret).
 
-VNPAY và JWT keys cũng được cấu hình trong `application.properties` — KHÔNG để key thật vào repo công khai.
-
-### Tạo database (MySQL) mẫu
-
-Chạy trong MySQL:
-
-```sql
-CREATE DATABASE shop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
--- tạo user nếu cần
--- CREATE USER 'shopuser'@'localhost' IDENTIFIED BY 'your_password';
--- GRANT ALL PRIVILEGES ON shop.* TO 'shopuser'@'localhost';
-```
-
-### Chạy project (Windows PowerShell)
-
-1) Chạy trực tiếp (với Maven Wrapper, sẽ dùng embedded Tomcat):
+3. Chạy project (PowerShell):
 
 ```powershell
-.\'mvnw.cmd' spring-boot:run
-```
-
-2) Hoặc build và chạy file WAR:
-
-```powershell
-.\'mvnw.cmd' clean package -DskipTests
+.\mvnw.cmd clean package -DskipTests
 java -jar target\Design-0.0.1-SNAPSHOT.war
 ```
 
-Lưu ý: tên WAR dựa trên `artifactId` và `version` trong `pom.xml` (hiện tại `Design-0.0.1-SNAPSHOT.war`).
-
-### Thử nghiệm & kiểm tra
-
-- Chạy test (nếu có):
+Hoặc chạy trực tiếp (dev):
 
 ```powershell
-.\'mvnw.cmd' test
+.\mvnw.cmd spring-boot:run
 ```
 
-### Cấu trúc quan trọng & đường dẫn
+### 5. Hướng dẫn thanh toán VNPAY (như mẫu)
 
-- Các controller client: `src/main/java/com/shop/shop/controller/client` (ví dụ: `CartController`)
-- Mẫu view JSP: `src/main/webapp/WEB-INF/views/`
-- Tài nguyên web (css/js/images): `src/main/webapp/resources/`
-- File upload mặc định: `file.upload.dir=src/main/webapp/resources/admin/images/user` (cấu hình trong `application.properties`)
+- Tại trang thanh toán chọn VNPAY → chọn phương thức thẻ nội địa.
+- Dùng thông tin thẻ giả lập (sandbox) theo môi trường dev (xem `application.properties` cho `vnpay.*` keys).
 
-### Cảnh báo bảo mật / best practices
+### 6. Chức năng / Target (tương tự mẫu Uteshop)
 
-- Không commit secrets (JWT secret, VNPAY keys, DB password). Thay thế bằng environment variables hoặc externalized config khi deploy.
-- Kiểm tra `spring.jpa.hibernate.ddl-auto` (hiện `update`) — không dùng `create` hoặc `create-drop` trên production.
+Ứng dụng hỗ trợ các role: Guest, User, Vendor, Shipper, Admin.
 
-### Thay đổi cấu hình bằng environment variables
+- Guest: xem sản phẩm, tìm kiếm, xem chi tiết.
+- User: quản lý profile, nhiều địa chỉ nhận hàng, giỏ hàng lưu DB, đặt hàng, thanh toán (COD, VNPAY,...), đánh giá.
+- Vendor: quản lý shop, sản phẩm, đơn hàng, khuyến mãi.
+- Shipper: nhận/giao đơn, cập nhật trạng thái.
+- Admin: quản lý người dùng, shop, sản phẩm, khuyến mãi, vận chuyển.
 
-Bạn có thể override giá trị trong `application.properties` bằng biến môi trường hoặc tham số JVM.
-Ví dụ (PowerShell):
+Các điểm thực hiện/đã có sẵn: VNPAY sandbox, xuất báo cáo PDF, WebSocket liên lạc, đăng nhập Google.
 
-```powershell
-$env:SPRING_DATASOURCE_URL='jdbc:mysql://localhost:3306/shop'
-$env:SPRING_DATASOURCE_USERNAME='root'
-$env:SPRING_DATASOURCE_PASSWORD='newpass'
-.\'mvnw.cmd' spring-boot:run
-```
+### 7. Phân công (ví dụ từ mẫu)
 
-Hoặc khi chạy jar:
+- Bạn có thể giữ phần mô tả công việc nhóm như mẫu, hoặc cập nhật theo team hiện tại.
 
-```powershell
-java -Dspring.datasource.password=securepass -jar target\Design-0.0.1-SNAPSHOT.war
-```
+### 8. Thực hành an toàn & vận hành
 
-### Vấn đề thường gặp
+- KHÔNG commit secrets (JWT secret, VNPAY, DB password). Sử dụng `application.properties.sample` và env vars.
+- Tránh `spring.jpa.hibernate.ddl-auto=create` trên production.
 
-- JSP không hiển thị / 404 cho view: kiểm tra `spring.mvc.view.prefix=/WEB-INF/views/` và `spring.mvc.view.suffix=.jsp` trong `application.properties`.
-- Thời gian build lâu, lỗi plugin JSP: đảm bảo `maven-war-plugin` cấu hình `warSourceDirectory` là `src/main/webapp`.
+### 9. Thêm đề xuất (tôi có thể giúp)
 
-### Ghi chú thêm
-
-- Dự án dùng Spring Security, JPA, VNPAY integration, email và WebSocket. Nếu muốn deploy trên môi trường cloud, hãy externalize secrets và cấu hình datasource.
+- Tạo `application.properties.sample` (với placeholder) và chuyển secrets ra biến môi trường.
+- Viết `docker-compose.yml` để chạy app + MySQL.
+- Thêm script seed SQL trong `db/` và README hướng dẫn khôi phục DB.
+- Viết hướng dẫn debug cho IntelliJ / VS Code.
 
 ---
 
-Nếu muốn, tôi có thể:
+Nếu bạn muốn, tôi sẽ cập nhật file README hiện tại với các thay đổi trên (đã thực hiện) và có thể tiếp tục tạo:
 
-- Thêm phần `ENV` cụ thể cho Docker/Docker Compose.
-- Viết script SQL khởi tạo dữ liệu mẫu (users, roles, sample products).
-- Tạo hướng dẫn debug cho IntelliJ / VS Code.
+- `application.properties.sample`
+- `db/seed.sql` (ví dụ dữ liệu)
+- `docker-compose.yml`
 
-Hãy cho biết bạn muốn thêm phần nào nữa vào README.
+Chọn mục bạn muốn mình làm tiếp theo.
