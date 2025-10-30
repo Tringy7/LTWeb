@@ -69,13 +69,53 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserAddress handlUserAddress(User user) {
-        UserAddress userAddress = userAddressRepository.findByUser(user);
+        UserAddress userAddress = userAddressRepository.findTopByUserOrderByIdDesc(user);
         if (userAddress == null) {
             userAddress = new UserAddress();
             userAddress.setUser(user);
             userAddressRepository.save(userAddress);
         }
         return userAddress;
+    }
+
+    /**
+     * Compare relevant fields to determine if two addresses are identical.
+     */
+    private boolean addressesEqual(UserAddress a, UserAddress b) {
+        if (a == b) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+
+        String n1 = a.getReceiverName() == null ? "" : a.getReceiverName().trim();
+        String n2 = b.getReceiverName() == null ? "" : b.getReceiverName().trim();
+        if (!n1.equals(n2)) {
+            return false;
+        }
+
+        String p1 = a.getReceiverPhone() == null ? "" : a.getReceiverPhone().trim();
+        String p2 = b.getReceiverPhone() == null ? "" : b.getReceiverPhone().trim();
+        if (!p1.equals(p2)) {
+            return false;
+        }
+
+        String addr1 = a.getReceiverAddress() == null ? "" : a.getReceiverAddress().trim();
+        String addr2 = b.getReceiverAddress() == null ? "" : b.getReceiverAddress().trim();
+        if (!addr1.equals(addr2)) {
+            return false;
+        }
+
+        String d1 = a.getReceiverDistrict() == null ? "" : a.getReceiverDistrict().trim();
+        String d2 = b.getReceiverDistrict() == null ? "" : b.getReceiverDistrict().trim();
+        if (!d1.equals(d2)) {
+            return false;
+        }
+
+        String note1 = a.getNote() == null ? "" : a.getNote().trim();
+        String note2 = b.getNote() == null ? "" : b.getNote().trim();
+        return note1.equals(note2);
     }
 
     @Override
@@ -147,7 +187,7 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        UserAddress userAddress = userAddressRepository.findByUser(userInDB);
+        UserAddress userAddress = userAddressRepository.findTopByUserOrderByIdDesc(userInDB);
         if (userAddress == null) {
             UserAddress newAddress = new UserAddress();
             newAddress.setUser(userInDB);
@@ -191,16 +231,57 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void handleReceiverUser(User user, UserAddress receiver) {
-        UserAddress userAddress = userAddressRepository.findByUser(user);
-        if (userAddress != null) {
-            userAddress.setReceiverAddress(receiver.getReceiverAddress());
-            userAddress.setReceiverName(receiver.getReceiverName());
-            userAddress.setReceiverPhone(receiver.getReceiverPhone());
-            userAddress.setNote(receiver.getNote());
-            userAddressRepository.save(userAddress);
-        } else {
+        // Find the latest persisted address for this user
+        UserAddress latest = userAddressRepository.findTopByUserOrderByIdDesc(user);
+
+        UserAddress toSave = null;
+        if (latest == null) {
+            // no existing address -> persist the provided receiver as new
             receiver.setUser(user);
-            userAddressRepository.save(receiver);
+            toSave = receiver;
+            userAddressRepository.save(toSave);
+        } else {
+            // if receiver is null or identical to latest, update latest in-place
+            if (receiver == null) {
+                toSave = latest;
+            } else if (addressesEqual(latest, receiver)) {
+                // same data -> update any fields (keep same row)
+                latest.setReceiverAddress(receiver.getReceiverAddress());
+                latest.setReceiverName(receiver.getReceiverName());
+                latest.setReceiverPhone(receiver.getReceiverPhone());
+                latest.setReceiverDistrict(receiver.getReceiverDistrict());
+                latest.setNote(receiver.getNote());
+                userAddressRepository.save(latest);
+                toSave = latest;
+            } else {
+                // different -> create a new address row and persist it
+                UserAddress newAddr = new UserAddress();
+                newAddr.setUser(user);
+                newAddr.setReceiverAddress(receiver.getReceiverAddress());
+                newAddr.setReceiverName(receiver.getReceiverName());
+                newAddr.setReceiverPhone(receiver.getReceiverPhone());
+                newAddr.setReceiverDistrict(receiver.getReceiverDistrict());
+                newAddr.setNote(receiver.getNote());
+                userAddressRepository.save(newAddr);
+                toSave = newAddr;
+            }
+        }
+
+        // Attach the chosen address to the user's most recent pending order (if any)
+        try {
+            Order pending = orderRepository.findTopByUserAndPaymentStatusOrderByCreatedAtDesc(user, false);
+            if (pending != null) {
+                pending.setAddress(toSave);
+                if (pending.getOrderDetails() != null) {
+                    for (OrderDetail od : pending.getOrderDetails()) {
+                        od.setAddress(toSave);
+                    }
+                }
+                orderRepository.save(pending);
+            }
+        } catch (Exception e) {
+            // non-fatal: log and continue
+            System.err.println("Failed to attach address to pending order: " + e.getMessage());
         }
     }
 
@@ -315,23 +396,9 @@ public class UserServiceImpl implements UserService {
     public void handleCheckoutUpdateUser(User user) {
         Long id = user.getId();
         User userGet = userRepository.findById(id).orElse(null);
-        UserAddress existing = userGet.getReceiver();
+        // Delegate to handleReceiverUser which will create a new address if data changed
         UserAddress receiver = user.getReceiver();
-        if (existing != null) {
-            if (receiver != null) {
-                existing.setReceiverAddress(receiver.getReceiverAddress());
-                existing.setReceiverName(receiver.getReceiverName());
-                existing.setReceiverPhone(receiver.getReceiverPhone());
-                existing.setNote(receiver.getNote());
-                existing.setReceiverDistrict(receiver.getReceiverDistrict());
-            }
-            userAddressRepository.save(existing);
-        } else {
-            if (receiver != null) {
-                receiver.setUser(user);
-                userAddressRepository.save(receiver);
-            }
-        }
+        handleReceiverUser(userGet, receiver);
     }
 
 }

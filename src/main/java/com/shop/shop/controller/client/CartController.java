@@ -117,7 +117,14 @@ public class CartController {
         }
 
         model.addAttribute("order", order);
+
+        // Ensure the checkout form has the user's latest receiver address.
+        // `handlUserAddress` returns the latest persisted UserAddress (or creates a new empty one).
+        com.shop.shop.domain.UserAddress receiver = userService.handlUserAddress(user);
+        // Attach receiver to the user object so form binding can use `user.receiver`
+        user.setReceiver(receiver);
         model.addAttribute("user", user);
+        model.addAttribute("receiver", receiver);
 
         // Provide explicit totals for the view
         Double baseTotal = order.getTotalPrice() != null ? order.getTotalPrice() : 0.0;
