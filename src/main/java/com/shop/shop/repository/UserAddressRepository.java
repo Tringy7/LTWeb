@@ -7,5 +7,9 @@ import com.shop.shop.domain.UserAddress;
 
 public interface UserAddressRepository extends JpaRepository<UserAddress, Long> {
 
-    UserAddress findByUser(User user);
+    // keep a way to fetch all addresses for a user if needed
+    java.util.List<UserAddress> findByUser(User user);
+
+    // fetch the latest address (highest id) for the given user
+    UserAddress findTopByUserOrderByIdDesc(User user);
 }

@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,7 +62,12 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserAddress> addresses;
+
+    // transient receiver used for DTOs / form binding. Getter will return this if set,
+    // otherwise it returns the last address from the persisted addresses list.
+    @Transient
     private UserAddress receiver;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -72,6 +78,37 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Shop shop;
+
+    // Convenience getter: return transient receiver if present (e.g. from form binding),
+    // otherwise return the last persisted address (most recently added by id order).
+    public UserAddress getReceiver() {
+        if (this.receiver != null) {
+            return this.receiver;
+        }
+        if (this.addresses == null || this.addresses.isEmpty()) {
+            return null;
+        }
+        return this.addresses.get(this.addresses.size() - 1);
+    }
+
+    // allow setting transient receiver (e.g. incoming DTO)
+    public void setReceiver(UserAddress receiver) {
+        this.receiver = receiver;
+    }
+
+    // helper methods to manage bidirectional relation
+    public void addAddress(UserAddress addr) {
+        if (addr == null) return;
+        if (this.addresses == null) this.addresses = new java.util.ArrayList<>();
+        addr.setUser(this);
+        this.addresses.add(addr);
+    }
+
+    public void removeAddress(UserAddress addr) {
+        if (addr == null || this.addresses == null) return;
+        addr.setUser(null);
+        this.addresses.remove(addr);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -87,6 +124,7 @@ public class User implements UserDetails {
     public String getPassword() {
         return password;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
