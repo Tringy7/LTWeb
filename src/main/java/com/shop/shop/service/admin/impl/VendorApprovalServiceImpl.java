@@ -62,6 +62,7 @@ public class VendorApprovalServiceImpl implements VendorApprovalService {
             }
 
             Shop shop = shopOpt.get();
+            shop.setStatus("Active");
             User user = shop.getUser();
             ShopSecurityInfo securityInfo = shop.getSecurityInfo();
 
@@ -71,7 +72,7 @@ public class VendorApprovalServiceImpl implements VendorApprovalService {
             }
 
             // Check if already approved
-            if ("Approved".equals(securityInfo.getVerificationStatus())) {
+            if ("APPROVED".equals(securityInfo.getVerificationStatus())) {
                 logger.warn("Vendor already approved for shop id: {}", shopId);
                 return true;
             }
@@ -90,8 +91,9 @@ public class VendorApprovalServiceImpl implements VendorApprovalService {
             userRepository.save(user);
 
             // Update shop security info status to Approved
-            securityInfo.setVerificationStatus("Approved");
+            securityInfo.setVerificationStatus("APPROVED");
             shopSecurityInfoRepository.save(securityInfo);
+            shopRepository.save(shop);
 
             logger.info("Successfully approved vendor for shop id: {}, user: {}", shopId, user.getEmail());
             return true;
@@ -124,7 +126,6 @@ public class VendorApprovalServiceImpl implements VendorApprovalService {
             shopSecurityInfoRepository.save(securityInfo);
 
             // Note: We keep the user role as ROLE_USER (no change needed)
-
             logger.info("Successfully rejected vendor for shop id: {}, reason: {}", shopId, rejectionReason);
             return true;
 

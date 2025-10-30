@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
             return false;
         }
         String prodStatus = p.getStatus();
-        if (prodStatus == null || !"ACTIVE".equalsIgnoreCase(prodStatus)) {
+        if (prodStatus == null || !"ACTIVE".equalsIgnoreCase(prodStatus) || !"Active".equalsIgnoreCase(prodStatus)) {
             return false;
         }
         if (p.getShop() == null) {
