@@ -24,4 +24,8 @@ public class ShipperService {
     public void save(Shipper shipper) {
         shipperRepository.save(shipper);
     }
+
+    public Shipper getByUserId(Long userId) {
+        return shipperRepository.findByUserId(userId);
+    }
 }

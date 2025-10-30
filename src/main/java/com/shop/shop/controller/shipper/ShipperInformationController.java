@@ -42,9 +42,19 @@ public class ShipperInformationController {
         return "shipper/information/show";
     }
 
-    @PostMapping("shipper/update")
-    public String updateShipper(
-            @RequestParam Long shipperId,
+    @GetMapping("/shipper/information/update-profile")
+    public String showUpdateProfileForm(Model model) {
+        Long userId = getCurrentUserId();
+        Shipper shipper = shipperService.getByUserId(userId);
+        if (shipper == null) {
+            return "redirect:/shipper/information?error=notfound";
+        }
+        model.addAttribute("shipper", shipper);
+        return "shipper/information/update-profile";
+    }
+
+    @PostMapping("/shipper/information/update-profile")
+    public String updateShipperProfile(
             @RequestParam String name,
             @RequestParam String phone,
             @RequestParam String email,
@@ -53,7 +63,12 @@ public class ShipperInformationController {
             @RequestParam String status,
             @RequestParam(required = false) MultipartFile image) throws IOException {
 
-        Shipper shipper = shipperService.getById(shipperId);
+        Long userId = getCurrentUserId();
+        Shipper shipper = shipperService.getByUserId(userId);
+        if (shipper == null) {
+            return "redirect:/shipper/information/update-profile?error=notfound";
+        }
+
         shipper.setName(name);
         shipper.setPhone(phone);
         shipper.setVehicleNumber(vehicleNumber);
@@ -63,20 +78,30 @@ public class ShipperInformationController {
         user.setEmail(email);
         user.setAddress(address);
 
+        // --- Lưu ảnh (chỉ tên file) ---
+        String uploadDir = "C:/shop/uploads/user/";
+        File dir = new File(uploadDir);
+        if (!dir.exists())
+            dir.mkdirs();
+
         if (image != null && !image.isEmpty()) {
             String fileName = image.getOriginalFilename();
-            File saveFile = new File("path/to/images/folder/" + fileName);
-            image.transferTo(saveFile);
+            File saveFile = new File(uploadDir, fileName);
+            image.transferTo(saveFile); // lưu file lên disk
+
+            // Xóa ảnh cũ nếu có
+            if (user.getImage() != null && !user.getImage().isEmpty()) {
+                File oldFile = new File(uploadDir + user.getImage());
+                if (oldFile.exists())
+                    oldFile.delete();
+            }
+
+            // Chỉ lưu tên ảnh vào DB
             user.setImage(fileName);
         }
 
         shipperService.save(shipper);
-
         return "redirect:/shipper/information";
     }
 
-    @GetMapping("/shipper/update")
-    public String getUpdateForm() {
-        return "redirect:/shipper/information";
-    }
 }

@@ -199,81 +199,16 @@
                                     Bạn có thể chỉnh sửa thông tin cá nhân và cập nhật trạng thái hoạt động của mình tại
                                     đây.
                                 </p>
-                                <button class="btn btn-primary edit-btn" data-bs-toggle="modal"
-                                    data-bs-target="#editShipperModal">
+                                <a href="${pageContext.request.contextPath}/shipper/information/update-profile"
+                                    class="btn btn-primary edit-btn">
                                     <i class="fa-solid fa-pen-to-square me-1"></i> Chỉnh sửa thông tin
-                                </button>
-
+                                </a>
                             </div>
+
                         </div>
                     </div>
 
                 </div>
-
-                <!-- Modal chỉnh sửa thông tin Shipper -->
-                <div class="modal fade" id="editShipperModal" tabindex="-1" aria-labelledby="editShipperModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form action="${pageContext.request.contextPath}/shipper/update" method="post"
-                                enctype="multipart/form-data">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editShipperModalLabel">Chỉnh sửa thông tin</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Đóng"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="shipperId" value="${shipper.id}" />
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Họ tên</label>
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            value="${shipper.name}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">SĐT</label>
-                                        <input type="text" class="form-control" id="phone" name="phone"
-                                            value="${shipper.phone}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            value="${shipper.user.email}" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="vehicleNumber" class="form-label">Biển số xe</label>
-                                        <input type="text" class="form-control" id="vehicleNumber" name="vehicleNumber"
-                                            value="${shipper.vehicleNumber}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="address" class="form-label">Quê quán</label>
-                                        <input type="text" class="form-control" id="address" name="address"
-                                            value="${user.address}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="status" class="form-label">Trạng thái</label>
-                                        <select class="form-select" id="status" name="status">
-                                            <option value="ACTIVE" ${shipper.status=='ACTIVE' ? 'selected' : '' }>Đang
-                                                hoạt động
-                                            </option>
-                                            <option value="INACTIVE" ${shipper.status=='INACTIVE' ? 'selected' : '' }>
-                                                Ngừng hoạt động
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <!-- <div class="mb-3">
-                                        <label for="image" class="form-label">Avatar</label>
-                                        <input type="file" class="form-control" id="image" name="image">
-                                    </div> -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
 
             </div>
 
