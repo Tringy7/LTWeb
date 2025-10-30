@@ -225,6 +225,7 @@ public class ShopController {
         }
 
         model.addAttribute("productList", products);
+        model.addAttribute("filterList", productService.getBraList()); // Thêm dòng này
         model.addAttribute("favoriteMap", favoriteMap);
         return "client/shop/show";
     }
