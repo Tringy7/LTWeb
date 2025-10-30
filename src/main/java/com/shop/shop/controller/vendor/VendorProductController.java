@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shop.shop.domain.Product;
@@ -188,54 +191,43 @@ public class VendorProductController {
 
     @PostMapping("/vendor/product/update")
     public String updateProduct(@ModelAttribute Product product,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             @RequestParam(value = "detailId[]", required = false) List<Long> detailIds,
             @RequestParam(value = "size[]", required = false) List<String> sizes,
-            @RequestParam(value = "quantity[]", required = false) List<Long> quantities)
-            throws IOException {
+            @RequestParam(value = "quantity[]", required = false) List<Long> quantities) {
+
         Long SHOP_ID = getCurrentShopId();
         Optional<Product> optProduct = productService.getProductByIdAndShopId(product.getId(), SHOP_ID);
-        if (optProduct.isEmpty()) {
+        if (optProduct.isEmpty())
             return "redirect:/vendor/product";
-        }
 
         Product existing = optProduct.get();
-        if (!"Active".equalsIgnoreCase(product.getStatus())) {
-            return "redirect:/vendor/product?error=status";
-        }
         product.setShop(existing.getShop());
 
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get("src/main/webapp/resources/admin/images/product");
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            imageFile.transferTo(uploadPath.resolve(fileName));
-            product.setImage(fileName);
-        } else {
+        // --- Ảnh ---
+        if (product.getImage() == null || product.getImage().isEmpty()) {
+            // Không chọn ảnh mới => giữ ảnh cũ
             product.setImage(existing.getImage());
         }
 
         productService.save(product);
 
+        // --- Cập nhật size/quantity ---
         if (sizes != null && quantities != null && detailIds != null) {
-            List<ProductDetail> currentDetails = productDetailService.getDetailsByProductId(product.getId());
-            Set<Long> updatedIds = new HashSet<>();
-
             for (int i = 0; i < sizes.size(); i++) {
                 Long id = detailIds.get(i);
                 String size = sizes.get(i);
                 Long quantity = quantities.get(i);
 
                 if (id != null && id != 0) {
+                    // Cập nhật detail có sẵn
                     ProductDetail detail = productDetailService.getById(id);
                     if (detail != null) {
+                        detail.setSize(size);
                         detail.setQuantity(quantity);
                         productDetailService.save(detail);
-                        updatedIds.add(id);
                     }
                 } else {
+                    // Thêm mới nếu chưa có ID
                     ProductDetail newDetail = new ProductDetail();
                     newDetail.setProduct(product);
                     newDetail.setSize(size);
@@ -243,35 +235,29 @@ public class VendorProductController {
                     productDetailService.save(newDetail);
                 }
             }
-
-            if (sizes != null && quantities != null && detailIds != null) {
-                for (int i = 0; i < sizes.size(); i++) {
-                    Long id = detailIds.get(i);
-                    String size = sizes.get(i);
-                    Long quantity = quantities.get(i);
-
-                    if (id != null && id != 0) {
-                        // Cập nhật chi tiết có sẵn
-                        ProductDetail detail = productDetailService.getById(id);
-                        if (detail != null) {
-                            detail.setSize(size);
-                            detail.setQuantity(quantity);
-                            productDetailService.save(detail);
-                        }
-                    } else {
-                        // Thêm mới nếu chưa có ID
-                        ProductDetail newDetail = new ProductDetail();
-                        newDetail.setProduct(product);
-                        newDetail.setSize(size);
-                        newDetail.setQuantity(quantity);
-                        productDetailService.save(newDetail);
-                    }
-                }
-            }
-
         }
 
         return "redirect:/vendor/product";
+    }
+
+    @PostMapping("/vendor/product/upload-image")
+    @ResponseBody
+    public Map<String, Object> uploadProductImage(@RequestParam("imageFile") MultipartFile imageFile)
+            throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            Path uploadPath = Paths.get("src/main/webapp/resources/admin/images/product");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            imageFile.transferTo(uploadPath.resolve(fileName));
+            result.put("success", true);
+            result.put("fileName", fileName);
+        } else {
+            result.put("success", false);
+        }
+        return result;
     }
 
     @PostMapping("/vendor/product/delete")

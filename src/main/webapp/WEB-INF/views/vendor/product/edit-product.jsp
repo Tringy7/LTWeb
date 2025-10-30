@@ -95,6 +95,7 @@
                             <form:form action="${pageContext.request.contextPath}/vendor/product/update" method="post"
                                 modelAttribute="product">
                                 <form:hidden path="id" />
+                                <form:hidden path="image" id="productImageHidden" />
 
                                 <div class="card-body p-4">
                                     <div class="row g-4">
@@ -105,9 +106,40 @@
                                                 <img id="productImagePreview"
                                                     src="<c:url value='/resources/admin/images/product/${product.image}'/>"
                                                     alt="Hình sản phẩm" class="img-fluid"
-                                                    style="width: 100%; height: 280px; object-fit: cover;">
+                                                    style="width:100%; height:280px; object-fit:cover;">
                                             </div>
+
+                                            <div class="custom-file" style="max-width:250px; margin:0 auto;">
+                                                <input type="file" id="updateImageFileInput" class="custom-file-input">
+                                                <label class="custom-file-label text-center" for="updateImageFileInput">
+                                                    <i class="fas fa-upload"></i> Chọn ảnh mới
+                                                </label>
+                                            </div>
+
+                                            <script>
+                                                document.getElementById('updateImageFileInput').addEventListener('change', function (e) {
+                                                    const file = e.target.files[0];
+                                                    if (file) {
+                                                        const formData = new FormData();
+                                                        formData.append("imageFile", file);
+
+                                                        fetch("${pageContext.request.contextPath}/vendor/product/upload-image", {
+                                                            method: "POST",
+                                                            body: formData
+                                                        }).then(res => res.json())
+                                                            .then(data => {
+                                                                if (data.success) {
+                                                                    document.getElementById('productImagePreview').src = URL.createObjectURL(file);
+                                                                    document.getElementById('productImageHidden').value = data.fileName;
+                                                                } else {
+                                                                    alert("Upload ảnh thất bại!");
+                                                                }
+                                                            }).catch(err => alert("Lỗi upload: " + err));
+                                                    }
+                                                });
+                                            </script>
                                         </div>
+
 
                                         <!-- Cột phải: Thông tin -->
                                         <div class="col-md-7">
