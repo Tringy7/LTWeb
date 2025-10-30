@@ -10,7 +10,7 @@
                             <div class="sidebar-profile-image">
                                 <c:choose>
                                     <c:when test="${not empty acc.image}">
-                                        <img src="/admin/images/user/${acc.image}" alt="image" />
+                                        <img src="/admin/${acc.image}" alt="image" />
                                     </c:when>
                                 </c:choose>
                                 <span class="sidebar-status-indicator"></span>
@@ -18,9 +18,7 @@
                             <div class="sidebar-profile-name">
                                 <p class="sidebar-name">
                                     <c:choose>
-                                        <c:when test="${not empty acc}">
-                                            ${acc.fullName}
-                                        </c:when>
+                                        <c:when test="${not empty acc}"> ${acc.fullName} </c:when>
                                     </c:choose>
                                 </p>
                                 <p class="sidebar-designation">
@@ -47,37 +45,35 @@
 
                     <p class="sidebar-menu-title">Website Management</p>
 
-                    <!-- Order -->
+                    <!-- Orders -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
                             onclick="location.href='/shipper/order'">
                             <i class="typcn typcn-th-small-outline menu-icon"></i>
                             <span class="menu-title">Orders</span>
-                            <i class="menu-arrow"></i>
+                            <i class="typcn typcn-chevron-right menu-arrow"></i>
                         </button>
                     </li>
 
+                    <!-- Shipping -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
                             onclick="location.href='/shipper/shipping'">
                             <i class="typcn typcn-map menu-icon"></i>
                             <span class="menu-title">Shipping</span>
-                            <i class="menu-arrow"></i>
+                            <i class="typcn typcn-chevron-right menu-arrow"></i>
                         </button>
                     </li>
 
-
+                    <!-- Profile -->
                     <li class="nav-item">
                         <button class="nav-link btn btn-link w-100 text-left" type="button"
                             onclick="location.href='/shipper/information'">
                             <i class="typcn typcn-user-outline menu-icon"></i>
                             <span class="menu-title">Profile</span>
-                            <i class="menu-arrow"></i>
+                            <i class="typcn typcn-chevron-right menu-arrow"></i>
                         </button>
                     </li>
-
-
-
 
                 </ul>
             </nav>

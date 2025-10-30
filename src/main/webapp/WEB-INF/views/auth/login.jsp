@@ -34,7 +34,6 @@
                                 <div class="col-lg-4 mx-auto">
                                     <div class="auth-form-light text-left py-5 px-4 px-sm-5">
                                         <div class="brand-logo">
-                                            <img src="<c:url value='/admin/images/logo.svg'/>" alt="logo">
                                         </div>
                                         <h4>Chào mừng bạn!</h4>
                                         <h6 class="font-weight-light">Đăng nhập để tiếp tục.</h6>
