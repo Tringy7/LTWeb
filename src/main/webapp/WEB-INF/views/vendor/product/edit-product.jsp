@@ -159,9 +159,6 @@
 
                                     <!-- BẢNG SIZE & SỐ LƯỢNG -->
                                     <div class="table-container mt-4">
-                                        <h3 class="text-center text-secondary mb-3">
-                                            <i class="fas fa-ruler"></i> Size & Số lượng
-                                        </h3>
 
                                         <div class="table-responsive">
                                             <table
@@ -170,14 +167,14 @@
                                                     style="background: linear-gradient(135deg, #f59d00, #f0ad4e); color: white;">
                                                     <tr>
                                                         <th style="width:50%">Size</th>
-                                                        <th style="width:50%">Số lượng</th>
+                                                        <th style="width:50%">Số lượng tồn kho</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <c:set var="sizes" value="${fn:split('S,M,L,XL', ',')}" />
                                                     <c:forEach var="size" items="${sizes}">
                                                         <c:set var="found" value="false" />
-                                                        <c:forEach var="d" items="${details}">
+                                                        <c:forEach var="d" items="${productDetails}">
                                                             <c:if test="${d.size eq size}">
                                                                 <tr style="background-color: #fffbee;">
                                                                     <td>
@@ -185,6 +182,8 @@
                                                                             class="fw-bold text-uppercase text-secondary">${d.size}</span>
                                                                         <input type="hidden" name="detailId[]"
                                                                             value="${d.id}" />
+                                                                        <input type="hidden" name="size[]"
+                                                                            value="${d.size}" />
                                                                     </td>
                                                                     <td>
                                                                         <input type="number" name="quantity[]"
@@ -198,8 +197,12 @@
                                                         </c:forEach>
                                                         <c:if test="${not found}">
                                                             <tr style="background-color: #fffbee;">
-                                                                <td><span
+                                                                <td>
+                                                                    <span
                                                                         class="fw-bold text-uppercase text-secondary">${size}</span>
+                                                                    <input type="hidden" name="detailId[]" value="0" />
+                                                                    <input type="hidden" name="size[]"
+                                                                        value="${size}" />
                                                                 </td>
                                                                 <td>
                                                                     <input type="number" name="quantity[]" value="0"
@@ -210,6 +213,7 @@
                                                         </c:if>
                                                     </c:forEach>
                                                 </tbody>
+
                                             </table>
                                         </div>
                                     </div>

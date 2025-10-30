@@ -183,10 +183,11 @@
                 <div class="main-panel">
                     <div class="content-wrapper">
 
-                        <!-- Header Danh sách đơn hàng -->
-                        <div class="card mb-3 border-0 shadow-sm overflow-hidden card-custom"
-                            style="border-radius: 15px;">
-                            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                        <!-- Danh sách đơn hàng (gộp header + bảng) -->
+                        <div class="card border-0 shadow-sm overflow-hidden card-custom" style="border-radius: 15px;">
+                            <!-- Header -->
+                            <div
+                                class="card-header-custom d-flex justify-content-between align-items-center p-3 border-bottom">
                                 <h4 class="mb-0 fw-bold">
                                     <i class="fas fa-receipt me-2"></i> Danh sách đơn hàng
                                 </h4>
@@ -196,14 +197,11 @@
                             </div>
 
                             <!-- Thanh hành động -->
-                            <div class="card-body d-flex justify-content-between align-items-center flex-wrap py-3"
-                                style="background-color: #fff; border-top: 1px solid #eee;">
-                                <!-- Bộ lọc -->
+                            <div class="d-flex justify-content-between align-items-center flex-wrap py-3 px-3"
+                                style="background-color: #fff; border-bottom: 1px solid #eee;">
                                 <form action="${pageContext.request.contextPath}/vendor/order/filter" method="get"
                                     class="d-flex align-items-center mb-2 mb-sm-0">
-
                                     <input type="hidden" name="shop_id" value="${shop.id}">
-
                                     <!-- <select name="status" id="statusFilter"
                                         class="form-select fw-semibold text-dark border rounded-3 shadow-sm btn-lift"
                                         onchange="this.form.submit()">
@@ -225,29 +223,22 @@
                                     </select> -->
                                 </form>
 
-
-
-                                <!-- Nút bên phải -->
-                                <div class="d-flex align-items-center">
-                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift" style="
-    margin-right: 14px;" onclick=" location.reload()">
+                                <!-- <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btn-lift" onclick="location.reload()">
                                         <i class="fas fa-rotate-right me-1"></i> Refresh
                                     </button>
-                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift"
-                                        onclick="confirmExport()">
+                                    <button type="button" class="btn btn-outline-info btn-sm btn-lift" onclick="confirmExport()">
                                         <i class="fas fa-download me-1"></i> Export
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
-                        </div>
 
-                        <!-- Card chứa bảng -->
-                        <div class="card card-custom border-0 shadow-sm" style="border-radius: 15px;">
+                            <!-- Bảng danh sách -->
                             <div class="card-body bg-white">
                                 <div class="table-responsive">
                                     <form:form>
-                                        <table class="table table-hover table-custom align-middle text-center">
-                                            <thead>
+                                        <table class="table table-hover table-custom align-middle text-center mb-0">
+                                            <thead class="bg-light">
                                                 <tr>
                                                     <th>Mã đơn hàng</th>
                                                     <th>Người đặt</th>
@@ -293,6 +284,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 

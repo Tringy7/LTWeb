@@ -17,34 +17,34 @@
 
                 <!-- Bảng bên trái: Danh sách đơn hàng -->
                 <div class="col-span-7">
-                    <div class="bg-green-500 rounded-lg p-6 mb-6 flex items-center justify-between text-white">
-                        <div>
-                            <h2 class="text-2xl font-bold mb-2">Chọn đúng chỗ ship rồi đấy con vợ ạ!!</h2>
-                        </div>
-                        <div class="w-32"><img src="https://img.icons8.com/ios-filled/100/ffffff/delivery.png" /></div>
-                    </div>
-
-                    <h3 class="text-lg font-semibold mb-2">Đơn hàng của bạn</h3>
-                    <div class="space-y-2">
-                        <div class="bg-white p-4 rounded-lg shadow flex justify-between items-center">
-                            <div class="flex items-center space-x-4">
+                    <h3 class="text-lg font-semibold mb-2">Đơn hàng đang giao</h3>
+                    <div class="space-y-4">
+                        <c:forEach var="detail" items="${orders}">
+                            <a href="${pageContext.request.contextPath}/shipper/shipping/detail/${detail.id}"
+                                class="no-underline hover:no-underline block">
                                 <div
-                                    class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">
-                                    C</div>
-                                <div>
-                                    <p class="font-semibold">Đơn hàng #1</p>
-                                    <p class="text-sm text-gray-500">Kho: Đ. số 10, Dĩ An, TP. Hồ Chí Minh</p>
-                                    <!-- <p class="text-sm text-gray-500">LK 001</p> -->
+                                    class="bg-white p-4 rounded-lg shadow flex justify-between items-center cursor-pointer hover:bg-green-50 hover:border hover:border-orange-400 transition-all duration-200">
+                                    <div class="flex items-center space-x-4">
+                                        <div
+                                            class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold">
+                                            ${detail.id}
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold">Đơn hàng #${detail.id}</p>
+                                            <p class="text-sm text-gray-500">Kho: ${detail.carrier.area}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-gray-700">${today}</p>
+                                        <span class="text-green-500 font-semibold">Đang vận chuyển</span>
+                                    </div>
+                                    <div class="text-right font-semibold">${detail.finalPrice} VND</div>
                                 </div>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-gray-700">25 Thg 10 2025</p>
-                                <span class="text-green-500 font-semibold">Đang vận chuyển</span>
-                            </div>
-                            <div class="text-right font-semibold">300.000 VND</div>
-                        </div>
+                            </a>
+                        </c:forEach>
                     </div>
                 </div>
+
 
                 <!-- Bảng bên phải: Thông tin giao hàng & bản đồ -->
                 <div class="col-span-5 space-y-4">
@@ -60,18 +60,34 @@
 
                         <!-- Thông tin người gửi và người nhận -->
                         <div class="bg-gray-50 p-3 rounded">
-                            <p class="font-semibold text-gray-700">Kho hàng:</p>
-                            <p class="text-gray-500 text-sm">Đ. số 10, Dĩ An, TP. Hồ Chí Minh, Việt Nam</p>
-                            <p class="font-semibold text-gray-700 mt-2">Địa chỉ người nhận: </p>
-                            <p class="text-gray-500 text-sm">01 Đ. Võ Văn Ngân, Linh Chiểu, Thủ Đức, TP. Hồ Chí Minh,
-                                Việt Nam</p>
-                            <div class="mt-3 flex justify-between items-center">
-                                <p class="font-semibold text-gray-700">Tiền thu:</p>
-                                <p class="font-bold">300.000 VND</p>
-                            </div>
-                            <button class="w-full mt-3 bg-green-700 text-white py-2 rounded-lg font-semibold">Xác nhận
-                                giao hàng thành công</button>
+                            <c:choose>
+                                <c:when test="${not empty selectedOrder}">
+                                    <p class="font-semibold text-gray-700">Kho hàng:</p>
+                                    <p class="text-gray-500 text-sm">${selectedOrder.carrier.area}</p>
+
+                                    <p class="font-semibold text-gray-700 mt-2">Địa chỉ người nhận:</p>
+                                    <p class="text-gray-500 text-sm">${selectedOrder.address.receiverAddress}</p>
+
+                                    <div class="mt-3 flex justify-between items-center">
+                                        <p class="font-semibold text-gray-700">Tiền thu:</p>
+                                        <p class="font-bold">${selectedOrder.finalPrice} VND</p>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="text-gray-500 italic">Hãy chọn một đơn hàng ở bảng bên trái để xem chi
+                                        tiết.</p>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <c:if test="${not empty selectedOrder}">
+                                <a href="${pageContext.request.contextPath}/shipper/shipping/complete/${selectedOrder.id}"
+                                    class="block w-full mt-3 bg-green-700 text-white py-2 rounded-lg font-semibold text-center 
+                                          transition-all duration-200 hover:bg-green-800 hover:scale-[1.02]">
+                                    Xác nhận giao hàng thành công
+                                </a>
+                            </c:if>
                         </div>
+
                     </div>
                 </div>
 

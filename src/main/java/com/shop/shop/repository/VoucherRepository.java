@@ -56,4 +56,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     List<Voucher> findByShopId(@Param("shopId") Long shopId);
 
     List<Voucher> findByShop_Id(Long shopId);
+
+    @Query("SELECT COUNT(p) FROM Voucher p WHERE p.shop.id = :shopId")
+    long countByShopId(Long shopId);
 }
