@@ -1,5 +1,3 @@
-# 🛍️ Dự án Quản Lý Cửa Hàng Kinh Doanh Quần Áo
-
 ## 🧩 Giới thiệu
 **Fashion Shop** là ứng dụng web thương mại điện tử mini được phát triển bằng **Spring Boot + JSP/JSTL + Bootstrap + JPA + MySQL + Sitemesh + JWT + WebSocket**, triển khai theo mô hình **MVC**.  
 Mục tiêu của dự án là xây dựng nền tảng mua hàng và quản lý sàn thương mại điện tử mini chuyên về quần áo, hỗ trợ nhiều vai trò khác nhau như **Guest, User, Vendor, Shipper, Admin**.
@@ -93,7 +91,16 @@ java -jar target\Design-0.0.1-SNAPSHOT.war
 
 ## 💳 Hướng dẫn thanh toán VNPAY
 - Tại trang thanh toán, chọn **VNPAY → Thẻ nội địa**, sau đó nhập thông tin thẻ giả lập (sandbox).
-  
+  - Nhập thông tin thanh toán vào Ngân hàng NCB
+
+Số thẻ 9704198526191432198
+
+Tên chủ thẻ NGUYEN VAN A
+
+Ngày phát hành 07/15
+
+Mật khẩu OTP 123456
+
 - Các cấu hình được đặt trong `application.properties` theo key `vnpay.*`.
 
 ---
@@ -103,15 +110,16 @@ java -jar target\Design-0.0.1-SNAPSHOT.war
 Ứng dụng hỗ trợ các vai trò:  **Guest, User, Vendor, Shipper, Admin**
 
 ### 👤 Guest
-- Xem sản phẩm, tìm kiếm, xem chi tiết.  
+- Xem sản phẩm bán nhiều nhất, xem giới thiệu sản phẩm
 - Không thể mua hoặc đánh giá sản phẩm.  
 
 ### 👥 User
-- Quản lý hồ sơ, nhiều địa chỉ nhận hàng.  
-- Giỏ hàng lưu trong DB.  
+- Quản lý hồ sơ cá nhân, địa chỉ nhận hàng.
+- Xem chi tiết sản phẩm, lưu sản phẩm vào giỏ hàng, đặt hàng sản phẩm
+- Tìm kiếm, lọc sản phẩm theo các tiêu chí.  
 - Đặt hàng và thanh toán (COD, VNPAY, MOMO).  
 - Theo dõi lịch sử đơn hàng theo trạng thái (mới, xác nhận, đang giao, hoàn tất, hủy, hoàn tiền).  
-- Thích, bình luận, đánh giá sản phẩm, sử dụng mã giảm giá.  
+- Thích, bình luận, đánh giá sản phẩm, sử dụng mã giảm giá khi thanh toántoán.  
 
 ### 🏪 Vendor (Chủ cửa hàng)
 - Có quyền của User.  
@@ -131,7 +139,8 @@ java -jar target\Design-0.0.1-SNAPSHOT.war
 ---
 
 ## ✨ 7. Điểm nổi bật
-- Thanh toán **VNPAY (sandbox)**  
+- Hệ thống thân thiện với người dùng.
+- Tích hợp thanh toán **VNPAY (sandbox)**  
 - Thông báo thời gian thực qua **WebSocket**  
 - Xuất báo cáo **PDF**  
 
@@ -140,52 +149,31 @@ java -jar target\Design-0.0.1-SNAPSHOT.war
 ## 👨‍💻 8. Phân công công việc
 
 ### **Chau Võ Minh Danh – Vendor + Shipper**
-- **Tuần 1:**
   - Vẽ và đặc tả use case liên quan đến Vendor và Shipper.  
   - Phân tích luồng nghiệp vụ cho hai actor.
-
-- **Tuần 2:**
   - Vẽ lược đồ tuần tự cho các chức năng Vendor và Shipper.  
   - Thiết kế giao diện sơ bộ cho các màn hình quản lý cửa hàng và giao hàng.
-
-- **Tuần 3:**
   - Xây dựng các chức năng của Vendor: quản lý sản phẩm, quản lý đơn hàng.
-
-- **Tuần 4:**
   - Hoàn thiện chức năng thống kê doanh thu cho Vendor.  
   - Phát triển và kiểm thử nghiệp vụ Shipper: nhận đơn, cập nhật trạng thái, xác nhận hoàn tất.  
   - Tinh chỉnh giao diện liên quan.
 
 ### **Nguyễn Hữu Trí – User + Guest**
-- **Tuần 1:**
   - Vẽ và đặc tả use case liên quan đến User và Guest.  
   - Phân tích hành vi người dùng và luồng đặt hàng.
-
-- **Tuần 2:**
   - Vẽ lược đồ tuần tự cho User và Guest.  
   - Thiết kế giao diện trang chính và trang sản phẩm.
-
-- **Tuần 3:**
   - Xây dựng chức năng Guest: xem, tìm kiếm, xem chi tiết sản phẩm.  
   - Xây dựng chức năng User: xem, tìm kiếm, xem chi tiết sản phẩm, quản lý giỏ hàng.
-
-- **Tuần 4:**
   - Phát triển các chức năng User nâng cao: đặt hàng, đánh giá sản phẩm.  
   - Hoàn thiện giao diện giỏ hàng và thanh toán.
 
 ### **Cao Nguyễn Anh Vũ – Admin**
-- **Tuần 1:**
   - Vẽ và đặc tả use case cho Admin.  
   - Thiết kế sơ đồ cơ sở dữ liệu tổng thể (bảng, khóa, quan hệ).
-
-- **Tuần 2:**
   - Vẽ lược đồ tuần tự cho Admin.  
   - Xây dựng hệ thống phân quyền người dùng.
-
-- **Tuần 3:**
   - Xây dựng chức năng Admin: quản lý người dùng, cửa hàng.
-
-- **Tuần 4:**
   - Hoàn thiện các chức năng quản trị.  
   - Tối ưu và hoàn thiện cơ sở dữ liệu.
 
