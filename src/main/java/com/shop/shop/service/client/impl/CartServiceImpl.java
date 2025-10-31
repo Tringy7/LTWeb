@@ -1,12 +1,12 @@
 package com.shop.shop.service.client.impl;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +162,6 @@ public class CartServiceImpl implements CartService {
                     orderDetail.setOrder(order);
                     orderDetail.setProduct(cartDetailInDB.getProduct());
                     orderDetail.setPrice(newPrice);
-                    orderDetail.setFinalPrice(newPrice);
                     orderDetail.setQuantity(cartDetailInDB.getQuantity());
                     orderDetail.setShop(cartDetailInDB.getProduct().getShop());
                     orderDetail.setSize(cartDetailInDB.getSize());
@@ -171,6 +170,10 @@ public class CartServiceImpl implements CartService {
                     if (carrierId != null) {
                         Carrier carrier = carrierRepository.findById(carrierId).orElse(null);
                         orderDetail.setCarrier(carrier);
+                        orderDetail.setFinalPrice(newPrice + carrier.getDeliveryFee());
+                    } else {
+
+                        orderDetail.setFinalPrice(newPrice);
                     }
 
                     orderDetails.add(orderDetail);
@@ -334,7 +337,7 @@ public class CartServiceImpl implements CartService {
                 if (discountPercent != null) {
                     discounted = basePrice * (1 - (discountPercent / 100.0));
                 }
-                od.setFinalPrice(discounted);
+                od.setFinalPrice(discounted + order.getShippingFee());
                 od.setPrice(basePrice);
                 total += discounted;
             } else {
@@ -370,7 +373,7 @@ public class CartServiceImpl implements CartService {
         for (OrderDetail od : order.getOrderDetails()) {
             double basePrice = od.getProduct().getPrice() * od.getQuantity();
             od.setPrice(basePrice);
-            od.setFinalPrice(basePrice);
+            od.setFinalPrice(basePrice + order.getShippingFee());
         }
 
         double total = 0.0;
