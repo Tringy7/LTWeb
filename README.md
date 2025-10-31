@@ -188,6 +188,7 @@ Mật khẩu OTP 123456
 - Thiết kế sơ đồ cơ sở dữ liệu tổng thể (bảng, khóa, quan hệ).
 - Vẽ lược đồ tuần tự cho Admin.
 - Xây dựng chức năng Admin: quản lý người dùng, cửa hàng, thống kê toàn hệ thống
+- Bổ sung các chức năng Admin: Tính chiết khấu các cửa hàng, tạo voucher toàn hệ thống
 - Hoàn thiện các chức năng quản trị.
 - Phát triển thêm các chức năng như: duyệt shop đăng ký, phân công shipper
 - Tinh chỉnh hoàn thiện báo cáo
