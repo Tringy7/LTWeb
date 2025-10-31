@@ -1,8 +1,5 @@
 package com.shop.shop.dto;
 
-//Update to dto
-//dto -> tmp
-//tmp -> dto
 public class OrderDetailDTO {
     private Long id;
     private Long productId;
@@ -12,18 +9,21 @@ public class OrderDetailDTO {
     private double price;
     private String image;
     private String status;
+    private double finalPrice;
 
-    public OrderDetailDTO(Long id, Long productId, String productName, String shopName, Long quantity, double price,
-            String image, String status) {
+    public OrderDetailDTO(Long id, Long productId, String productName, String shopName,
+            Long quantity, double finalPrice, String image, String status) {
         this.id = id;
         this.productId = productId;
         this.productName = productName;
         this.shopName = shopName;
         this.quantity = quantity;
-        this.price = price;
+        this.finalPrice = finalPrice;
         this.image = image;
         this.status = status;
     }
+
+    
 
     public Long getProductId() {
         return productId;
@@ -87,6 +87,18 @@ public class OrderDetailDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+
+    public double getFinalPrice() {
+        return finalPrice;
+    }
+
+
+
+    public void setFinalPrice(double finalPrice) {
+        this.finalPrice = finalPrice;
     }
 
 }

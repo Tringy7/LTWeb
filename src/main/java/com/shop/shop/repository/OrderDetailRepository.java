@@ -87,7 +87,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> 
         List<OrderDetail> findByOrder_Id(Long orderId);
 
         @Query("SELECT new com.shop.shop.dto.OrderDetailDTO("
-                        + "od.id, od.product.id, od.product.name, od.shop.shopName, od.quantity, od.price, od.product.image, od.status) "
+                        + "od.id, od.product.id, od.product.name, od.shop.shopName, od.quantity, od.finalPrice, od.product.image, od.status) "
                         + "FROM OrderDetail od "
                         + "WHERE od.order.id = :orderId AND od.shop.id = :shopId")
         List<OrderDetailDTO> findOrderDetailsDTOByOrderIdAndShopId(@Param("orderId") Long orderId,

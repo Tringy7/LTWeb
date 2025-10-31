@@ -293,7 +293,7 @@
                         <div class="card-header chart-header"
                             style="display:flex; justify-content:space-between; align-items:center;">
                             <div class="chart-legend">
-                                <span class="chart-title">Revenue Report</span>
+                                <span class="chart-title">Báo cáo doanh thu</span>
                                 <!-- <span class="legend-item purple"><span class="legend-color"></span>Earnings</span>
                                 <span class="legend-item green"><span class="legend-color"></span>Invested</span>
                                 <span class="legend-item orange"><span class="legend-color"></span>Expenses</span> -->
@@ -302,7 +302,7 @@
                                 <!-- Kiểu biểu đồ -->
                                 <!-- Kiểu biểu đồ -->
                                 <div class="filter-item">
-                                    <label for="chartType">Chart:</label>
+                                    <label for="chartType">Loại:</label>
                                     <select id="chartType" class="form-select">
                                         <option value="line" selected>Line</option>
                                         <option value="bar">Bar</option>
@@ -397,7 +397,7 @@
                                 labels: dataObj.labels,
                                 datasets: [
                                     {
-                                        label: 'Earnings',
+                                        label: 'Doanh thu',
                                         data: dataObj.earnings,
                                         borderColor: '#8c57ff',
                                         backgroundColor: type === 'pie' ? '#8c57ff' : 'rgba(140,87,255,0.2)',
@@ -407,7 +407,7 @@
                                         pointHoverRadius: 8
                                     },
                                     {
-                                        label: 'Invested',
+                                        label: 'Tiền hoa hồng',
                                         data: dataObj.invested,
                                         borderColor: '#00c853',
                                         backgroundColor: type === 'pie' ? '#00c853' : 'rgba(0,200,83,0.2)',
@@ -417,7 +417,7 @@
                                         pointHoverRadius: 8
                                     },
                                     {
-                                        label: 'Expenses',
+                                        label: 'Chi phí',
                                         data: dataObj.expenses,
                                         borderColor: '#ff9800',
                                         backgroundColor: type === 'pie' ? '#ff9800' : 'rgba(255,152,0,0.2)',

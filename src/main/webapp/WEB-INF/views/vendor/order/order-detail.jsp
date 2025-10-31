@@ -186,7 +186,7 @@
                                                         <td>${d.shopName}</td>
                                                         <td>${d.quantity}</td>
                                                         <td>
-                                                            <fmt:formatNumber value="${d.price}" type="number"
+                                                            <fmt:formatNumber value="${d.finalPrice}" type="number"
                                                                 groupingUsed="true" />
                                                         </td>
                                                         <td>
