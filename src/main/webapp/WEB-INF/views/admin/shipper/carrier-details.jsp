@@ -79,7 +79,7 @@
                                                             <div class="shipper-avatar">
                                                                 <c:choose>
                                                                     <c:when test="${not empty shipper.user.image}">
-                                                                        <img src="${shipper.user.image}"
+                                                                        <img src="/admin/images/user/${shipper.user.image}"
                                                                             alt="Shipper Avatar" class="rounded-circle"
                                                                             width="40" height="40">
                                                                     </c:when>
@@ -226,6 +226,7 @@
                                                                 ${dateTime.hour}:${dateTime.minute < 10 ? '0' : ''
                                                                     }${dateTime.minute} </c:if>
                                                         </td>
+
                                                         <td class="text-center">
                                                             <c:choose>
                                                                 <c:when test="${not empty availableShippers}">
